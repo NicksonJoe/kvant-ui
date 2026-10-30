@@ -61,7 +61,7 @@ describe('dependencies', () => {
 });
 
 describe('blockItem', () => {
-  it('is an item `kvant add` accepts: component files next to the block, the document to reopen it', () => {
+  it('is an item `kvant-ui add` accepts: component files next to the block, the document to reopen it', () => {
     const item = blockItem(page(template('deal-card')), { name: 'deal-card', title: 'Карточка сделки', description: 'Блок из Playground' });
     const parsed = parseItem(JSON.parse(JSON.stringify(item)), 'deal-card.json');
     expect(parsed).toMatchObject({

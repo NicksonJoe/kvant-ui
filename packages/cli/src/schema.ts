@@ -40,7 +40,7 @@ export interface ThemeOptions {
 export interface RegistryIndex {
   name: string;
   homepage: string;
-  /** Values `kvant init` accepts for --theme, --font and --shape. */
+  /** Values `kvant-ui init` accepts for --theme, --font and --shape. */
   theme: ThemeOptions;
   items: IndexItem[];
 }

@@ -15,7 +15,7 @@ export interface BlockDialogProps {
   onSave(block: SavedBlock): void;
 }
 
-/** «Сохранить как блок»: a registry item `kvant add` installs, plus a copy in «Мои блоки». */
+/** «Сохранить как блок»: a registry item `kvant-ui add` installs, plus a copy in «Мои блоки». */
 export function BlockDialog({ open, onOpenChange, root, onSave }: BlockDialogProps) {
   const [title, setTitle] = useState('Мой блок');
   const [name, setName] = useState<string | null>(null);
@@ -41,14 +41,14 @@ export function BlockDialog({ open, onOpenChange, root, onSave }: BlockDialogPro
       <DialogContent size="md">
         <DialogTitle>Сохранить как блок</DialogTitle>
         <DialogDescription>
-          Блок — элемент реестра Kvant: команда <code className="font-mono">kvant add</code> копирует его в проект вместе с нужными компонентами,
+          Блок — элемент реестра Kvant: команда <code className="font-mono">kvant-ui add</code> копирует его в проект вместе с нужными компонентами,
           а «Импорт» открывает обратно на холсте.
         </DialogDescription>
         <div className="flex flex-col gap-4">
           <Field label="Название" error={titleError}>
             <Input value={title} onValueChange={setTitle} />
           </Field>
-          <Field label="Имя для kvant add" description="Файл блока: blocks/<имя>.tsx." error={nameError}>
+          <Field label="Имя для kvant-ui add" description="Файл блока: blocks/<имя>.tsx." error={nameError}>
             <Input value={slug} onValueChange={(next) => setName(next)} spellCheck={false} />
           </Field>
           <Field label="Описание" optional>

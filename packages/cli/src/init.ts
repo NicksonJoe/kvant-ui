@@ -41,7 +41,7 @@ export async function init(options: InitOptions): Promise<KvantConfig> {
   const { theme } = await fetchIndex(source);
 
   const css = options.css ?? (await firstExisting(cwd, CSS_CANDIDATES));
-  if (!css) throw new Error(`Не нашёл файл стилей (${CSS_CANDIDATES.join(', ')}). Укажите его: kvant init --css путь/к/файлу.css`);
+  if (!css) throw new Error(`Не нашёл файл стилей (${CSS_CANDIDATES.join(', ')}). Укажите его: kvant-ui init --css путь/к/файлу.css`);
 
   const config: KvantConfig = {
     registry,
@@ -77,7 +77,7 @@ export async function init(options: InitOptions): Promise<KvantConfig> {
   if (await setHtmlAttributes(cwd, attributes)) log('Тема применена в index.html.');
   else log(`Добавьте на <html>: ${Object.entries(attributes).map(([name, value]) => `${name}="${value}"`).join(' ')}`);
 
-  log('Дальше: kvant add button dialog');
+  log('Дальше: kvant-ui add button dialog');
   log(`Импорт: import { Button } from '${config.aliases.kvant}' — алиас должен вести в ${config.dir} (paths в tsconfig и resolve.alias у сборщика).`);
   return config;
 }

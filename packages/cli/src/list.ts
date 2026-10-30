@@ -22,5 +22,5 @@ export async function listItems(options: { cwd: string; config: KvantConfig | un
       log(`  ${installed ? '✓' : ' '} ${item.name.padEnd(width)}  ${item.title}`);
     }
   }
-  log(`Реестр: ${source.label}. Установить: kvant add <имя…>`);
+  log(`Реестр: ${source.label}. Установить: kvant-ui add <имя…>`);
 }

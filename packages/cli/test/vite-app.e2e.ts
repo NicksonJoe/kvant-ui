@@ -1,4 +1,4 @@
-// A fresh Vite + React + TS app (the create-vite template) → kvant init → kvant add button dialog → tsc -b && vite build.
+// A fresh Vite + React + TS app (the create-vite template) → kvant-ui init → kvant-ui add button dialog → tsc -b && vite build.
 // Installs real packages: pnpm reuses its store, so it works offline once the workspace is installed.
 import { spawnSync } from 'node:child_process';
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
@@ -134,7 +134,7 @@ afterAll(async () => {
   if (app) await rm(app, { recursive: true, force: true });
 });
 
-it('kvant init + kvant add button dialog: the app typechecks and builds', async () => {
+it('kvant-ui init + kvant-ui add button dialog: the app typechecks and builds', async () => {
   app = await mkdtemp(join(tmpdir(), 'kvant-e2e-'));
   await mkdir(join(app, 'src'));
   for (const [file, content] of Object.entries(TEMPLATE)) await writeFile(join(app, file), content);

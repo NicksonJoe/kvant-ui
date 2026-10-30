@@ -89,7 +89,7 @@ export async function addItems(names: readonly string[], options: AddOptions): P
   if (report.imports.length > 0) log(`  в ${config.css} добавлено: ${report.imports.map((spec) => `@import "${spec}"`).join(', ')}`);
   if (report.kept.length > 0) {
     log(`  не тронуты — отличаются от реестра: ${report.kept.join(', ')}`);
-    log('  Посмотреть разницу: kvant diff. Заменить версией из реестра: kvant add … --overwrite');
+    log('  Посмотреть разницу: kvant-ui diff. Заменить версией из реестра: kvant-ui add … --overwrite');
   }
   return report;
 }

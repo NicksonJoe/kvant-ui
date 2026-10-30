@@ -1,4 +1,4 @@
-// Composer tree → clean JSX: a component with its imports, the `kvant add` command and a registry block item.
+// Composer tree → clean JSX: a component with its imports, the `kvant-ui add` command and a registry block item.
 import * as kvant from '@/kvant';
 import type { ReadyComponentMeta } from '@/kvant/meta';
 import registryPackage from '@/kvant/package.json?raw';
@@ -175,7 +175,7 @@ export function generateCode(root: ComposerNode, { name = 'Block', imports = 'al
   return lines.length > 0 ? `${lines.join('\n')}\n\n${component}` : component;
 }
 
-/** Registry items `kvant add` needs for the page, in alphabetical order. */
+/** Registry items `kvant-ui add` needs for the page, in alphabetical order. */
 export function usedComponents(root: ComposerNode): string[] {
   const ids = scan(bodyCode(root)).names.map((name) => owners.get(name)?.id).filter((id): id is string => id !== undefined);
   return [...new Set(ids)].sort();
@@ -224,7 +224,7 @@ function packageSpec(name: string): string {
 }
 
 export interface BlockInfo {
-  /** Item name for `kvant add`, see BLOCK_NAME. */
+  /** Item name for `kvant-ui add`, see BLOCK_NAME. */
   name: string;
   title: string;
   description: string;

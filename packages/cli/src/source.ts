@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { ITEM_NAME, parseIndex, parseItem, type RegistryIndex, type RegistryItem } from './schema.ts';
 
-export const DEFAULT_REGISTRY = 'github:NicksonJoe/kwant';
+export const DEFAULT_REGISTRY = 'github:NicksonJoe/kvant-ui';
 
 /** Where registry JSON comes from: a folder, a URL or a GitHub repository. */
 export interface RegistrySource {
@@ -69,7 +69,7 @@ function json(text: string, where: string): unknown {
 export async function fetchItem(source: RegistrySource, name: string): Promise<RegistryItem> {
   if (!ITEM_NAME.test(name)) throw new Error(`Недопустимое имя «${name}»: только латиница, цифры и дефис`);
   const text = await source.read(`${name}.json`);
-  if (text === undefined) throw new Error(`«${name}» нет в реестре ${source.label}. Список: kvant list`);
+  if (text === undefined) throw new Error(`«${name}» нет в реестре ${source.label}. Список: kvant-ui list`);
   const item = parseItem(json(text, `${name}.json`), `${name}.json`);
   if (item.name !== name) throw new Error(`Некорректный реестр (${name}.json): внутри элемент «${item.name}»`);
   return item;

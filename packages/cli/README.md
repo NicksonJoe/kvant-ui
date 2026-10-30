@@ -1,4 +1,4 @@
-# kvant
+# kvant-ui
 
 Команда библиотеки Kvant: копирует исходный код компонентов в ваш проект. Дальше код принадлежит проекту — правьте как хотите.
 
@@ -17,19 +17,19 @@ import { Button } from '@/kvant';
 
 | Команда | Что делает |
 |---|---|
-| `kvant init` | Пишет `kvant.json`, копирует стили и `cn`, подключает `@import` в стили проекта, ставит шрифт, ставит тему на `<html>` в `index.html` |
-| `kvant add <имя…>` | Копирует компоненты вместе с зависимостями, дописывает экспорт в `src/kvant/index.ts`, ставит недостающие пакеты |
-| `kvant add ./блок.json` | Ставит блок, сохранённый в Playground («Сохранить как блок»): файл в `src/kvant/blocks/`, зависимости — из реестра. Подойдёт и URL на `.json` |
-| `kvant diff [имя…]` | Показывает, чем ваши файлы отличаются от реестра |
-| `kvant list` | Список элементов реестра, ✓ — уже в проекте |
+| `kvant-ui init` | Пишет `kvant.json`, копирует стили и `cn`, подключает `@import` в стили проекта, ставит шрифт, ставит тему на `<html>` в `index.html` |
+| `kvant-ui add <имя…>` | Копирует компоненты вместе с зависимостями, дописывает экспорт в `src/kvant/index.ts`, ставит недостающие пакеты |
+| `kvant-ui add ./блок.json` | Ставит блок, сохранённый в Playground («Сохранить как блок»): файл в `src/kvant/blocks/`, зависимости — из реестра. Подойдёт и URL на `.json` |
+| `kvant-ui diff [имя…]` | Показывает, чем ваши файлы отличаются от реестра |
+| `kvant-ui list` | Список элементов реестра, ✓ — уже в проекте |
 
 Параметры `init`: `--theme` (graphite, cobalt, iris, aqua, jade, amber, ember, orchid), `--font` (inter, geist), `--shape` (capsule, density), `--dir` (по умолчанию `src/kvant`), `--alias` (`@/kvant`), `--css` (находится сам: `src/index.css` и т. п.).
 
-Изменённые вами файлы `add` не перезаписывает: сообщит и оставит. Заменить версией из реестра — `kvant add button --overwrite` (ваши правки пропадут).
+Изменённые вами файлы `add` не перезаписывает: сообщит и оставит. Заменить версией из реестра — `kvant-ui add button --overwrite` (ваши правки пропадут).
 
 ## Откуда берутся компоненты
 
-По умолчанию — `github:NicksonJoe/kwant` (папка `apps/docs/public/r` ветки `main`). Другой источник: `--registry` у любой команды или поле `registry` в `kvant.json`.
+По умолчанию — `github:NicksonJoe/kvant-ui` (папка `apps/docs/public/r` ветки `main`). Другой источник: `--registry` у любой команды или поле `registry` в `kvant.json`.
 
 - папка: `--registry ../kvant/apps/docs/public/r`;
 - URL: `--registry https://example.com/r`;

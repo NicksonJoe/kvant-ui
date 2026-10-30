@@ -2,7 +2,7 @@
 
 Реестр — набор статических JSON-файлов: `index.json` и по файлу на каждый элемент (`button.json`, `styles.json`…). Его читает команда `kvant` (`packages/cli`), больше ему ничего не нужно: подойдёт любой статический хостинг, папка на диске или GitHub.
 
-- В репозитории: `apps/docs/public/r/`. Источник по умолчанию — этот же репозиторий на GitHub: `github:NicksonJoe/kwant`.
+- В репозитории: `apps/docs/public/r/`. Источник по умолчанию — этот же репозиторий на GitHub: `github:NicksonJoe/kvant-ui`.
 - Собирается командой `pnpm generate` из корня: сначала токены (`packages/tokens` → `packages/registry/styles/tokens.css` и `tailwind.css`), затем реестр (`packages/cli/scripts/build-registry.ts`).
 - Руками файлы не правят. Тесты `pnpm --filter kvant-ui test` и `pnpm --filter @kvant/tokens test` падают, если сгенерированное отстало от исходников.
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | `name` | string | Имя реестра: `kvant` |
 | `homepage` | string | `https://ui.norda.cloud` |
-| `theme.accents`, `theme.fonts`, `theme.shapes` | string[] | Что принимает `kvant init` в `--theme`, `--font`, `--shape` |
+| `theme.accents`, `theme.fonts`, `theme.shapes` | string[] | Что принимает `kvant-ui init` в `--theme`, `--font`, `--shape` |
 | `theme.defaults` | `{ accent, font, shape }` | Значения по умолчанию: `cobalt`, `inter`, `capsule` |
 | `items` | элемент[] | Все элементы в порядке документации; поля как у элемента, но `files` — только список `target` без содержимого |
 
@@ -20,7 +20,7 @@
 
 | Поле | Тип | Что это |
 |---|---|---|
-| `name` | string | Имя для `kvant add`: латиница, цифры, дефис |
+| `name` | string | Имя для `kvant-ui add`: латиница, цифры, дефис |
 | `type` | `component` \| `lib` \| `style` \| `font` | Компонент, утилита, стили или шрифт |
 | `title`, `description` | string | По-русски, из метаданных компонента |
 | `dependencies` | string[] | npm-пакеты с диапазоном версий: `@base-ui/react@^1.9.0`. React не входит — он есть в проекте |
@@ -53,7 +53,7 @@
 - `barrel` — у файлов, которые реэкспортирует `packages/registry/index.ts`.
 - Несколько элементов могут поставлять один файл (`checkbox`, `radio-group` и `switch` — это `components/checkbox.tsx`); содержимое у них одинаковое.
 
-## Как `kvant add` применяет элементы
+## Как `kvant-ui add` применяет элементы
 
 1. Загружает элементы и, рекурсивно, их `registryDependencies`; зависимости идут первыми.
 2. Пишет каждый файл в `<dir>/<target>` из `kvant.json`. Файл совпадает с реестром — пропускает; отличается — оставляет как есть и сообщает, пока не передан `--overwrite`.
@@ -65,15 +65,15 @@
 
 - Папка: `--registry ../kvant/apps/docs/public/r` (путь от корня проекта).
 - URL: `--registry https://ui.norda.cloud/r`. Файлы берутся как `<url>/<name>.json`.
-- GitHub: `--registry github:владелец/репозиторий[/путь][#ветка]` → `https://raw.githubusercontent.com/владелец/репозиторий/ветка/путь`; путь по умолчанию `apps/docs/public/r`, ветка `main`. По умолчанию — `github:NicksonJoe/kwant`. Для приватного репозитория — переменная `GITHUB_TOKEN` (или `GH_TOKEN`).
+- GitHub: `--registry github:владелец/репозиторий[/путь][#ветка]` → `https://raw.githubusercontent.com/владелец/репозиторий/ветка/путь`; путь по умолчанию `apps/docs/public/r`, ветка `main`. По умолчанию — `github:NicksonJoe/kvant-ui`. Для приватного репозитория — переменная `GITHUB_TOKEN` (или `GH_TOKEN`).
 
-Источник, выбранный в `kvant init`, сохраняется в `kvant.json`; `--registry` у других команд его переопределяет.
+Источник, выбранный в `kvant-ui init`, сохраняется в `kvant.json`; `--registry` у других команд его переопределяет.
 
 ## Блоки из Playground
 
 «Сохранить как блок» в Playground (`/playground`) выдаёт обычный элемент: `type: "component"`, один файл `blocks/<имя>.tsx` с `barrel: true`, импорты — из соседних файлов компонентов (`../components/button`), в `registryDependencies` — использованные компоненты, в `dependencies` — `lucide-react`, если есть иконки. Дополнительное поле `composer` хранит документ Playground, чтобы «Импорт» открыл блок обратно; `kvant` его не читает.
 
-Ставится аргументом-файлом: `kvant add ./kartochka-sdelki.json` (или URL на `.json`). Файл проверяется как любой элемент реестра, а его `registryDependencies` берутся из источника реестра.
+Ставится аргументом-файлом: `kvant-ui add ./kartochka-sdelki.json` (или URL на `.json`). Файл проверяется как любой элемент реестра, а его `registryDependencies` берутся из источника реестра.
 
 ## Проверки (реестр — внешние данные)
 
@@ -86,7 +86,7 @@
 
 | Поле | Пример | Что это |
 |---|---|---|
-| `registry` | `github:NicksonJoe/kwant` | Источник реестра |
+| `registry` | `github:NicksonJoe/kvant-ui` | Источник реестра |
 | `theme`, `font`, `shape` | `cobalt`, `inter`, `capsule` | Выбор при `init`; тема ставится атрибутами `data-accent`, `data-font`, `data-shape` на `<html>` |
 | `css` | `src/index.css` | Файл стилей проекта |
 | `dir` | `src/kvant` | Куда копируются файлы |

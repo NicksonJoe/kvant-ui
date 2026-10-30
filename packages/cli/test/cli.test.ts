@@ -48,7 +48,7 @@ async function addToProject(names: string[], overwrite = false) {
   return addItems(names, { cwd: project, config, source: registrySource(config.registry, project), overwrite, install, log });
 }
 
-describe('kvant init', () => {
+describe('kvant-ui init', () => {
   it('writes kvant.json, styles, Tailwind for Vite and the theme', async () => {
     await initProject({ theme: 'iris', font: 'geist' });
 
@@ -92,7 +92,7 @@ describe('kvant init', () => {
   });
 });
 
-describe('kvant add', () => {
+describe('kvant-ui add', () => {
   beforeEach(() => initProject());
 
   it('copies items with their registry dependencies, exports them and installs missing packages only', async () => {
@@ -162,7 +162,7 @@ describe('kvant add', () => {
   });
 });
 
-describe('kvant diff and list', () => {
+describe('kvant-ui diff and list', () => {
   beforeEach(async () => {
     await initProject();
     await addToProject(['spinner']);
@@ -259,7 +259,7 @@ describe('helpers', () => {
   it('runs as a command', () => {
     const help = spawnSync(process.execPath, [CLI, '--help'], { encoding: 'utf8' });
     expect(help.status).toBe(0);
-    expect(help.stdout).toContain('kvant add <имя…>');
+    expect(help.stdout).toContain('kvant-ui add <имя…>');
     const unknown = spawnSync(process.execPath, [CLI, 'remove'], { encoding: 'utf8', cwd: project });
     expect(unknown.status).toBe(1);
     expect(unknown.stderr).toContain('Нет команды «remove»');

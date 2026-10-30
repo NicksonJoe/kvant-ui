@@ -10,13 +10,13 @@ import { listItems } from './list.ts';
 import { exists } from './project.ts';
 import { DEFAULT_REGISTRY, registrySource } from './source.ts';
 
-const HELP = `kvant — компоненты Kvant в вашем проекте
+const HELP = `kvant-ui — компоненты Kvant в вашем проекте
 
-  kvant init [--theme cobalt] [--font inter] [--shape capsule] [--alias @/kvant] [--dir src/kvant] [--css src/index.css]
-  kvant add <имя…> [--overwrite]    скопировать компоненты с зависимостями
-  kvant add ./блок.json             блок из Playground: файл блока, зависимости — из реестра
-  kvant diff [имя…]                 чем установленные файлы отличаются от реестра
-  kvant list                        что есть в реестре
+  kvant-ui init [--theme cobalt] [--font inter] [--shape capsule] [--alias @/kvant] [--dir src/kvant] [--css src/index.css]
+  kvant-ui add <имя…> [--overwrite]    скопировать компоненты с зависимостями
+  kvant-ui add ./блок.json             блок из Playground: файл блока, зависимости — из реестра
+  kvant-ui diff [имя…]                 чем установленные файлы отличаются от реестра
+  kvant-ui list                        что есть в реестре
 
   --registry <источник>   папка, URL (по умолчанию ${DEFAULT_REGISTRY}) или github:владелец/репозиторий[/путь][#ветка];
                           для приватного репозитория задайте GITHUB_TOKEN
@@ -54,7 +54,7 @@ async function main(argv: string[]): Promise<number> {
       await init({ ...values, cwd, install, log });
       return 0;
     case 'add': {
-      if (names.length === 0) throw new Error('Укажите, что добавить: kvant add button dialog');
+      if (names.length === 0) throw new Error('Укажите, что добавить: kvant-ui add button dialog');
       const config = await readConfig(cwd);
       const source = registrySource(values.registry ?? config.registry, cwd);
       await addItems(names, { cwd, config, source, overwrite: values.overwrite, install, log });
@@ -72,7 +72,7 @@ async function main(argv: string[]): Promise<number> {
       return 0;
     }
     default:
-      throw new Error(`Нет команды «${command}». Справка: kvant --help`);
+      throw new Error(`Нет команды «${command}». Справка: kvant-ui --help`);
   }
 }
 
@@ -81,7 +81,7 @@ main(process.argv.slice(2)).then(
     process.exitCode = code;
   },
   (error: unknown) => {
-    process.stderr.write(`kvant: ${error instanceof Error ? error.message : String(error)}\n`);
+    process.stderr.write(`kvant-ui: ${error instanceof Error ? error.message : String(error)}\n`);
     process.exitCode = 1;
   },
 );

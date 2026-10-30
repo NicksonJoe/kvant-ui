@@ -4,7 +4,7 @@
   "description": "Kvant UI: компоненты копируются в проект одной командой и дальше принадлежат проекту.",
   "type": "module",
   "bin": {
-    "kvant": "dist/index.js"
+    "kvant-ui": "dist/index.js"
   },
   "files": [
     "dist"

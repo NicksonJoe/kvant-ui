@@ -23,7 +23,7 @@ export async function readConfig(cwd: string): Promise<KvantConfig> {
   try {
     text = await readFile(join(cwd, CONFIG_FILE), 'utf8');
   } catch {
-    throw new Error(`Нет ${CONFIG_FILE}. Сначала выполните kvant init в корне проекта.`);
+    throw new Error(`Нет ${CONFIG_FILE}. Сначала выполните kvant-ui init в корне проекта.`);
   }
   let json: unknown;
   try {

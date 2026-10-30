@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`blockItem > is an item \`kvant add\` accepts: component files next to the block, the document to reopen it 1`] = `
+exports[`blockItem > is an item \`kvant-ui add\` accepts: component files next to the block, the document to reopen it 1`] = `
 "import { ArrowRight, Ellipsis, MessageCircle } from 'lucide-react';
 import { Badge } from '../components/badge';
 import { Button, IconButton } from '../components/button';
