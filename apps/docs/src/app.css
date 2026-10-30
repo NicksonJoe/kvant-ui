@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter/opsz.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/jetbrains-mono';
+@import '../../../packages/registry/styles/tokens.css';
+@import '../../../packages/registry/styles/tailwind.css';
+@import '../../../packages/registry/styles/components.css';
+
+/* Library sources live outside the app: scan them for utilities. */
+@source '../../../packages/registry';
+
+/* Code colours follow the theme: Shiki's css-variables theme mapped onto Kvant tokens. */
+:root {
+  --code-foreground: var(--color-fg-1);
+  --code-background: transparent;
+  --code-token-keyword: var(--color-accent-soft-fg);
+  --code-token-string: var(--color-success-soft-fg);
+  --code-token-string-expression: var(--color-success-soft-fg);
+  --code-token-function: var(--color-info-soft-fg);
+  --code-token-constant: var(--color-warning-soft-fg);
+  --code-token-parameter: var(--color-fg-2);
+  --code-token-punctuation: var(--color-fg-3);
+  --code-token-comment: var(--color-fg-3);
+  --code-token-link: var(--color-accent-soft-fg);
+}
+
+@layer base {
+  body {
+    background: var(--color-background);
+    min-height: 100dvh;
+  }
+  [id] {
+    scroll-margin-top: 80px;
+  }
+}
+
+@layer components {
+  /* Calm stage for live previews: background with a quiet dot grid. */
+  .docs-stage {
+    background-color: var(--color-background);
+    background-image: radial-gradient(var(--color-fill-3) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: center;
+  }
+
+  /* «Анатомия»: the part whose row is hovered, focused or pinned; ink, so it shows on accent fills too. */
+  [data-anatomy-active] {
+    outline: 1.5px dashed var(--color-fg-1);
+    outline-offset: 2px;
+  }
+
+  .docs-code pre {
+    overflow-x: auto;
+    padding: 16px 20px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    tab-size: 2;
+    outline-offset: -2px;
+  }
+
+  /* Long-form text in foundations pages. */
+  .docs-prose {
+    max-width: 72ch;
+    color: var(--color-fg-2);
+    font-size: var(--text-body-md);
+    line-height: var(--leading-body-md);
+  }
+  .docs-prose p + p {
+    margin-top: 12px;
+  }
+  .docs-prose strong {
+    color: var(--color-fg-1);
+    font-weight: var(--font-weight-semibold);
+  }
+  .docs-prose code {
+    border-radius: var(--radius-xs);
+    background: var(--color-fill-2);
+    padding: 1px 5px;
+    font-size: 0.875em;
+    color: var(--color-fg-1);
+  }
+}

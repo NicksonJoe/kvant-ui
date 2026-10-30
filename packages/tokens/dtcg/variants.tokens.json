@@ -1,0 +1,62 @@
+{
+  "$description": "Opt-in overrides switched by <html> attributes: data-font=\"geist\", data-shape=\"density\", data-density=\"compact\", data-reduce-motion (also the OS setting).",
+  "font-geist": {
+    "font": {
+      "$type": "fontFamily",
+      "sans": {
+        "$value": ["Geist Variable", "Geist", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"]
+      }
+    }
+  },
+  "shape-density": {
+    "radius": {
+      "$type": "dimension",
+      "control-xs": { "$value": "6px" },
+      "control-sm": { "$value": "8px" },
+      "control-md": { "$value": "10px" },
+      "control-inner": { "$value": "6px" },
+      "badge": { "$value": "6px" }
+    }
+  },
+  "density-compact": {
+    "spacing": {
+      "$type": "dimension",
+      "control-xs": { "$value": "22px" },
+      "control-sm": { "$value": "28px" },
+      "control-md": { "$value": "32px" },
+      "control-lg": { "$value": "40px" },
+      "control-xl": { "$value": "48px" },
+      "row": { "$value": "40px" }
+    }
+  },
+  "reduce-motion": {
+    "duration": {
+      "$type": "duration",
+      "base": { "$value": "150ms" },
+      "moderate": { "$value": "150ms" },
+      "slow": { "$value": "150ms" },
+      "slower": { "$value": "150ms" },
+      "deliberate": { "$value": "150ms" },
+      "spinner": { "$value": "1600ms" }
+    },
+    "ease": { "$type": "cubicBezier", "spring-0": { "$value": "{ease.out}" }, "spring-10": { "$value": "{ease.out}" } },
+    "shift": {
+      "$type": "dimension",
+      "xs": { "$value": "0px" },
+      "sm": { "$value": "0px" },
+      "md": { "$value": "0px" },
+      "lg": { "$value": "0px" },
+      "xl": { "$value": "0px" }
+    },
+    "scale": {
+      "$type": "number",
+      "press": { "$value": 1 },
+      "press-wide": { "$value": 1 },
+      "press-icon": { "$value": 1 },
+      "enter": { "$value": 1 },
+      "tooltip": { "$value": 1 },
+      "lift": { "$value": 1 }
+    },
+    "animate": { "shimmer": { "$value": "none" } }
+  }
+}

@@ -1,0 +1,294 @@
+{
+  "$description": "Neutrals, statuses and effects. \"light\" applies in both modes (:root), \"dark\" overrides it under data-mode=\"dark\". Colours marked tint/hue/ink follow the accent inputs; their stored components are cobalt's.",
+  "light": {
+    "ink": {
+      "$type": "color",
+      "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258] },
+      "$extensions": { "cloud.norda.kvant": { "tint": true, "channels": true } }
+    },
+    "color": {
+      "$type": "color",
+      "background": {
+        "$value": { "colorSpace": "oklch", "components": [0.982, 0.003, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "surface-1": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0] } },
+      "surface-2": {
+        "$value": { "colorSpace": "oklch", "components": [0.962, 0.005, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "surface-3": {
+        "$value": { "colorSpace": "oklch", "components": [0.94, 0.006, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "overlay": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0] } },
+      "fg-1": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258] },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "fg-2": {
+        "$value": { "colorSpace": "oklch", "components": [0.423, 0.016, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "fg-3": {
+        "$value": { "colorSpace": "oklch", "components": [0.52, 0.018, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "fg-4": {
+        "$value": { "colorSpace": "oklch", "components": [0.616, 0.016, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "input": { "$value": "{color.fg-4}" },
+      "border": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.14 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "hairline": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.1 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "separator": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.07 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "fill-1": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.04 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "fill-2": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.07 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "fill-3": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.1 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "scrim": {
+        "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.32 },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "glass": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.8 } },
+      "glass-strong": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.92 } },
+      "field": { "$description": "Role surfaces that differ between modes", "$value": "{color.surface-1}" },
+      "control": { "$value": "{color.surface-1}" },
+      "control-hover": { "$value": "{color.surface-2}" },
+      "control-pressed": { "$value": "{color.surface-3}" },
+      "thumb": { "$value": "{color.surface-1}" },
+      "success": {
+        "$value": { "colorSpace": "oklch", "components": [0.544, 0.138, 150] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "success" } }
+      },
+      "success-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "success-soft": {
+        "$value": { "colorSpace": "oklch", "components": [0.955, 0.03, 150] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "success" } }
+      },
+      "success-soft-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.506, 0.128, 150] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "success" } }
+      },
+      "warning": {
+        "$value": { "colorSpace": "oklch", "components": [0.78, 0.151, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "warning-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.205, 0.02, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "warning-soft": {
+        "$value": { "colorSpace": "oklch", "components": [0.955, 0.03, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "warning-soft-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.52, 0.101, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "danger": {
+        "$value": { "colorSpace": "oklch", "components": [0.581, 0.19, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "danger-hover": {
+        "$value": { "colorSpace": "oklch", "components": [0.541, 0.18, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "danger-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "danger-soft": {
+        "$value": { "colorSpace": "oklch", "components": [0.955, 0.025, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "danger-soft-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.537, 0.19, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "info": {
+        "$description": "info follows the accent; accents that are not blue set their own h250 blue",
+        "$value": "{color.accent}"
+      },
+      "info-fg": { "$value": "{color.accent-fg}" },
+      "info-soft": { "$value": "{color.accent-soft}" },
+      "info-soft-fg": { "$value": "{color.accent-soft-fg}" },
+      "chart-1": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 255] } },
+      "chart-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.151, 50] } },
+      "chart-3": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.105, 178] } },
+      "chart-4": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.117, 88] } },
+      "chart-5": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 345] } },
+      "chart-6": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 140] } },
+      "chart-7": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 295] } },
+      "chart-8": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 25] } }
+    },
+    "shadow": {
+      "$type": "shadow",
+      "raised": { "$value": "0 0 0 1px var(--color-hairline), 0 1px 2px oklch(var(--ink) / 0.05)" },
+      "control": { "$value": "0 0 0 1px var(--color-border), 0 1px 2px oklch(var(--ink) / 0.06)" },
+      "control-pressed": { "$value": "0 0 0 1px var(--color-border)" },
+      "accent-control": {
+        "$value": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0.12), 0 1px 2px oklch(var(--ink) / 0.16)"
+      },
+      "pressed-accent": { "$value": "inset 0 1px 2px oklch(0 0 0 / 0.16)" },
+      "overlay": {
+        "$value": "0 0 0 1px var(--color-hairline), 0 2px 6px oklch(var(--ink) / 0.06), 0 12px 32px -8px oklch(var(--ink) / 0.18)"
+      },
+      "modal": { "$value": "0 0 0 1px var(--color-hairline), 0 24px 64px -12px oklch(var(--ink) / 0.28)" },
+      "thumb": { "$value": "0 1px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06)" },
+      "segment": { "$value": "0 1px 2px oklch(var(--ink) / 0.1), 0 0 0 0.5px oklch(var(--ink) / 0.12)" },
+      "glass": {
+        "$value": "0 0 0 1px oklch(var(--ink) / 0.08), inset 0 1px 0 oklch(1 0 0 / 0.6), 0 8px 24px -8px oklch(var(--ink) / 0.16)"
+      },
+      "tooltip": { "$value": "0 4px 12px oklch(var(--ink) / 0.16)" }
+    }
+  },
+  "dark": {
+    "ink": {
+      "$type": "color",
+      "$value": { "colorSpace": "oklch", "components": [0.965, 0.004, 258] },
+      "$extensions": { "cloud.norda.kvant": { "tint": true, "channels": true } }
+    },
+    "color": {
+      "$type": "color",
+      "background": {
+        "$value": { "colorSpace": "oklch", "components": [0.16, 0.005, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "surface-1": {
+        "$value": { "colorSpace": "oklch", "components": [0.192, 0.006, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "surface-2": {
+        "$value": { "colorSpace": "oklch", "components": [0.225, 0.007, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "surface-3": {
+        "$value": { "colorSpace": "oklch", "components": [0.258, 0.008, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "overlay": {
+        "$value": { "colorSpace": "oklch", "components": [0.232, 0.007, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "fg-1": {
+        "$value": { "colorSpace": "oklch", "components": [0.965, 0.004, 258] },
+        "$extensions": { "cloud.norda.kvant": { "ink": true } }
+      },
+      "fg-2": {
+        "$value": { "colorSpace": "oklch", "components": [0.774, 0.01, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "fg-3": {
+        "$value": { "colorSpace": "oklch", "components": [0.685, 0.014, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "fg-4": {
+        "$value": { "colorSpace": "oklch", "components": [0.584, 0.014, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "input": { "$value": "{color.fg-4}" },
+      "border": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.13 } },
+      "hairline": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.09 } },
+      "separator": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.07 } },
+      "fill-1": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.05 } },
+      "fill-2": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.08 } },
+      "fill-3": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.11 } },
+      "scrim": { "$value": { "colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.55 } },
+      "glass": {
+        "$value": { "colorSpace": "oklch", "components": [0.232, 0.007, 258], "alpha": 0.82 },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "glass-strong": {
+        "$value": { "colorSpace": "oklch", "components": [0.232, 0.007, 258], "alpha": 0.92 },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "field": { "$value": "{color.background}" },
+      "control": { "$value": "{color.surface-3}" },
+      "control-hover": {
+        "$value": { "colorSpace": "oklch", "components": [0.29, 0.009, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "control-pressed": { "$value": "{color.surface-2}" },
+      "thumb": {
+        "$value": { "colorSpace": "oklch", "components": [0.33, 0.008, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "success": {
+        "$value": { "colorSpace": "oklch", "components": [0.511, 0.13, 150] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "success" } }
+      },
+      "success-soft": {
+        "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 150] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "success" } }
+      },
+      "success-soft-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.8, 0.13, 150] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "success" } }
+      },
+      "warning": {
+        "$value": { "colorSpace": "oklch", "components": [0.78, 0.151, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "warning-soft": {
+        "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "warning-soft-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.8, 0.13, 75] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "warning" } }
+      },
+      "danger": {
+        "$value": { "colorSpace": "oklch", "components": [0.547, 0.19, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "danger-hover": {
+        "$value": { "colorSpace": "oklch", "components": [0.582, 0.19, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "danger-soft": {
+        "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      },
+      "danger-soft-fg": {
+        "$value": { "colorSpace": "oklch", "components": [0.8, 0.105, 27] },
+        "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
+      }
+    },
+    "shadow": {
+      "$type": "shadow",
+      "raised": { "$value": "0 0 0 1px oklch(1 0 0 / 0.07), inset 0 1px 0 oklch(1 0 0 / 0.06)" },
+      "control": { "$value": "0 0 0 1px oklch(1 0 0 / 0.08), inset 0 1px 0 oklch(1 0 0 / 0.06)" },
+      "control-pressed": { "$value": "0 0 0 1px oklch(1 0 0 / 0.08)" },
+      "accent-control": {
+        "$value": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0.12), 0 1px 2px oklch(0 0 0 / 0.4)"
+      },
+      "overlay": {
+        "$value": "0 0 0 1px oklch(1 0 0 / 0.1), inset 0 1px 0 oklch(1 0 0 / 0.08), 0 12px 32px -8px oklch(0 0 0 / 0.6)"
+      },
+      "modal": {
+        "$value": "0 0 0 1px oklch(1 0 0 / 0.1), inset 0 1px 0 oklch(1 0 0 / 0.08), 0 24px 64px -12px oklch(0 0 0 / 0.6)"
+      },
+      "thumb": { "$value": "0 1px 2px oklch(0 0 0 / 0.35), 0 0 0 0.5px oklch(0 0 0 / 0.2)" },
+      "segment": { "$value": "0 1px 2px oklch(0 0 0 / 0.35), inset 0 1px 0 oklch(1 0 0 / 0.08)" },
+      "glass": {
+        "$value": "0 0 0 1px oklch(1 0 0 / 0.1), inset 0 1px 0 oklch(1 0 0 / 0.08), 0 8px 24px -8px oklch(0 0 0 / 0.5)"
+      },
+      "tooltip": { "$value": "0 4px 12px oklch(0 0 0 / 0.4)" }
+    }
+  }
+}

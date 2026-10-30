@@ -1,0 +1,1671 @@
+{
+  "name": "kvant",
+  "homepage": "https://ui.norda.cloud",
+  "theme": {
+    "accents": [
+      "graphite",
+      "cobalt",
+      "iris",
+      "aqua",
+      "jade",
+      "amber",
+      "ember",
+      "orchid"
+    ],
+    "fonts": [
+      "inter",
+      "geist"
+    ],
+    "shapes": [
+      "capsule",
+      "density"
+    ],
+    "defaults": {
+      "accent": "cobalt",
+      "font": "inter",
+      "shape": "capsule"
+    }
+  },
+  "items": [
+    {
+      "name": "styles",
+      "type": "style",
+      "title": "Стили Kvant",
+      "description": "Токены (8 тем × светлая и тёмная), мост Tailwind v4 и CSS-рецепты движения.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [
+        "tailwindcss",
+        "./styles/tokens.css",
+        "./styles/tailwind.css",
+        "./styles/components.css"
+      ],
+      "files": [
+        "styles/tokens.css",
+        "styles/tailwind.css",
+        "styles/components.css"
+      ]
+    },
+    {
+      "name": "cn",
+      "type": "lib",
+      "title": "cn",
+      "description": "Склеивает классы; className — для раскладки, не для переопределения рецепта.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [],
+      "files": [
+        "lib/cn.ts"
+      ]
+    },
+    {
+      "name": "recipes",
+      "type": "lib",
+      "title": "Рецепты списков",
+      "description": "Общие классы всплывающих списков: меню, выбор, комбобокс.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [],
+      "files": [
+        "lib/recipes.ts"
+      ]
+    },
+    {
+      "name": "use-controllable",
+      "type": "lib",
+      "title": "useControllable",
+      "description": "Хук useControllable, общий для компонентов Kvant.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [],
+      "files": [
+        "lib/use-controllable.ts"
+      ]
+    },
+    {
+      "name": "use-copy",
+      "type": "lib",
+      "title": "useCopy",
+      "description": "Хук useCopy, общий для компонентов Kvant.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [],
+      "files": [
+        "lib/use-copy.ts"
+      ]
+    },
+    {
+      "name": "theme",
+      "type": "lib",
+      "title": "Тема",
+      "description": "useTheme: акцент, режим, шрифт, форма и плотность на <html> с запоминанием выбора.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [],
+      "files": [
+        "theme.ts"
+      ]
+    },
+    {
+      "name": "font-inter",
+      "type": "font",
+      "title": "Шрифт Inter",
+      "description": "Inter с оптическим размером и JetBrains Mono для кода и цифр.",
+      "dependencies": [
+        "@fontsource-variable/inter@^5.3.0",
+        "@fontsource-variable/jetbrains-mono@^5.3.0"
+      ],
+      "registryDependencies": [],
+      "css": [
+        "@fontsource-variable/inter/opsz.css",
+        "@fontsource-variable/jetbrains-mono"
+      ],
+      "files": []
+    },
+    {
+      "name": "font-geist",
+      "type": "font",
+      "title": "Шрифт Geist",
+      "description": "Geist и JetBrains Mono для кода и цифр.",
+      "dependencies": [
+        "@fontsource-variable/geist@^5.3.0",
+        "@fontsource-variable/jetbrains-mono@^5.3.0"
+      ],
+      "registryDependencies": [],
+      "css": [
+        "@fontsource-variable/geist",
+        "@fontsource-variable/jetbrains-mono"
+      ],
+      "files": []
+    },
+    {
+      "name": "button",
+      "type": "component",
+      "title": "Кнопка",
+      "description": "Запускает действие. Капсула пяти высот и восьми вариантов; одна основная кнопка на экран.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/button.tsx"
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "component",
+      "title": "Группа кнопок",
+      "description": "Связанные действия в одной капсуле с волосяными разделителями. Кнопка с меню — частный случай.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/button.tsx"
+      ]
+    },
+    {
+      "name": "toggle-button",
+      "type": "component",
+      "title": "Кнопка-переключатель",
+      "description": "Кнопка с двумя состояниями: избранное, закрепить, подписаться. Подпись не меняется — состояние видно по мягкой заливке и закрашенной иконке.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/toggle.tsx"
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "component",
+      "title": "Группа переключателей",
+      "description": "Переключатели в одной капсуле: начертание, выравнивание, вид списка. В режиме «одно» повторное нажатие снимает выбор — этим группа отличается от сегментов.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/toggle.tsx"
+      ]
+    },
+    {
+      "name": "fab",
+      "type": "component",
+      "title": "Плавающая кнопка",
+      "description": "Главное действие экрана поверх контента на телефоне: круг 56, с подписью в начале списка, раскрывается в набор действий.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/fab.tsx"
+      ]
+    },
+    {
+      "name": "link",
+      "type": "component",
+      "title": "Ссылка",
+      "description": "Переход в тексте или отдельной строкой. Без фона и отступов, кегль берёт у соседнего текста; внешняя ссылка — со стрелкой.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/link.tsx"
+      ]
+    },
+    {
+      "name": "copy-button",
+      "type": "component",
+      "title": "Кнопка копирования",
+      "description": "Копирует ссылку, ключ или номер и подтверждает галочкой на две секунды. Круг 28 в поле или кнопка с подписью.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/copy-button.tsx"
+      ]
+    },
+    {
+      "name": "field",
+      "type": "component",
+      "title": "Поле формы",
+      "description": "Подпись, контрол, подсказка и ошибка, связанные между собой для экранного диктора. Оборачивает любой ввод.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/field.tsx"
+      ]
+    },
+    {
+      "name": "fieldset",
+      "type": "component",
+      "title": "Группа полей",
+      "description": "Связанные поля под общей легендой. Самостоятельная группа на странице — карточка; группы внутри одной карточки делит разделитель.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/form.tsx"
+      ]
+    },
+    {
+      "name": "form",
+      "type": "component",
+      "title": "Форма",
+      "description": "Поля в порядке чтения, проверка по правилу «ушёл из поля — проверяем, исправляет — на каждый символ», сводка ошибок сверху и кнопки внизу.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/form.tsx"
+      ]
+    },
+    {
+      "name": "input",
+      "type": "component",
+      "title": "Текстовое поле",
+      "description": "Однострочный ввод в капсуле: иконка, единица, клавиша-подсказка и кнопка очистки.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/input.tsx"
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "component",
+      "title": "Многострочное поле",
+      "description": "Ввод нескольких строк: комментарии, описания, письма. Счётчик символов по желанию: от 90 % предупреждает, сверх лимита — ошибка.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/input.tsx"
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "component",
+      "title": "Поле с дополнениями",
+      "description": "Слева — иконка или неизменяемая часть значения, справа — одно действие или статус. Короткая часть пишется внутри, длинная становится сегментом.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/input.tsx"
+      ]
+    },
+    {
+      "name": "search-field",
+      "type": "component",
+      "title": "Поле поиска",
+      "description": "Запрос для фильтра или глобального поиска: лупа, очистка, спиннер ожидания и клавиша «/» или ⌘K. Ищем через 200 мс после паузы.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/search-field.tsx"
+      ]
+    },
+    {
+      "name": "password-input",
+      "type": "component",
+      "title": "Поле пароля",
+      "description": "Скрытый ввод с кнопкой «показать». При создании пароля — шкала из четырёх сегментов и совет, что добавить; второго поля «повторите пароль» нет.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input"
+      ],
+      "css": [],
+      "files": [
+        "components/password-input.tsx"
+      ]
+    },
+    {
+      "name": "number-field",
+      "type": "component",
+      "title": "Числовое поле",
+      "description": "Небольшие числа: кнопки «−» и «+» внутри капсулы, ввод с клавиатуры и стрелки работают всегда. В строке списка на телефоне — отдельный степпер, как в iOS.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input"
+      ],
+      "css": [],
+      "files": [
+        "components/number-field.tsx"
+      ]
+    },
+    {
+      "name": "otp-input",
+      "type": "component",
+      "title": "Код подтверждения",
+      "description": "Шесть ячеек тройками — так код легче сверить с СМС. Это одно поле: вставка и автозаполнение кладут код целиком, последняя цифра сразу отправляет проверку.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/otp-input.tsx"
+      ]
+    },
+    {
+      "name": "tags-input",
+      "type": "component",
+      "title": "Поле тегов",
+      "description": "Несколько свободных значений тегами внутри капсулы. Enter или запятая создают тег, Backspace сначала выделяет последний, а удаляет только вторым нажатием.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "cn",
+        "combobox",
+        "input",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/tags-input.tsx"
+      ]
+    },
+    {
+      "name": "masked-input",
+      "type": "component",
+      "title": "Поле с маской",
+      "description": "Ввод по шаблону: человек вводит только цифры, скобки и дефисы маска ставит сама. Код страны стоит отдельно и не стирается.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input"
+      ],
+      "css": [],
+      "files": [
+        "components/masked-input.tsx"
+      ]
+    },
+    {
+      "name": "editable",
+      "type": "component",
+      "title": "Правка на месте",
+      "description": "Текст лежит в невидимой капсуле с теми же отступами, что и поле, поэтому при переходе в правку ничего не сдвигается. Enter или уход из поля сохраняют, Esc возвращает как было.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/editable.tsx"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "component",
+      "title": "Флажок",
+      "description": "Да или нет, плюс промежуточное состояние для «выбрано частично». Группа флажков — множественный выбор.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/checkbox.tsx"
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "component",
+      "title": "Радиокнопки",
+      "description": "Один вариант из двух–пяти, все на виду. Повторное нажатие выбор не снимает, поэтому у группы всегда есть значение по умолчанию или явный вариант «Не выбрано».",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/checkbox.tsx"
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "component",
+      "title": "Переключатель",
+      "description": "Включает настройку сразу, без кнопки «Сохранить». При нажатии бегунок растягивается на 4 px в сторону хода — контрол отвечает раньше, чем меняет положение. Для выбора в форме — флажок.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/checkbox.tsx"
+      ]
+    },
+    {
+      "name": "choice-card",
+      "type": "component",
+      "title": "Карточка выбора",
+      "description": "Когда у варианта есть цена, описание или иконка: тарифы, доставка, роли. Вся карточка — одна цель нажатия; выбор показан кольцом 2 px, лёгким тоном accent и индикатором в углу — не только цветом.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/choice-card.tsx"
+      ]
+    },
+    {
+      "name": "segmented-control",
+      "type": "component",
+      "title": "Сегменты",
+      "description": "Один из двух–пяти связанных вариантов или видов; бегунок скользит к выбранному.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/segmented-control.tsx"
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "component",
+      "title": "Слайдер",
+      "description": "Значение или диапазон на шкале — когда пропорция важнее точной цифры. Если цифра важна, рядом ставят поле ввода. При перетаскивании над бегунком видно значение.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/slider.tsx"
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "component",
+      "title": "Оценка",
+      "description": "Пять звёзд: при вводе шаг — целая звезда, при показе среднего — половина. Подпись словами объясняет оценку и читается экранным диктором вместо звёзд.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/rating.tsx"
+      ]
+    },
+    {
+      "name": "select",
+      "type": "component",
+      "title": "Выпадающий список",
+      "description": "Выбор одного варианта из списка. Триггер выглядит как поле, список — как меню с галочкой.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/select.tsx"
+      ]
+    },
+    {
+      "name": "native-select",
+      "type": "component",
+      "title": "Системный список",
+      "description": "Тот же вид, что у поля, но список рисует система: колесо на iOS, меню на macOS. Двойной шеврон вместо одинарного подсказывает, что откроется системный выбор.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input"
+      ],
+      "css": [],
+      "files": [
+        "components/native-select.tsx"
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "component",
+      "title": "Комбобокс",
+      "description": "Поле, которое фильтрует список при наборе. Совпадение выделено полужирным; можно создать новый вариант.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/combobox.tsx"
+      ]
+    },
+    {
+      "name": "listbox",
+      "type": "component",
+      "title": "Список выбора",
+      "description": "Список прямо в форме — когда вариантов мало и каждому нужно описание. Один или несколько вариантов, разделы с заголовками, галочка у выбранного.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/listbox.tsx"
+      ]
+    },
+    {
+      "name": "cascader",
+      "type": "component",
+      "title": "Иерархический выбор",
+      "description": "Выбор из иерархии до трёх уровней: каждая колонка раскрывает следующую. Поле показывает путь целиком — «Дизайн › Брендинг › Фирменный стиль».",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "popover",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/cascader.tsx"
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "component",
+      "title": "Календарь",
+      "description": "Месяц целиком, без прокрутки, неделя с понедельника. Calendar выбирает одну дату, RangeCalendar — диапазон на двух месяцах: первое нажатие ставит начало, второе — конец.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn",
+        "input",
+        "popover",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/calendar.tsx"
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "component",
+      "title": "Выбор даты",
+      "description": "Поле с датой «29.10.2026» открывает календарь в поповере. DateRangePicker — диапазон: два месяца рядом и пресеты слева; фильтр меняется только по «Применить», так можно спокойно поправить край.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn",
+        "input",
+        "popover",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/calendar.tsx"
+      ]
+    },
+    {
+      "name": "date-field",
+      "type": "component",
+      "title": "Поле даты",
+      "description": "Дату быстрее напечатать, чем найти в календаре: поле разбито на день, месяц и год, точки ставятся сами. Календарь открывается кнопкой справа.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "calendar",
+        "cn",
+        "input",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/date-field.tsx"
+      ]
+    },
+    {
+      "name": "time-picker",
+      "type": "component",
+      "title": "Выбор времени",
+      "description": "Время из колонок часов и минут с шагом 5 минут или свободный слот записи чипами. Занятые слоты видны зачёркнутыми — не нужно гадать, куда делось время.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "popover",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/time-picker.tsx"
+      ]
+    },
+    {
+      "name": "color-picker",
+      "type": "component",
+      "title": "Выбор цвета",
+      "description": "Поповер открывается от поля с образцом. Цвет из палитры проекта — один клик, точное значение — в HEX, RGB или HSL, прозрачность — отдельным ползунком.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "popover",
+        "slider"
+      ],
+      "css": [],
+      "files": [
+        "components/color-picker.tsx"
+      ]
+    },
+    {
+      "name": "file-upload",
+      "type": "component",
+      "title": "Загрузка файлов",
+      "description": "Зона принимает перетаскивание и клик; подсказка заранее называет форматы и лимит, а отказ — конкретный файл и причину. Строка списка проходит путь от очереди до готовности, ошибка остаётся и предлагает повтор.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn",
+        "progress"
+      ],
+      "css": [],
+      "files": [
+        "components/file-upload.tsx"
+      ]
+    },
+    {
+      "name": "topbar",
+      "type": "component",
+      "title": "Верхняя панель",
+      "description": "Каркас экрана: строка админки 56 (путь или заголовок, поиск ⌘K, действия), панель навигации iOS (крупный заголовок, стекло при прокрутке) и шапка сайта, которая после прокрутки становится стеклянной капсулой.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/navigation.tsx"
+      ]
+    },
+    {
+      "name": "tab-bar",
+      "type": "component",
+      "title": "Таб-бар",
+      "description": "Разделы приложения внизу экрана телефона в духе iOS 26: плавающая стеклянная капсула в 16 от краёв и отдельный круг поиска. Выбранная вкладка — акцентный цвет и подложка fill-2; при прокрутке вниз бар сворачивается до выбранной вкладки.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/tab-bar.tsx"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "component",
+      "title": "Боковая панель",
+      "description": "Постоянная навигация админки: 256 px с подписями или узкая полоса 64 px с подсказками.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/navigation.tsx"
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "component",
+      "title": "Вкладки",
+      "description": "Переключают панели внутри одного контекста. Подчёркивание для разделов страницы, капсулы — для фильтров.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/tabs.tsx"
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "type": "component",
+      "title": "Хлебные крошки",
+      "description": "Путь от корня до текущей страницы. Больше четырёх уровней — средние сворачиваются в «…» с меню. На телефоне остаётся один шаг назад.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "menu"
+      ],
+      "css": [],
+      "files": [
+        "components/breadcrumb.tsx"
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "component",
+      "title": "Пагинация",
+      "description": "Полная — под длинными списками и в поиске; компактная — в подвале таблицы; на телефоне две кнопки и номер страницы. Первая и последняя страницы видны всегда.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/pagination.tsx"
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "component",
+      "title": "Меню навигации",
+      "description": "Навигация сайта с панелями: раскрывается по наведению с задержкой 100 мс и по клику. Колонки разделов и карточка с новостью; панель сохраняет место и плавно меняет размер при переходе между пунктами шапки.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/navigation-menu.tsx"
+      ]
+    },
+    {
+      "name": "menubar",
+      "type": "component",
+      "title": "Строка меню",
+      "description": "Меню настольного приложения для редакторов. Когда одно меню открыто, наведение на соседний пункт сразу переключает меню; стрелки ← → делают то же с клавиатуры.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/menu.tsx"
+      ]
+    },
+    {
+      "name": "steps",
+      "type": "component",
+      "title": "Шаги",
+      "description": "Прохождение многошагового сценария. Пройденные шаги нажимаются, будущие — нет. Ошибка не прячет прогресс: шаг остаётся пройденным, но просит вернуться.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/steps.tsx"
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "component",
+      "title": "Панель инструментов",
+      "description": "Плавает над документом, поэтому стеклянная. Кнопки — круги 36 внутри капсулы 44, группы разделены штрихом. Панель выделения появляется над выделенным текстом и исчезает вместе с ним.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/toolbar.tsx"
+      ]
+    },
+    {
+      "name": "command-palette",
+      "type": "component",
+      "title": "Командная палитра",
+      "description": "Поиск и команды по ⌘K: стеклянная панель 640 px, группы, подсветка совпадений, подсказки клавиш.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "combobox"
+      ],
+      "css": [],
+      "files": [
+        "components/command-palette.tsx"
+      ]
+    },
+    {
+      "name": "tree-view",
+      "type": "component",
+      "title": "Дерево",
+      "description": "Файлы и папки, иерархическая навигация или выбор. Шаг вложенности 24, линии уровней проходят через центр шеврона родителя. ← → сворачивают и раскрывают ветку, ↑ ↓ ходят по строкам.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner",
+        "use-controllable"
+      ],
+      "css": [],
+      "files": [
+        "components/tree-view.tsx"
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "component",
+      "title": "Диалог",
+      "description": "Модальное окно для короткой задачи: форма, просмотр, настройка. Фокус внутри, Esc закрывает.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/dialog.tsx"
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "component",
+      "title": "Подтверждение",
+      "description": "Прерывает работу, чтобы подтвердить важное или необратимое действие. Закрывается только явным выбором.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/dialog.tsx"
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "component",
+      "title": "Шит",
+      "description": "Панель с края экрана, страница за ней остаётся видна. На компьютере — плавающая боковая для длинной формы, на телефоне — нижняя с двумя высотами и жестом.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/sheet.tsx"
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "component",
+      "title": "Поповер",
+      "description": "Немодальная панель у кнопки: быстрая настройка, заметка, ссылка. Закрывается щелчком вне.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/popover.tsx"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "component",
+      "title": "Подсказка",
+      "description": "Короткое пояснение при наведении или фокусе: название кнопки-иконки, горячая клавиша.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/popover.tsx"
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "component",
+      "title": "Карточка при наведении",
+      "description": "Превью человека или записи при наведении на упоминание. Повторяет то, что есть по ссылке, поэтому на касании не нужна.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/popover.tsx"
+      ]
+    },
+    {
+      "name": "menu",
+      "type": "component",
+      "title": "Меню",
+      "description": "Список действий у кнопки: иконки, горячие клавиши, флажки, радиопункты и подменю.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/menu.tsx"
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "component",
+      "title": "Контекстное меню",
+      "description": "Действия с объектом по правому клику, долгому нажатию или Shift+F10. Тот же попап и пункты, что у меню, но от точки курсора.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "recipes"
+      ],
+      "css": [],
+      "files": [
+        "components/menu.tsx"
+      ]
+    },
+    {
+      "name": "tour",
+      "type": "component",
+      "title": "Тур",
+      "description": "Знакомит с одной функцией за раз: затемнение с вырезом по форме цели и карточка шага рядом. Пять шагов или меньше, Esc завершает.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/tour.tsx"
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "component",
+      "title": "Уведомление",
+      "description": "Короткое сообщение о результате без остановки работы: успех, ошибка, «Отменить». Стопка до трёх; ошибки и тосты с действием живут 8 секунд.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/toast.tsx"
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "component",
+      "title": "Оповещение",
+      "description": "Сообщение внутри контента, рядом с тем, к чему относится, — не исчезает само. Баннер — его версия для всего продукта на верхнем краю окна.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/alert.tsx"
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "component",
+      "title": "Прогресс",
+      "description": "Сколько задачи уже сделано: линия с подписью и процентом или круг. Без значения — неопределённый.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/progress.tsx"
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "component",
+      "title": "Спиннер",
+      "description": "Короткое ожидание неизвестной длины: дуга 16–24 px, оборот за 800 мс.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/spinner.tsx"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "component",
+      "title": "Скелетон",
+      "description": "Держит место будущего содержимого его же формой, чтобы страница не прыгала после загрузки.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/progress.tsx"
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "component",
+      "title": "Пустое состояние",
+      "description": "Объясняет, почему здесь пусто, и предлагает следующий шаг.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/progress.tsx"
+      ]
+    },
+    {
+      "name": "meter",
+      "type": "component",
+      "title": "Шкала",
+      "description": "Заполненность ресурса, а не ход процесса: место, места в тарифе, лимиты. Пороги делят шкалу на зоны, и вся полоса принимает цвет текущей.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/progress.tsx"
+      ]
+    },
+    {
+      "name": "navigation-progress",
+      "type": "component",
+      "title": "Прогресс перехода",
+      "description": "Тонкая полоса по верхнему краю окна при переходе между страницами. Появляется, только если переход дольше 150 мс; старая страница стоит на месте и не мигает.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/progress.tsx"
+      ]
+    },
+    {
+      "name": "card",
+      "type": "component",
+      "title": "Карточка",
+      "description": "Группирует связанное содержимое и действия. Высота задана один раз: волосяное кольцо и микротень. Карточки не вкладываются.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/card.tsx"
+      ]
+    },
+    {
+      "name": "list",
+      "type": "component",
+      "title": "Список",
+      "description": "Строки с медиа, текстом и действиями — основа мобильных экранов и настроек. 44 под указатель, 52 под касание.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/list.tsx"
+      ]
+    },
+    {
+      "name": "table",
+      "type": "component",
+      "title": "Таблица",
+      "description": "Данные в ровных колонках на нативной таблице: сортировка, выбор строк, три плотности. Числа справа и табличными цифрами.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/table.tsx"
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "component",
+      "title": "Таблица данных",
+      "description": "Панель инструментов, таблица и подвал — одна система по высоте 32. Сортировка, выбор строк, пагинация и стеклянная панель массовых действий, которая плавает над строками и не сдвигает их.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "cn",
+        "pagination",
+        "progress",
+        "table",
+        "use-controllable"
+      ],
+      "css": [],
+      "files": [
+        "components/data-table.tsx"
+      ]
+    },
+    {
+      "name": "data-list",
+      "type": "component",
+      "title": "Список свойств",
+      "description": "Пары «ключ — значение» одной записи. Горизонтальный — в панелях и боковых листах, вертикальный — в шапке сделки и на узких экранах.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "use-copy"
+      ],
+      "css": [],
+      "files": [
+        "components/data-list.tsx"
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "component",
+      "title": "Аватар",
+      "description": "Человек или компания: фото или инициалы на мягком акценте, точка присутствия, группа с «+N».",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/card.tsx"
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "component",
+      "title": "Бейдж",
+      "description": "Короткая метка статуса или свойства. Не нажимается — для фильтров есть тег.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/badge.tsx"
+      ]
+    },
+    {
+      "name": "indicator",
+      "type": "component",
+      "title": "Счётчик",
+      "description": "Число непрочитанного на иконке или пункте меню: красная капсула 18 px с кольцом цвета поверхности.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/badge.tsx"
+      ]
+    },
+    {
+      "name": "tag",
+      "type": "component",
+      "title": "Тег",
+      "description": "Нажимаемая метка: фильтр с галочкой, выбор или удаляемое значение с крестиком.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/badge.tsx"
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "component",
+      "title": "Клавиша",
+      "description": "Показывает клавишу или сочетание: в подсказках, меню и командной палитре.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/badge.tsx"
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "component",
+      "title": "Аккордеон",
+      "description": "Прячет и показывает разделы. Обычный — на фоне страницы, пункты разделены линиями; вставной — каждый пункт отдельной карточкой. Сворачиваемый блок — одна редкая секция внутри карточки.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn",
+        "use-controllable"
+      ],
+      "css": [],
+      "files": [
+        "components/accordion.tsx"
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "component",
+      "title": "Карусель",
+      "description": "Лента слайдов, которая доводится до края. Следующий слайд всегда выглядывает — это и есть подсказка, что ленту можно листать. Стрелки дублируют свайп и клавиши, точки показывают позицию.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/carousel.tsx"
+      ]
+    },
+    {
+      "name": "timeline",
+      "type": "component",
+      "title": "Лента событий",
+      "description": "История сделки, сгруппированная по дням. Линия связывает события одного дня, последнее отмечено акцентом. Время — моноширинным, чтобы колонка не прыгала.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/timeline.tsx"
+      ]
+    },
+    {
+      "name": "chart",
+      "type": "component",
+      "title": "График",
+      "description": "Данные — главный слой, всё остальное отступает: сетка цвета separator, ось нуля — border, подписи 12/16 fg-3 с сокращением «тыс». Наведение и ← → показывают вертикаль, точку и подсказку. Плюс кольцо, спарклайн и карточка KPI.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/chart.tsx"
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "component",
+      "title": "Блок кода",
+      "description": "Код для документации API и интеграций: вкладки файлов, номера строк, подсвеченные строки и копирование в один клик. Подсветка синтаксиса — тремя оттенками палитры статусов, остальное в цвете текста.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "use-copy"
+      ],
+      "css": [],
+      "files": [
+        "components/code-block.tsx"
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "component",
+      "title": "Разделитель",
+      "description": "Волосяная линия между группами: горизонтальная в списках, вертикальная в панелях.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/card.tsx"
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "component",
+      "title": "Область прокрутки",
+      "description": "Одна прокрутка во всём интерфейсе. Затухание у края показывает, что содержимое продолжается, и появляется только с той стороны, где оно есть. Полоса тонкая и прячется, пока к ней не потянулись.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/scroll-area.tsx"
+      ]
+    },
+    {
+      "name": "resizable",
+      "type": "component",
+      "title": "Изменяемые панели",
+      "description": "Список слева, подробности справа — ширину делит пользователь. Ручка видна всегда, но тихо: капсула на линии раздела. Двойной щелчок возвращает ширину по умолчанию.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn",
+        "use-controllable"
+      ],
+      "css": [],
+      "files": [
+        "components/resizable.tsx"
+      ]
+    },
+    {
+      "name": "message",
+      "type": "component",
+      "title": "Сообщение",
+      "description": "Реплика в переписке с клиентом или агентом. Подряд идущие сообщения одного автора собираются в группу: имя — над первым, аватар и время — у последнего; внутренние углы группы сжимаются до 6, внешние остаются 20.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/message.tsx"
+      ]
+    },
+    {
+      "name": "prompt-input",
+      "type": "component",
+      "title": "Поле сообщения",
+      "description": "Поле для чата с клиентом и агентом. В одну строку — капсула высотой 52; растёт до 6 строк, радиус 28 сохраняется, кнопки прижаты к нижнему краю. Вложения встают над текстом внутри того же поля.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner",
+        "use-controllable"
+      ],
+      "css": [],
+      "files": [
+        "components/prompt-input.tsx"
+      ]
+    },
+    {
+      "name": "attachment",
+      "type": "component",
+      "title": "Вложение",
+      "description": "Файл в поле сообщения: плашка h56 с плиткой 40 или превью картинки 56. Показывает загрузку с процентом и ошибку, которая предлагает выход.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner",
+        "use-controllable"
+      ],
+      "css": [],
+      "files": [
+        "components/prompt-input.tsx"
+      ]
+    }
+  ]
+}

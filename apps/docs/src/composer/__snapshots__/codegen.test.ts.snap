@@ -1,0 +1,161 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`blockItem > is an item \`kvant add\` accepts: component files next to the block, the document to reopen it 1`] = `
+"import { ArrowRight, Ellipsis, MessageCircle } from 'lucide-react';
+import { Badge } from '../components/badge';
+import { Button, IconButton } from '../components/button';
+import { Avatar, Card, CardHeader } from '../components/card';
+
+export function DealCard() {
+  return (
+    <Card className="w-100 max-w-full">
+      <CardHeader
+        title="Айдентика для пекарни"
+        description="Пекарня «Хлебница» · до 30 октября"
+        action={<IconButton aria-label="Действия со сделкой" size="sm" icon={<Ellipsis />} />}
+      />
+      <div className="flex items-center justify-between gap-2">
+        <Badge tone="info">Переговоры</Badge>
+        <h3 className="text-heading-xs font-semibold tabular-nums">1 284 900 ₽</h3>
+      </div>
+      <div className="flex items-center gap-3">
+        <Avatar name="Анна Северова" />
+        <div className="flex flex-col">
+          <span className="text-label-md font-medium">Анна Северова</span>
+          <span className="text-caption text-fg-3">Менеджер проекта</span>
+        </div>
+      </div>
+      <div className="flex items-center justify-end gap-2">
+        <Button variant="secondary" size="sm" leadingIcon={<MessageCircle />}>Написать</Button>
+        <Button size="sm" trailingIcon={<ArrowRight />}>Открыть сделку</Button>
+      </div>
+    </Card>
+  );
+}
+"
+`;
+
+exports[`generateCode > prints «Карточка сделки» as a component with its imports 1`] = `
+"import { ArrowRight, Ellipsis, MessageCircle } from 'lucide-react';
+import { Avatar, Badge, Button, Card, CardHeader, IconButton } from '@/kvant';
+
+export function Block() {
+  return (
+    <Card className="w-100 max-w-full">
+      <CardHeader
+        title="Айдентика для пекарни"
+        description="Пекарня «Хлебница» · до 30 октября"
+        action={<IconButton aria-label="Действия со сделкой" size="sm" icon={<Ellipsis />} />}
+      />
+      <div className="flex items-center justify-between gap-2">
+        <Badge tone="info">Переговоры</Badge>
+        <h3 className="text-heading-xs font-semibold tabular-nums">1 284 900 ₽</h3>
+      </div>
+      <div className="flex items-center gap-3">
+        <Avatar name="Анна Северова" />
+        <div className="flex flex-col">
+          <span className="text-label-md font-medium">Анна Северова</span>
+          <span className="text-caption text-fg-3">Менеджер проекта</span>
+        </div>
+      </div>
+      <div className="flex items-center justify-end gap-2">
+        <Button variant="secondary" size="sm" leadingIcon={<MessageCircle />}>Написать</Button>
+        <Button size="sm" trailingIcon={<ArrowRight />}>Открыть сделку</Button>
+      </div>
+    </Card>
+  );
+}
+"
+`;
+
+exports[`generateCode > prints «Пустое состояние» as a component with its imports 1`] = `
+"import { Plus, Wallet } from 'lucide-react';
+import { Button, EmptyState } from '@/kvant';
+
+export function Block() {
+  return (
+    <EmptyState
+      title="Сделок пока нет"
+      description="Добавьте первую сделку — воронка соберётся сама."
+      icon={<Wallet />}
+      actions={
+        <>
+          <Button size="sm" leadingIcon={<Plus />}>Новая сделка</Button>
+          <Button variant="ghost" size="sm">Импорт из таблицы</Button>
+        </>
+      }
+    />
+  );
+}
+"
+`;
+
+exports[`generateCode > prints «Строка таблицы с действиями» as a component with its imports 1`] = `
+"import { Ellipsis, Pencil } from 'lucide-react';
+import { Avatar, Badge, Card, IconButton } from '@/kvant';
+
+export function Block() {
+  return (
+    <Card variant="outline" padding="compact" className="w-180 max-w-full">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Avatar name="Пекарня Хлебница" size={40} />
+          <div className="flex flex-col">
+            <span className="text-label-md font-medium">Айдентика для пекарни</span>
+            <span className="text-caption text-fg-3">Пекарня «Хлебница» · Анна Северова</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Badge tone="success" variant="dot">Оплачено</Badge>
+          <p className="text-body-sm font-medium tabular-nums">1 284 900 ₽</p>
+          <div className="flex items-center gap-1">
+            <IconButton aria-label="Изменить" size="sm" icon={<Pencil />} />
+            <IconButton aria-label="Ещё" size="sm" icon={<Ellipsis />} />
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+"
+`;
+
+exports[`generateCode > prints «Форма входа» as a component with its imports 1`] = `
+"import { Mail } from 'lucide-react';
+import { Button, Card, CardHeader, Checkbox, Field, Input, Link, PasswordInput } from '@/kvant';
+
+export function Block() {
+  return (
+    <Card padding="spacious" className="w-100 max-w-full">
+      <CardHeader title="Вход в Норду" description="Рабочая почта и пароль от студии" />
+      <Field label="Почта">
+        <Input placeholder="name@studio.ru" prefix={<Mail />} />
+      </Field>
+      <Field label="Пароль">
+        <PasswordInput placeholder="Не меньше 8 символов" />
+      </Field>
+      <div className="flex items-center justify-between gap-2">
+        <Checkbox>Запомнить меня</Checkbox>
+        <Link href="#">Забыли пароль?</Link>
+      </div>
+      <Button size="lg">Войти</Button>
+    </Card>
+  );
+}
+"
+`;
+
+exports[`generateCode > wraps several blocks in the page stack 1`] = `
+"import { Plus } from 'lucide-react';
+import { Button } from '@/kvant';
+
+export function Deals() {
+  return (
+    <div className="flex flex-col items-start gap-6">
+      <h2 className="text-heading-md font-semibold">Сделки</h2>
+      <Button leadingIcon={<Plus />}>Новая сделка</Button>
+    </div>
+  );
+}
+"
+`;

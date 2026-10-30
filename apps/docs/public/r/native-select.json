@@ -1,0 +1,22 @@
+{
+  "name": "native-select",
+  "type": "component",
+  "title": "Системный список",
+  "description": "Тот же вид, что у поля, но список рисует система: колесо на iOS, меню на macOS. Двойной шеврон вместо одинарного подсказывает, что откроется системный выбор.",
+  "dependencies": [
+    "@base-ui/react@^1.9.0",
+    "lucide-react@^1.63.0"
+  ],
+  "registryDependencies": [
+    "cn",
+    "input"
+  ],
+  "files": [
+    {
+      "target": "components/native-select.tsx",
+      "content": "import { Input as BaseInput } from '@base-ui/react/input';\nimport { ChevronsUpDown } from 'lucide-react';\nimport type { ComponentProps } from 'react';\nimport { cn } from '../lib/cn';\nimport { fieldShell, fieldSizes, type FieldSize } from './input';\n\n// The select fills the whole capsule (one hit target), so the padding moves onto it.\nconst padding: Record<FieldSize, string> = { sm: 'pl-3 pr-9', md: 'pl-3.5 pr-10', lg: 'pl-4 pr-11' };\nconst chevron: Record<FieldSize, string> = { sm: 'right-3', md: 'right-3.5', lg: 'right-4' };\n\nexport interface NativeSelectProps extends Omit<ComponentProps<'select'>, 'size' | 'className' | 'multiple'> {\n  size?: FieldSize;\n  /** Standalone invalid state; inside <Field error> it is set for you. */\n  invalid?: boolean;\n  /** Capsule class. */\n  className?: string;\n}\n\n/**\n * The field look over a real <select>: the system draws the list (wheel on iOS, menu on macOS).\n * The double chevron hints that a system picker opens. Children are <option> and <optgroup>.\n */\nexport function NativeSelect({ size = 'md', invalid, className, children, ...props }: NativeSelectProps) {\n  return (\n    <div data-slot=\"native-select\" className={cn(fieldShell, fieldSizes[size], 'px-0', className)}>\n      <BaseInput\n        render={<select {...props}>{children}</select>}\n        aria-invalid={invalid || undefined}\n        className={cn(\n          'h-full w-full min-w-0 cursor-pointer appearance-none truncate rounded-[inherit] bg-transparent outline-none disabled:cursor-not-allowed',\n          padding[size],\n        )}\n      />\n      <ChevronsUpDown aria-hidden className={cn('pointer-events-none absolute', chevron[size])} />\n    </div>\n  );\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

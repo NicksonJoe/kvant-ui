@@ -1,0 +1,224 @@
+/*
+ * Tailwind v4 bridge for Kvant tokens. Import after `tailwindcss` and `./tokens.css`.
+ * `reference` = utilities point at the token variables, Tailwind emits no copies of them.
+ * Generated from the Kvant DTCG tokens (packages/tokens): change the tokens, not this file.
+ */
+
+@theme {
+  --color-*: initial;
+  --radius-*: initial;
+  --text-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --font-*: initial;
+  --tracking-*: initial;
+  --leading-*: initial;
+  --ease-*: initial;
+  --animate-*: initial;
+  --container-*: initial;
+  --spacing: 4px;
+}
+
+@theme inline reference {
+  --color-background: var(--color-background);
+  --color-surface-1: var(--color-surface-1);
+  --color-surface-2: var(--color-surface-2);
+  --color-surface-3: var(--color-surface-3);
+  --color-overlay: var(--color-overlay);
+  --color-fg-1: var(--color-fg-1);
+  --color-fg-2: var(--color-fg-2);
+  --color-fg-3: var(--color-fg-3);
+  --color-fg-4: var(--color-fg-4);
+  --color-input: var(--color-input);
+  --color-border: var(--color-border);
+  --color-hairline: var(--color-hairline);
+  --color-separator: var(--color-separator);
+  --color-fill-1: var(--color-fill-1);
+  --color-fill-2: var(--color-fill-2);
+  --color-fill-3: var(--color-fill-3);
+  --color-scrim: var(--color-scrim);
+  --color-glass: var(--color-glass);
+  --color-glass-strong: var(--color-glass-strong);
+  --color-field: var(--color-field);
+  --color-control: var(--color-control);
+  --color-control-hover: var(--color-control-hover);
+  --color-control-pressed: var(--color-control-pressed);
+  --color-thumb: var(--color-thumb);
+  --color-success: var(--color-success);
+  --color-success-fg: var(--color-success-fg);
+  --color-success-soft: var(--color-success-soft);
+  --color-success-soft-fg: var(--color-success-soft-fg);
+  --color-warning: var(--color-warning);
+  --color-warning-fg: var(--color-warning-fg);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-warning-soft-fg: var(--color-warning-soft-fg);
+  --color-danger: var(--color-danger);
+  --color-danger-hover: var(--color-danger-hover);
+  --color-danger-fg: var(--color-danger-fg);
+  --color-danger-soft: var(--color-danger-soft);
+  --color-danger-soft-fg: var(--color-danger-soft-fg);
+  --color-info: var(--color-info);
+  --color-info-fg: var(--color-info-fg);
+  --color-info-soft: var(--color-info-soft);
+  --color-info-soft-fg: var(--color-info-soft-fg);
+  --color-chart-1: var(--color-chart-1);
+  --color-chart-2: var(--color-chart-2);
+  --color-chart-3: var(--color-chart-3);
+  --color-chart-4: var(--color-chart-4);
+  --color-chart-5: var(--color-chart-5);
+  --color-chart-6: var(--color-chart-6);
+  --color-chart-7: var(--color-chart-7);
+  --color-chart-8: var(--color-chart-8);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-pressed: var(--color-accent-pressed);
+  --color-accent-fg: var(--color-accent-fg);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-accent-soft-hover: var(--color-accent-soft-hover);
+  --color-accent-soft-fg: var(--color-accent-soft-fg);
+  --color-ring: var(--color-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --font-weight-regular: var(--font-weight-regular);
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-semibold: var(--font-weight-semibold);
+
+  --text-display-2xl: var(--text-display-2xl);
+  --text-display-2xl--line-height: var(--leading-display-2xl);
+  --text-display-2xl--letter-spacing: var(--tracking-display);
+  --text-display-xl: var(--text-display-xl);
+  --text-display-xl--line-height: var(--leading-display-xl);
+  --text-display-xl--letter-spacing: var(--tracking-display);
+  --text-display-lg: var(--text-display-lg);
+  --text-display-lg--line-height: var(--leading-display-lg);
+  --text-display-lg--letter-spacing: var(--tracking-display);
+  --text-display-md: var(--text-display-md);
+  --text-display-md--line-height: var(--leading-display-md);
+  --text-display-md--letter-spacing: var(--tracking-display);
+  --text-display-sm: var(--text-display-sm);
+  --text-display-sm--line-height: var(--leading-display-sm);
+  --text-display-sm--letter-spacing: var(--tracking-display);
+  --text-heading-xl: var(--text-heading-xl);
+  --text-heading-xl--line-height: var(--leading-heading-xl);
+  --text-heading-xl--letter-spacing: var(--tracking-heading-lg);
+  --text-heading-lg: var(--text-heading-lg);
+  --text-heading-lg--line-height: var(--leading-heading-lg);
+  --text-heading-lg--letter-spacing: var(--tracking-heading-lg);
+  --text-heading-md: var(--text-heading-md);
+  --text-heading-md--line-height: var(--leading-heading-md);
+  --text-heading-md--letter-spacing: var(--tracking-heading-md);
+  --text-heading-sm: var(--text-heading-sm);
+  --text-heading-sm--line-height: var(--leading-heading-sm);
+  --text-heading-sm--letter-spacing: var(--tracking-heading-sm);
+  --text-heading-xs: var(--text-heading-xs);
+  --text-heading-xs--line-height: var(--leading-heading-xs);
+  --text-heading-xs--letter-spacing: var(--tracking-heading-xs);
+  --text-body-lg: var(--text-body-lg);
+  --text-body-lg--line-height: var(--leading-body-lg);
+  --text-body-lg--letter-spacing: var(--tracking-body-lg);
+  --text-body-md: var(--text-body-md);
+  --text-body-md--line-height: var(--leading-body-md);
+  --text-body-md--letter-spacing: var(--tracking-body);
+  --text-body-sm: var(--text-body-sm);
+  --text-body-sm--line-height: var(--leading-body-sm);
+  --text-body-sm--letter-spacing: var(--tracking-body);
+  --text-body-xs: var(--text-body-xs);
+  --text-body-xs--line-height: var(--leading-body-xs);
+  --text-body-xs--letter-spacing: var(--tracking-body-xs);
+  --text-label-lg: var(--text-label-lg);
+  --text-label-lg--line-height: var(--leading-label-lg);
+  --text-label-lg--letter-spacing: var(--tracking-label-lg);
+  --text-label-md: var(--text-label-md);
+  --text-label-md--line-height: var(--leading-label-md);
+  --text-label-md--letter-spacing: var(--tracking-body);
+  --text-label-sm: var(--text-label-sm);
+  --text-label-sm--line-height: var(--leading-label-sm);
+  --text-label-sm--letter-spacing: var(--tracking-label-sm);
+  --text-caption: var(--text-caption);
+  --text-caption--line-height: var(--leading-caption);
+  --text-caption--letter-spacing: 0em;
+  --text-overline: var(--text-overline);
+  --text-overline--line-height: var(--leading-overline);
+  --text-overline--letter-spacing: 0em;
+
+  --tracking-display: var(--tracking-display);
+  --tracking-heading: var(--tracking-heading-md);
+  --tracking-body: var(--tracking-body);
+  --tracking-overline: var(--tracking-overline);
+
+  --spacing-control-xs: var(--spacing-control-xs);
+  --spacing-control-sm: var(--spacing-control-sm);
+  --spacing-control-md: var(--spacing-control-md);
+  --spacing-control-lg: var(--spacing-control-lg);
+  --spacing-control-xl: var(--spacing-control-xl);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-3xl: var(--radius-3xl);
+  --radius-4xl: var(--radius-4xl);
+  --radius-control-xs: var(--radius-control-xs);
+  --radius-control-sm: var(--radius-control-sm);
+  --radius-control-md: var(--radius-control-md);
+  --radius-control-lg: var(--radius-control-lg);
+  --radius-control-xl: var(--radius-control-xl);
+  --radius-control-inner: var(--radius-control-inner);
+  --radius-badge: var(--radius-badge);
+
+  --shadow-raised: var(--shadow-raised);
+  --shadow-control: var(--shadow-control);
+  --shadow-control-pressed: var(--shadow-control-pressed);
+  --shadow-accent-control: var(--shadow-accent-control);
+  --shadow-pressed-accent: var(--shadow-pressed-accent);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-modal: var(--shadow-modal);
+  --shadow-thumb: var(--shadow-thumb);
+  --shadow-segment: var(--shadow-segment);
+  --shadow-glass: var(--shadow-glass);
+  --shadow-tooltip: var(--shadow-tooltip);
+
+  --ease-out: var(--ease-out);
+  --ease-standard: var(--ease-standard);
+  --ease-fluid: var(--ease-fluid);
+  --ease-hover: var(--ease-hover);
+  --ease-emphasized: var(--ease-emphasized);
+  --ease-exit: var(--ease-exit);
+  --ease-in-out: var(--ease-in-out);
+  --ease-spring-0: var(--ease-spring-0);
+  --ease-spring-10: var(--ease-spring-10);
+
+  --animate-spinner: var(--animate-spinner);
+  --animate-shimmer: var(--animate-shimmer);
+  --animate-indeterminate: var(--animate-indeterminate);
+
+  --container-prose: var(--container-prose);
+  --container-md: var(--container-md);
+  --container-lg: var(--container-lg);
+  --container-xl: var(--container-xl);
+}
+
+/*
+ * Hover styles only for real pointers; touch gets press feedback only.
+ * data-force-hover / -pressed / -focus on the interactive element force a state for docs state matrices;
+ * like real :hover and :active, a forced state also reaches the element's ancestors.
+ */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+  &:is([data-force-hover], :has([data-force-hover])) {
+    @slot;
+  }
+}
+@custom-variant active (&:is(:active, [data-force-pressed], :has([data-force-pressed])));
+@custom-variant focus-visible (&:is(:focus-visible, [data-force-focus]));
+@custom-variant focus-within (&:is(:focus-within, [data-force-focus], :has([data-force-focus])));
+@custom-variant dark (&:where([data-mode='dark'], [data-mode='dark'] *));

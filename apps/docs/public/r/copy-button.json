@@ -1,0 +1,23 @@
+{
+  "name": "copy-button",
+  "type": "component",
+  "title": "Кнопка копирования",
+  "description": "Копирует ссылку, ключ или номер и подтверждает галочкой на две секунды. Круг 28 в поле или кнопка с подписью.",
+  "dependencies": [
+    "@base-ui/react@^1.9.0",
+    "lucide-react@^1.63.0"
+  ],
+  "registryDependencies": [
+    "button",
+    "cn",
+    "popover"
+  ],
+  "files": [
+    {
+      "target": "components/copy-button.tsx",
+      "content": "import { Button as BaseButton } from '@base-ui/react/button';\nimport { Check, Copy } from 'lucide-react';\nimport { useEffect, useRef, useState } from 'react';\nimport { cn } from '../lib/cn';\nimport { Button } from './button';\nimport { Tooltip } from './popover';\n\n/** How long the check stays before the copy icon returns. */\nconst CONFIRM_MS = 2000;\n\n// Icons cross-fade from .8: five times the enter shrink, so reduced motion (enter scale 1) drops the scale too.\nconst swap =\n  'transition-[opacity,scale] duration-(--duration-quick) ease-out starting:opacity-0 starting:scale-[calc(1_-_(1_-_var(--scale-enter))_*_5)]';\n\nexport interface CopyButtonProps extends Omit<BaseButton.Props, 'className' | 'children' | 'value' | 'onClick'> {\n  /** Text that goes to the clipboard. */\n  value: string;\n  /** Visible label, e.g. «Копировать». Without it the button is a 28 px icon with a tooltip. */\n  label?: string;\n  /** Name of the icon button and its tooltip. */\n  'aria-label'?: string;\n  /** Called after a successful copy. */\n  onCopied?: (value: string) => void;\n  className?: string;\n}\n\n/** Copies a value and confirms with a check for two seconds; the result is announced politely. */\nexport function CopyButton({\n  value,\n  label,\n  'aria-label': ariaLabel = 'Копировать',\n  onCopied,\n  className,\n  ...props\n}: CopyButtonProps) {\n  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');\n  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);\n  useEffect(() => () => clearTimeout(timer.current), []);\n\n  const copy = async () => {\n    clearTimeout(timer.current);\n    try {\n      await navigator.clipboard.writeText(value);\n      setState('copied');\n      onCopied?.(value);\n    } catch {\n      // No clipboard (insecure page, denied permission): say so instead of pretending.\n      setState('failed');\n    }\n    timer.current = setTimeout(() => setState('idle'), CONFIRM_MS);\n  };\n\n  const copied = state === 'copied';\n  const icon = copied ? (\n    <Check key=\"done\" aria-hidden className={cn(swap, 'stroke-2! text-success')} />\n  ) : (\n    <Copy key=\"copy\" aria-hidden className={swap} />\n  );\n  const status = (\n    <span role=\"status\" className=\"sr-only\">\n      {copied ? 'Скопировано' : state === 'failed' ? 'Не удалось скопировать — выделите текст вручную' : ''}\n    </span>\n  );\n\n  if (label) {\n    return (\n      <>\n        <Button\n          variant=\"secondary\"\n          size=\"sm\"\n          data-copied={copied || undefined}\n          leadingIcon={icon}\n          onClick={copy}\n          className={cn('min-w-35', className)}\n          {...props}\n        >\n          {copied ? 'Скопировано' : label}\n        </Button>\n        {status}\n      </>\n    );\n  }\n  return (\n    <>\n      <Tooltip content={copied ? 'Скопировано' : ariaLabel}>\n        <BaseButton\n          data-slot=\"copy-button\"\n          data-copied={copied || undefined}\n          aria-label={ariaLabel}\n          onClick={copy}\n          className={cn(\n            'kv-pressable relative grid size-7 shrink-0 place-items-center rounded-full text-fg-2 [--kv-press-scale:var(--scale-press-icon)]',\n            'hover:bg-fill-2 hover:text-fg-1 active:bg-fill-3 data-copied:bg-fill-2 data-disabled:pointer-events-none data-disabled:opacity-50',\n            'pointer-coarse:after:absolute pointer-coarse:after:-inset-2 [&_svg]:size-4 [&_svg]:stroke-[1.75]',\n            className,\n          )}\n          {...props}\n        >\n          {icon}\n        </BaseButton>\n      </Tooltip>\n      {status}\n    </>\n  );\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

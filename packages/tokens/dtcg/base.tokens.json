@@ -1,0 +1,325 @@
+{
+  "$description": "Kvant base tokens shared by every theme and mode (:root). Non-colour values are CSS strings: DTCG has no em, calc() or linear().",
+  "font": {
+    "$type": "fontFamily",
+    "$description": "Typography",
+    "sans": {
+      "$value": ["Inter Variable", "Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"]
+    },
+    "mono": { "$value": ["JetBrains Mono Variable", "JetBrains Mono", "ui-monospace", "SF Mono", "Menlo", "monospace"] }
+  },
+  "font-weight": {
+    "$type": "fontWeight",
+    "regular": { "$value": 400 },
+    "medium": { "$value": 500 },
+    "semibold": { "$value": 600 }
+  },
+  "text": {
+    "$type": "dimension",
+    "display-2xl": { "$value": "72px" },
+    "display-xl": { "$value": "60px" },
+    "display-lg": { "$value": "48px" },
+    "display-md": { "$value": "40px" },
+    "display-sm": { "$value": "32px" },
+    "heading-xl": { "$value": "28px" },
+    "heading-lg": { "$value": "24px" },
+    "heading-md": { "$value": "20px" },
+    "heading-sm": { "$value": "18px" },
+    "heading-xs": { "$value": "16px" },
+    "body-lg": { "$value": "18px" },
+    "body-md": { "$value": "16px" },
+    "body-sm": { "$value": "14px" },
+    "body-xs": { "$value": "13px" },
+    "label-lg": { "$value": "16px" },
+    "label-md": { "$value": "14px" },
+    "label-sm": { "$value": "13px" },
+    "caption": { "$value": "12px" },
+    "overline": { "$value": "11px" }
+  },
+  "leading": {
+    "$type": "dimension",
+    "display-2xl": { "$value": "76px" },
+    "display-xl": { "$value": "64px" },
+    "display-lg": { "$value": "52px" },
+    "display-md": { "$value": "44px" },
+    "display-sm": { "$value": "36px" },
+    "heading-xl": { "$value": "36px" },
+    "heading-lg": { "$value": "32px" },
+    "heading-md": { "$value": "28px" },
+    "heading-sm": { "$value": "24px" },
+    "heading-xs": { "$value": "24px" },
+    "body-lg": { "$value": "28px" },
+    "body-md": { "$value": "24px" },
+    "body-sm": { "$value": "20px" },
+    "body-xs": { "$value": "18px" },
+    "label-lg": { "$value": "20px" },
+    "label-md": { "$value": "20px" },
+    "label-sm": { "$value": "16px" },
+    "caption": { "$value": "16px" },
+    "overline": { "$value": "16px" }
+  },
+  "tracking": {
+    "$type": "dimension",
+    "display": { "$value": "0em" },
+    "heading-lg": { "$value": "-0.002em" },
+    "heading-md": { "$value": "-0.007em" },
+    "heading-sm": { "$value": "-0.008em" },
+    "heading-xs": { "$value": "-0.009em" },
+    "body-lg": { "$value": "-0.006em" },
+    "body": { "$value": "-0.007em" },
+    "body-xs": { "$value": "-0.004em" },
+    "label-lg": { "$value": "-0.008em" },
+    "label-sm": { "$value": "-0.004em" },
+    "overline": { "$value": "0.06em" }
+  },
+  "typography": {
+    "$type": "typography",
+    "$description": "Text styles: size, line height and tracking in one utility (text-body-md).",
+    "display-2xl": {
+      "$value": {
+        "fontSize": "{text.display-2xl}",
+        "lineHeight": "{leading.display-2xl}",
+        "letterSpacing": "{tracking.display}"
+      }
+    },
+    "display-xl": {
+      "$value": {
+        "fontSize": "{text.display-xl}",
+        "lineHeight": "{leading.display-xl}",
+        "letterSpacing": "{tracking.display}"
+      }
+    },
+    "display-lg": {
+      "$value": {
+        "fontSize": "{text.display-lg}",
+        "lineHeight": "{leading.display-lg}",
+        "letterSpacing": "{tracking.display}"
+      }
+    },
+    "display-md": {
+      "$value": {
+        "fontSize": "{text.display-md}",
+        "lineHeight": "{leading.display-md}",
+        "letterSpacing": "{tracking.display}"
+      }
+    },
+    "display-sm": {
+      "$value": {
+        "fontSize": "{text.display-sm}",
+        "lineHeight": "{leading.display-sm}",
+        "letterSpacing": "{tracking.display}"
+      }
+    },
+    "heading-xl": {
+      "$value": {
+        "fontSize": "{text.heading-xl}",
+        "lineHeight": "{leading.heading-xl}",
+        "letterSpacing": "{tracking.heading-lg}"
+      }
+    },
+    "heading-lg": {
+      "$value": {
+        "fontSize": "{text.heading-lg}",
+        "lineHeight": "{leading.heading-lg}",
+        "letterSpacing": "{tracking.heading-lg}"
+      }
+    },
+    "heading-md": {
+      "$value": {
+        "fontSize": "{text.heading-md}",
+        "lineHeight": "{leading.heading-md}",
+        "letterSpacing": "{tracking.heading-md}"
+      }
+    },
+    "heading-sm": {
+      "$value": {
+        "fontSize": "{text.heading-sm}",
+        "lineHeight": "{leading.heading-sm}",
+        "letterSpacing": "{tracking.heading-sm}"
+      }
+    },
+    "heading-xs": {
+      "$value": {
+        "fontSize": "{text.heading-xs}",
+        "lineHeight": "{leading.heading-xs}",
+        "letterSpacing": "{tracking.heading-xs}"
+      }
+    },
+    "body-lg": {
+      "$value": {
+        "fontSize": "{text.body-lg}",
+        "lineHeight": "{leading.body-lg}",
+        "letterSpacing": "{tracking.body-lg}"
+      }
+    },
+    "body-md": {
+      "$value": { "fontSize": "{text.body-md}", "lineHeight": "{leading.body-md}", "letterSpacing": "{tracking.body}" }
+    },
+    "body-sm": {
+      "$value": { "fontSize": "{text.body-sm}", "lineHeight": "{leading.body-sm}", "letterSpacing": "{tracking.body}" }
+    },
+    "body-xs": {
+      "$value": {
+        "fontSize": "{text.body-xs}",
+        "lineHeight": "{leading.body-xs}",
+        "letterSpacing": "{tracking.body-xs}"
+      }
+    },
+    "label-lg": {
+      "$value": {
+        "fontSize": "{text.label-lg}",
+        "lineHeight": "{leading.label-lg}",
+        "letterSpacing": "{tracking.label-lg}"
+      }
+    },
+    "label-md": {
+      "$value": {
+        "fontSize": "{text.label-md}",
+        "lineHeight": "{leading.label-md}",
+        "letterSpacing": "{tracking.body}"
+      }
+    },
+    "label-sm": {
+      "$value": {
+        "fontSize": "{text.label-sm}",
+        "lineHeight": "{leading.label-sm}",
+        "letterSpacing": "{tracking.label-sm}"
+      }
+    },
+    "caption": { "$value": { "fontSize": "{text.caption}", "lineHeight": "{leading.caption}", "letterSpacing": "0em" } },
+    "overline": {
+      "$value": { "fontSize": "{text.overline}", "lineHeight": "{leading.overline}", "letterSpacing": "0em" }
+    }
+  },
+  "spacing": {
+    "$type": "dimension",
+    "$description": "Spacing (4px grid) and control heights",
+    "0-5": { "$value": "2px" },
+    "1": { "$value": "4px" },
+    "1-5": { "$value": "6px" },
+    "2": { "$value": "8px" },
+    "3": { "$value": "12px" },
+    "4": { "$value": "16px" },
+    "5": { "$value": "20px" },
+    "6": { "$value": "24px" },
+    "8": { "$value": "32px" },
+    "10": { "$value": "40px" },
+    "12": { "$value": "48px" },
+    "16": { "$value": "64px" },
+    "20": { "$value": "80px" },
+    "24": { "$value": "96px" },
+    "control-xs": { "$value": "24px" },
+    "control-sm": { "$value": "32px" },
+    "control-md": { "$value": "36px" },
+    "control-lg": { "$value": "44px" },
+    "control-xl": { "$value": "52px" },
+    "row": { "$value": "48px" }
+  },
+  "radius": {
+    "$type": "dimension",
+    "$description": "Radius. Controls are capsules; data-shape=\"density\" swaps the control radii only.",
+    "xs": { "$value": "6px" },
+    "sm": { "$value": "8px" },
+    "md": { "$value": "12px" },
+    "lg": { "$value": "16px" },
+    "xl": { "$value": "20px" },
+    "2xl": { "$value": "24px" },
+    "3xl": { "$value": "28px" },
+    "4xl": { "$value": "36px" },
+    "full": { "$value": "9999px" },
+    "control-xs": { "$value": "{radius.full}" },
+    "control-sm": { "$value": "{radius.full}" },
+    "control-md": { "$value": "{radius.full}" },
+    "control-lg": { "$value": "{radius.full}" },
+    "control-xl": { "$value": "{radius.full}" },
+    "control-inner": { "$value": "{radius.full}" },
+    "badge": { "$value": "{radius.full}" }
+  },
+  "opacity": { "$type": "number", "disabled": { "$value": 0.5 } },
+  "breakpoint": {
+    "$type": "dimension",
+    "sm": { "$value": "640px" },
+    "md": { "$value": "768px" },
+    "lg": { "$value": "1024px" },
+    "xl": { "$value": "1280px" },
+    "2xl": { "$value": "1536px" }
+  },
+  "container": {
+    "$type": "dimension",
+    "prose": { "$value": "680px" },
+    "md": { "$value": "960px" },
+    "lg": { "$value": "1200px" },
+    "xl": { "$value": "1440px" }
+  },
+  "duration": {
+    "$type": "duration",
+    "$description": "Motion",
+    "instant": { "$value": "0ms" },
+    "micro": { "$value": "75ms" },
+    "fast": { "$value": "100ms" },
+    "quick": { "$value": "150ms" },
+    "base": { "$value": "200ms" },
+    "moderate": { "$value": "250ms" },
+    "slow": { "$value": "300ms" },
+    "slower": { "$value": "400ms" },
+    "deliberate": { "$value": "700ms" },
+    "spinner": { "$value": "800ms" },
+    "shimmer": { "$value": "2000ms" }
+  },
+  "ease": {
+    "$type": "cubicBezier",
+    "out": { "$value": [0.23, 1, 0.32, 1] },
+    "standard": { "$value": [0.2, 0, 0, 1] },
+    "fluid": { "$value": [0.32, 0.72, 0, 1] },
+    "hover": { "$value": [0.25, 0.1, 0.25, 1] },
+    "emphasized": { "$value": [0.05, 0.7, 0.1, 1] },
+    "exit": { "$value": [0.3, 0, 0.8, 0.15] },
+    "in-out": { "$value": [0.77, 0, 0.175, 1] },
+    "spring-0": {
+      "$description": "Apple spring, bounce 0, as CSS linear(); native platforms use their own springs.",
+      "$value": "linear(0, 0.005 1.1%, 0.02 2.3%, 0.045 3.6%, 0.082 5.1%, 0.16 7.7%, 0.365 13.8%, 0.462 16.9%, 0.556 20.2%, 0.637 23.4%, 0.707 26.7%, 0.766 30.1%, 0.817 33.7%, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%, 0.971 58.6%, 0.991 73.8%, 1)"
+    },
+    "spring-10": {
+      "$description": "Apple spring, bounce 0.1 (switch, segment, tabs only).",
+      "$value": "linear(0, 0.006 1.3%, 0.022 2.7%, 0.05 4.2%, 0.091 5.9%, 0.178 8.9%, 0.393 15.5%, 0.493 18.7%, 0.587 22.1%, 0.668 25.4%, 0.736 28.6%, 0.794 32%, 0.844 35.4%, 0.885 39%, 0.921 43.3%, 0.95 47.9%, 0.971 53.1%, 0.986 58.9%, 1 73.4%, 1)"
+    }
+  },
+  "spring": {
+    "$type": "transition",
+    "$description": "Apple-style springs as duration + curve: use as `transition: transform var(--spring-snappy)`.",
+    "micro": { "$value": { "duration": "200ms", "delay": "0ms", "timingFunction": "{ease.spring-0}" } },
+    "snappy": { "$value": { "duration": "300ms", "delay": "0ms", "timingFunction": "{ease.spring-10}" } },
+    "smooth": { "$value": { "duration": "350ms", "delay": "0ms", "timingFunction": "{ease.spring-0}" } },
+    "gentle": { "$value": { "duration": "500ms", "delay": "0ms", "timingFunction": "{ease.spring-0}" } }
+  },
+  "shift": {
+    "$type": "dimension",
+    "xs": { "$value": "2px" },
+    "sm": { "$value": "4px" },
+    "md": { "$value": "8px" },
+    "lg": { "$value": "16px" },
+    "xl": { "$value": "24px" }
+  },
+  "scale": {
+    "$type": "number",
+    "press": { "$value": 0.97 },
+    "press-wide": { "$value": 0.98 },
+    "press-icon": { "$value": 0.94 },
+    "enter": { "$value": 0.96 },
+    "tooltip": { "$value": 0.97 },
+    "lift": { "$value": 1.02 }
+  },
+  "animate": {
+    "$description": "CSS animations; their @keyframes ship with tokens.css. No DTCG type: CSS only.",
+    "spinner": { "$value": "kv-spin var(--duration-spinner) linear infinite" },
+    "shimmer": { "$value": "kv-shimmer var(--duration-shimmer) linear infinite" },
+    "indeterminate": { "$value": "kv-indeterminate 1500ms var(--ease-in-out) infinite" }
+  },
+  "tint": {
+    "$type": "number",
+    "$description": "Theme inputs: neutral tint and status hues (overridden per accent)",
+    "hue": { "$value": 258 },
+    "strength": { "$value": 1 }
+  },
+  "hue": { "$type": "number", "success": { "$value": 150 }, "warning": { "$value": 75 }, "danger": { "$value": 27 } }
+}

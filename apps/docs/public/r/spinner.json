@@ -1,0 +1,18 @@
+{
+  "name": "spinner",
+  "type": "component",
+  "title": "Спиннер",
+  "description": "Короткое ожидание неизвестной длины: дуга 16–24 px, оборот за 800 мс.",
+  "dependencies": [],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "target": "components/spinner.tsx",
+      "content": "import type { ComponentProps } from 'react';\nimport { cn } from '../lib/cn';\n\nexport interface SpinnerProps extends Omit<ComponentProps<'svg'>, 'children'> {\n  size?: 16 | 20 | 24;\n  /** Announces the spinner as a status. Omit when the parent already sets aria-busy. */\n  label?: string;\n  /** Use the parent's text colour (buttons); otherwise fg-3. */\n  inherit?: boolean;\n}\n\n// `stroke-[2.5]!`: stays 2.5 even inside buttons that thin their icons.\nexport function Spinner({ size = 20, label, inherit = false, className, ...props }: SpinnerProps) {\n  return (\n    <svg\n      data-slot=\"spinner\"\n      viewBox=\"0 0 24 24\"\n      width={size}\n      height={size}\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2.5}\n      strokeLinecap=\"round\"\n      role={label ? 'status' : undefined}\n      aria-label={label}\n      aria-hidden={label ? undefined : true}\n      className={cn('shrink-0 animate-spinner stroke-[2.5]!', !inherit && 'text-fg-3', className)}\n      {...props}\n    >\n      <path d=\"M21 12a9 9 0 1 1-6.219-8.56\" />\n    </svg>\n  );\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

@@ -1,0 +1,20 @@
+{
+  "name": "tabs",
+  "type": "component",
+  "title": "Вкладки",
+  "description": "Переключают панели внутри одного контекста. Подчёркивание для разделов страницы, капсулы — для фильтров.",
+  "dependencies": [
+    "@base-ui/react@^1.9.0"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "target": "components/tabs.tsx",
+      "content": "import { Tabs as BaseTabs } from '@base-ui/react/tabs';\nimport { createContext, use } from 'react';\nimport { cn } from '../lib/cn';\n\nexport type TabsVariant = 'underline' | 'pills';\nconst VariantContext = createContext<TabsVariant>('underline');\n\nexport interface TabsProps extends Omit<BaseTabs.Root.Props, 'className'> {\n  className?: string;\n}\n\nexport function Tabs({ className, ...props }: TabsProps) {\n  return <BaseTabs.Root data-slot=\"tabs\" className={cn('flex flex-col gap-4', className)} {...props} />;\n}\n\nexport interface TabsListProps extends Omit<BaseTabs.List.Props, 'className'> {\n  variant?: TabsVariant;\n  className?: string;\n}\n\n/** Arrows move between tabs (activation follows focus), the indicator slides on the snappy spring. */\nexport function TabsList({ variant = 'underline', activateOnFocus = true, className, children, ...props }: TabsListProps) {\n  return (\n    <VariantContext value={variant}>\n      <BaseTabs.List\n        data-slot=\"tabs-list\"\n        data-variant={variant}\n        activateOnFocus={activateOnFocus}\n        className={cn(\n          'relative z-0 flex items-center',\n          variant === 'underline' ? 'gap-6 shadow-[inset_0_-1px_0_var(--color-separator)]' : 'gap-1',\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        <BaseTabs.Indicator\n          data-slot=\"tabs-indicator\"\n          className={cn(\n            'kv-slide absolute left-0 w-(--active-tab-width) translate-x-(--active-tab-left) rounded-full',\n            variant === 'underline' ? 'bottom-0 h-0.5 bg-accent' : 'top-(--active-tab-top) -z-1 h-(--active-tab-height) bg-fill-2',\n          )}\n        />\n      </BaseTabs.List>\n    </VariantContext>\n  );\n}\n\nexport interface TabsTabProps extends Omit<BaseTabs.Tab.Props, 'className'> {\n  className?: string;\n}\n\nexport function TabsTab({ className, ...props }: TabsTabProps) {\n  const variant = use(VariantContext);\n  return (\n    <BaseTabs.Tab\n      data-slot=\"tabs-tab\"\n      className={cn(\n        'inline-flex select-none items-center gap-1.5 whitespace-nowrap text-label-md font-medium text-fg-2 transition-colors duration-(--duration-micro) ease-hover hover:not-data-disabled:text-fg-1 data-active:text-fg-1 data-disabled:opacity-50 [&_svg]:size-4 [&_svg]:stroke-[1.75]',\n        variant === 'underline' ? 'h-10 rounded-xs' : 'h-8 rounded-full px-3 focus-visible:outline-offset-0',\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport interface TabsPanelProps extends Omit<BaseTabs.Panel.Props, 'className'> {\n  className?: string;\n}\n\nexport function TabsPanel({ className, ...props }: TabsPanelProps) {\n  return <BaseTabs.Panel data-slot=\"tabs-panel\" className={cn('outline-none', className)} {...props} />;\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

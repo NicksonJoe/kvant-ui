@@ -1,0 +1,15 @@
+{
+  "name": "use-controllable",
+  "type": "lib",
+  "title": "useControllable",
+  "description": "Хук useControllable, общий для компонентов Kvant.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "target": "lib/use-controllable.ts",
+      "content": "import { useState } from 'react';\n\n/** `value` wins when defined (null counts as a value); otherwise the component keeps its own state. */\nexport function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (value: T) => void): [T, (next: T) => void] {\n  const [own, setOwn] = useState(defaultValue);\n  const current = value === undefined ? own : value;\n  const set = (next: T) => {\n    if (value === undefined) setOwn(next);\n    onChange?.(next);\n  };\n  return [current, set];\n}\n"
+    }
+  ],
+  "css": []
+}

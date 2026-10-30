@@ -1,0 +1,29 @@
+{
+  "$description": "Accent «iris» (data-accent=\"iris\"): \"light\" applies in both modes, \"dark\" overrides it in dark mode.",
+  "light": {
+    "tint": { "$type": "number", "hue": { "$value": 280 } },
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.574, 0.18, 283] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.534, 0.17, 283] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.494, 0.156, 283] } },
+      "accent-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.955, 0.02, 283] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.935, 0.029, 283] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.531, 0.18, 283] } },
+      "ring": { "$value": "{color.accent}" }
+    }
+  },
+  "dark": {
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.54, 0.18, 283] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.575, 0.18, 283] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.52, 0.173, 283] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 283] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.3, 0.06, 283] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.096, 283] } },
+      "ring": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.13, 283] } }
+    }
+  }
+}

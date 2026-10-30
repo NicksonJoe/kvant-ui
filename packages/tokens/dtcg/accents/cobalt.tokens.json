@@ -1,0 +1,28 @@
+{
+  "$description": "Accent «cobalt» (data-accent=\"cobalt\"): \"light\" applies in both modes, \"dark\" overrides it in dark mode. Default accent: also applied to :root.",
+  "light": {
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.565, 0.19, 258] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.525, 0.179, 258] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.485, 0.165, 258] } },
+      "accent-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.955, 0.02, 258] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.935, 0.029, 258] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.523, 0.178, 258] } },
+      "ring": { "$value": "{color.accent}" }
+    }
+  },
+  "dark": {
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.53, 0.181, 258] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.565, 0.19, 258] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.51, 0.174, 258] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 258] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.3, 0.06, 258] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.093, 258] } },
+      "ring": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.13, 258] } }
+    }
+  }
+}

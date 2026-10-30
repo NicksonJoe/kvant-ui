@@ -1,0 +1,15 @@
+{
+  "name": "use-copy",
+  "type": "lib",
+  "title": "useCopy",
+  "description": "Хук useCopy, общий для компонентов Kvant.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "target": "lib/use-copy.ts",
+      "content": "import { useEffect, useState } from 'react';\n\n/** Copy to the clipboard; `copied` stays true for 2 s (icon → check). A blocked clipboard leaves it false. */\nexport function useCopy(): [copied: boolean, copy: (text: string) => Promise<void>] {\n  const [copied, setCopied] = useState(false);\n\n  useEffect(() => {\n    if (!copied) return;\n    const timer = setTimeout(() => setCopied(false), 2000);\n    return () => clearTimeout(timer);\n  }, [copied]);\n\n  const copy = async (text: string) => {\n    try {\n      await navigator.clipboard.writeText(text);\n      setCopied(true);\n    } catch {\n      // no permission or insecure context: the icon simply does not turn into a check\n      setCopied(false);\n    }\n  };\n\n  return [copied, copy];\n}\n"
+    }
+  ],
+  "css": []
+}

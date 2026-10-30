@@ -1,0 +1,21 @@
+/*
+ * Tailwind v4 bridge for Kvant tokens. Import after `tailwindcss` and `./tokens.css`.
+ * `reference` = utilities point at the token variables, Tailwind emits no copies of them.
+ * Generated from the Kvant DTCG tokens (packages/tokens): change the tokens, not this file.
+ */
+
+@theme {
+  --color-*: initial;
+  --radius-*: initial;
+  --text-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --font-*: initial;
+  --tracking-*: initial;
+  --leading-*: initial;
+  --ease-*: initial;
+  --animate-*: initial;
+  --container-*: initial;
+  --spacing: 4px;
+}

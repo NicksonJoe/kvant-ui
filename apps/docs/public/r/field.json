@@ -1,0 +1,21 @@
+{
+  "name": "field",
+  "type": "component",
+  "title": "Поле формы",
+  "description": "Подпись, контрол, подсказка и ошибка, связанные между собой для экранного диктора. Оборачивает любой ввод.",
+  "dependencies": [
+    "@base-ui/react@^1.9.0",
+    "lucide-react@^1.63.0"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "target": "components/field.tsx",
+      "content": "import { Field as BaseField } from '@base-ui/react/field';\nimport { CircleX } from 'lucide-react';\nimport { useRef, type ReactNode } from 'react';\nimport { cn } from '../lib/cn';\n\nexport interface FieldProps extends Omit<BaseField.Root.Props, 'className' | 'children'> {\n  label?: ReactNode;\n  /** Adds «необязательно» after the label. */\n  optional?: boolean;\n  description?: ReactNode;\n  /** Error text. Marks the control aria-invalid and links the message via aria-describedby. */\n  error?: ReactNode;\n  className?: string;\n  children: ReactNode;\n}\n\n/**\n * Label + control + description + error, wired by Base UI Field: the label targets the control,\n * description and error ids land in the control's aria-describedby. Without `error`, messages from\n * `validate`, native constraints and `<Form errors>` show in the same place.\n */\nexport function Field({ label, optional, description, error, invalid, onChange, className, children, ...props }: FieldProps) {\n  const hasError = error !== undefined && error !== null && error !== false;\n  const actions = useRef<BaseField.Root.Actions>(null);\n  return (\n    <BaseField.Root\n      data-slot=\"field\"\n      actionsRef={actions}\n      invalid={hasError || invalid}\n      onChange={(event) => {\n        onChange?.(event);\n        // Once a field is wrong it is re-checked on every change, so the error leaves the moment it is fixed.\n        if (event.currentTarget.hasAttribute('data-invalid')) actions.current?.validate();\n      }}\n      className={cn('flex min-w-0 flex-col gap-1.5', className)}\n      {...props}\n    >\n      {label ? (\n        <BaseField.Label className=\"inline-flex items-baseline gap-1.5 text-label-sm font-medium text-fg-2\">\n          {label}\n          {optional ? <span className=\"font-regular text-fg-3\">необязательно</span> : null}\n        </BaseField.Label>\n      ) : null}\n      {children}\n      {description ? <BaseField.Description className=\"text-caption text-fg-3\">{description}</BaseField.Description> : null}\n      <BaseField.Error\n        // No `children` key without an error: Base UI then renders its own validation message.\n        {...(hasError ? { match: true, children: error } : {})}\n        className=\"flex items-center gap-1 text-caption text-danger-soft-fg transition-opacity duration-(--duration-quick) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:duration-(--duration-fast) [&_svg]:size-3.5 [&_svg]:shrink-0 [&_svg]:stroke-[1.75]\"\n        render={(errorProps) => (\n          <div {...errorProps} hidden={!errorProps.children}>\n            <CircleX aria-hidden />\n            {errorProps.children}\n          </div>\n        )}\n      />\n    </BaseField.Root>\n  );\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

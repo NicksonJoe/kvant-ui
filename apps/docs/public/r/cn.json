@@ -1,0 +1,16 @@
+{
+  "name": "cn",
+  "type": "lib",
+  "title": "cn",
+  "description": "Склеивает классы; className — для раскладки, не для переопределения рецепта.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "target": "lib/cn.ts",
+      "content": "export type ClassValue = string | false | null | undefined;\n\n/** Joins class names. No conflict merging: className props are for layout, not for overriding a recipe. */\nexport function cn(...values: ClassValue[]): string {\n  return values.filter(Boolean).join(' ');\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

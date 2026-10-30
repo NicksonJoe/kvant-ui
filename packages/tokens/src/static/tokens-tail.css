@@ -1,0 +1,105 @@
+@keyframes kv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes kv-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@keyframes kv-indeterminate {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 340% 0;
+  }
+}
+@keyframes kv-shake {
+  0%,
+  100% {
+    translate: 0;
+  }
+  16%,
+  50%,
+  83% {
+    translate: calc(var(--shift-sm) * -1) 0;
+  }
+  33%,
+  66% {
+    translate: var(--shift-sm) 0;
+  }
+}
+
+/* ---------- Base layer ---------- */
+@layer base {
+  html {
+    background: var(--color-background);
+    color: var(--color-fg-1);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-sm);
+    line-height: var(--leading-body-sm);
+    letter-spacing: var(--tracking-body);
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    caret-color: var(--color-accent);
+    accent-color: var(--color-accent);
+    scrollbar-color: var(--color-fill-3) transparent;
+  }
+
+  ::selection {
+    background: var(--color-accent-soft-hover);
+    color: var(--color-fg-1);
+  }
+
+  /* data-force-focus: docs state matrices show the ring without real focus */
+  :focus-visible,
+  [data-force-focus] {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  /* numbers in data, prices, dates and timers never jitter */
+  time,
+  data,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-fill-3);
+    border: 2px solid transparent;
+    border-radius: var(--radius-full);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      scroll-behavior: auto !important;
+    }
+  }
+}

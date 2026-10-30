@@ -1,0 +1,40 @@
+{
+  "$description": "Accent «amber» (data-accent=\"amber\"): \"light\" applies in both modes, \"dark\" overrides it in dark mode.",
+  "light": {
+    "tint": { "$type": "number", "hue": { "$value": 80 }, "strength": { "$value": 0.9 } },
+    "hue": { "$type": "number", "warning": { "$value": 50 } },
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.78, 0.151, 75] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.74, 0.144, 75] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.136, 75] } },
+      "accent-fg": { "$value": { "colorSpace": "oklch", "components": [0.205, 0.02, 75] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.955, 0.03, 75] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.935, 0.04, 75] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.52, 0.101, 75] } },
+      "ring": {
+        "$description": "light amber is too pale for indicators: rings/indicators use the darker ring",
+        "$value": { "colorSpace": "oklch", "components": [0.621, 0.121, 75] }
+      },
+      "info": { "$value": { "colorSpace": "oklch", "components": [0.559, 0.146, 250] } },
+      "info-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "info-soft": { "$value": { "colorSpace": "oklch", "components": [0.955, 0.03, 250] } },
+      "info-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.52, 0.137, 250] } }
+    }
+  },
+  "dark": {
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.78, 0.151, 75] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.815, 0.15, 75] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.76, 0.148, 75] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 75] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.3, 0.059, 75] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.13, 75] } },
+      "ring": { "$value": "{color.accent}" },
+      "info": { "$value": { "colorSpace": "oklch", "components": [0.524, 0.137, 250] } },
+      "info-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 250] } },
+      "info-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.097, 250] } }
+    }
+  }
+}

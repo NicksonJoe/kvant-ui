@@ -1,0 +1,339 @@
+/*
+ * Kvant component recipes that read better as CSS than as utility strings:
+ * press physics, popup enter/exit, toast stack, sliding indicators, shimmer.
+ * Everything else lives as utilities next to the component.
+ */
+@layer components {
+  /* Press physics: hover colour 75ms, press-in 75ms ease-out, release on spring-micro. */
+  .kv-pressable {
+    transition:
+      background-color var(--duration-micro) var(--ease-hover),
+      color var(--duration-micro) var(--ease-hover),
+      box-shadow var(--duration-micro) var(--ease-hover),
+      opacity var(--duration-micro) var(--ease-hover),
+      scale var(--spring-micro);
+  }
+  .kv-pressable:is(:active, [data-force-pressed]):not(:disabled, [data-disabled], [aria-busy='true'], [aria-expanded='true']) {
+    scale: var(--kv-press-scale, var(--scale-press));
+    transition-duration: var(--duration-micro);
+    transition-timing-function: var(--ease-out);
+  }
+
+  /* Menus, selects, popovers, comboboxes: opacity + scale .96 + 4px from the trigger, exit = opacity only. */
+  .kv-popup {
+    transform-origin: var(--transform-origin);
+    transition:
+      opacity var(--duration-quick) var(--ease-out),
+      scale var(--duration-quick) var(--ease-out),
+      translate var(--duration-quick) var(--ease-out);
+  }
+  .kv-popup[data-starting-style] {
+    opacity: 0;
+    scale: var(--kv-enter-scale, var(--scale-enter));
+  }
+  .kv-popup[data-starting-style][data-side='bottom'] {
+    translate: 0 calc(var(--shift-sm) * -1);
+  }
+  .kv-popup[data-starting-style][data-side='top'] {
+    translate: 0 var(--shift-sm);
+  }
+  .kv-popup[data-starting-style]:is([data-side='right'], [data-side='inline-end']) {
+    translate: calc(var(--shift-sm) * -1) 0;
+  }
+  .kv-popup[data-starting-style]:is([data-side='left'], [data-side='inline-start']) {
+    translate: var(--shift-sm) 0;
+  }
+  .kv-popup[data-ending-style] {
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .kv-popup[data-instant] {
+    transition: none;
+  }
+
+  /* Dialogs: backdrop fades 200ms, panel opacity + scale .96 + 8px; exit 150ms. */
+  .kv-backdrop {
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+  .kv-backdrop:is([data-starting-style], [data-ending-style]) {
+    opacity: 0;
+  }
+  .kv-dialog {
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      scale var(--duration-base) var(--ease-out),
+      translate var(--duration-base) var(--ease-out);
+  }
+  .kv-dialog[data-starting-style] {
+    opacity: 0;
+    scale: var(--scale-enter);
+    translate: 0 var(--shift-md);
+  }
+  .kv-dialog[data-ending-style] {
+    opacity: 0;
+    scale: var(--scale-enter);
+    transition-duration: var(--duration-quick);
+  }
+
+  /* Side sheet: slides in 300ms ease-fluid, out 250ms. */
+  .kv-sheet {
+    transition: translate var(--duration-slow) var(--ease-fluid);
+  }
+  .kv-sheet[data-side='right']:is([data-starting-style], [data-ending-style]) {
+    translate: calc(100% + 16px) 0;
+  }
+  .kv-sheet[data-side='left']:is([data-starting-style], [data-ending-style]) {
+    translate: calc(-100% - 16px) 0;
+  }
+  .kv-sheet[data-ending-style] {
+    transition-duration: var(--duration-moderate);
+  }
+
+  /*
+   * Bottom sheet: rests at a detent (medium 50 %, large 92 % of the screen) on spring-gentle, follows the finger 1:1
+   * while dragged, leaves in 250ms ease-fluid from where it was let go; the scrim fades with the drag.
+   */
+  .kv-bottom-sheet {
+    --kv-sheet-height: 50dvh;
+    height: var(--kv-sheet-drag-height, var(--kv-sheet-height));
+    translate: 0 var(--kv-sheet-drag-offset, 0px);
+    transition:
+      height var(--spring-gentle),
+      translate var(--spring-gentle);
+  }
+  .kv-bottom-sheet[data-detent='large'] {
+    --kv-sheet-height: 92dvh;
+  }
+  .kv-bottom-sheet:is([data-starting-style], [data-ending-style]) {
+    translate: 0 100%;
+  }
+  .kv-bottom-sheet[data-ending-style] {
+    transition: translate var(--duration-moderate) var(--ease-fluid);
+  }
+  .kv-sheet-backdrop {
+    opacity: calc(1 - var(--kv-sheet-progress, 0));
+  }
+  .kv-bottom-sheet[data-dragging],
+  .kv-sheet-backdrop[data-dragging] {
+    transition: none;
+  }
+
+  /*
+   * Toast stack: 3 visible, back toasts scale .95/.90 and peek 8px above; hover expands (translate + scale 400ms).
+   * Enter y16 + opacity 350ms, leave opacity + y8 200ms. Phone (< 640px): the stack hangs from the top edge.
+   */
+  .kv-toast {
+    --kv-gap: 8px;
+    --kv-peek: 8px;
+    --kv-scale: calc(1 - var(--toast-index) * 0.05);
+    --kv-height: var(--toast-frontmost-height, var(--toast-height));
+    --kv-offset-y: calc(var(--toast-offset-y) * -1 - var(--toast-index) * var(--kv-gap) + var(--toast-swipe-movement-y));
+    --kv-y: calc(var(--toast-swipe-movement-y) - var(--toast-index) * var(--kv-peek) - (1 - var(--kv-scale)) * var(--kv-height));
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--kv-height);
+    z-index: calc(1000 - var(--toast-index));
+    transform-origin: bottom center;
+    translate: var(--toast-swipe-movement-x) var(--kv-y);
+    scale: var(--kv-scale);
+    transition:
+      translate var(--duration-slower) var(--ease-fluid),
+      scale var(--duration-slower) var(--ease-fluid),
+      opacity 350ms var(--ease-fluid),
+      height var(--duration-quick) var(--ease-out);
+    user-select: none;
+  }
+  .kv-toast::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: calc(var(--kv-gap) + 1px);
+  }
+  .kv-toast[data-expanded] {
+    --kv-y: var(--kv-offset-y);
+    scale: 1;
+    height: var(--toast-height);
+  }
+  .kv-toast[data-swiping] {
+    transition: none;
+  }
+  .kv-toast[data-starting-style] {
+    opacity: 0;
+    translate: 0 var(--shift-lg);
+  }
+  .kv-toast[data-limited] {
+    opacity: 0;
+  }
+  .kv-toast[data-ending-style] {
+    opacity: 0;
+    translate: var(--toast-swipe-movement-x) calc(var(--kv-y) + var(--shift-md));
+    transition-duration: var(--duration-base);
+  }
+  .kv-toast[data-ending-style][data-swipe-direction='right'] {
+    translate: calc(var(--toast-swipe-movement-x) + 120%) var(--kv-y);
+  }
+  .kv-toast[data-ending-style][data-swipe-direction='down'] {
+    translate: 0 calc(var(--toast-swipe-movement-y) + 120%);
+  }
+  .kv-toast[data-ending-style][data-swipe-direction='up'] {
+    translate: 0 calc(var(--toast-swipe-movement-y) - 120%);
+  }
+  @media (width < 640px) {
+    .kv-toast {
+      --kv-offset-y: calc(var(--toast-offset-y) + var(--toast-index) * var(--kv-gap) + var(--toast-swipe-movement-y));
+      --kv-y: calc(var(--toast-swipe-movement-y) + var(--toast-index) * var(--kv-peek) + (1 - var(--kv-scale)) * var(--kv-height));
+      top: 0;
+      bottom: auto;
+      transform-origin: top center;
+    }
+    .kv-toast::after {
+      top: auto;
+      bottom: 100%;
+    }
+    .kv-toast[data-starting-style] {
+      translate: 0 calc(var(--shift-lg) * -1);
+    }
+    .kv-toast[data-ending-style] {
+      translate: var(--toast-swipe-movement-x) calc(var(--kv-y) - var(--shift-md));
+    }
+  }
+  .kv-toast-content {
+    transition: opacity var(--duration-moderate) var(--ease-out);
+  }
+  .kv-toast-content[data-behind] {
+    opacity: 0;
+  }
+  .kv-toast-content[data-expanded] {
+    opacity: 1;
+  }
+
+  /* Sliding thumb for segmented control and tabs: snappy spring (CSS fallback 250ms ease-fluid in reduced motion). */
+  .kv-slide {
+    transition:
+      translate var(--spring-snappy),
+      width var(--spring-snappy),
+      height var(--spring-snappy);
+  }
+
+  /*
+   * Skeleton: fill-2 with one shimmer wave across the whole group (the gradient is fixed to the viewport), 2000ms linear.
+   * Hidden for the first 300ms so a fast load never flashes. Reduced motion: no wave (--animate-shimmer: none).
+   */
+  .kv-shimmer {
+    background-color: var(--color-fill-2);
+    background-image: linear-gradient(90deg, transparent 0%, var(--color-fill-1) 50%, transparent 100%);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    animation:
+      kv-skeleton-delay 1ms 300ms backwards,
+      var(--animate-shimmer);
+  }
+
+  /* Checkbox mark draws in 150ms, leaves in 100ms. */
+  .kv-check-draw path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset var(--duration-quick) var(--ease-out);
+  }
+  .kv-check-draw[data-starting-style] path {
+    stroke-dashoffset: 1;
+  }
+  .kv-check-draw[data-ending-style] {
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  /* Radio dot pops .5 → 1 on the snappy spring. */
+  .kv-radio-dot {
+    transition: scale var(--spring-snappy), opacity var(--duration-fast) var(--ease-out);
+  }
+  .kv-radio-dot:is([data-starting-style], [data-ending-style]) {
+    scale: 0.5;
+    opacity: 0;
+  }
+
+  /* Switch: thumb rides the snappy spring, track colour 150ms, press stretches the thumb by 4px. */
+  .kv-switch {
+    --kv-thumb: 16px;
+    --kv-travel: 16px;
+    transition: background-color var(--duration-quick) var(--ease-hover), box-shadow var(--duration-quick) var(--ease-hover);
+  }
+  .kv-switch[data-size='lg'] {
+    --kv-thumb: 28px;
+    --kv-travel: 20px;
+  }
+  .kv-switch-thumb {
+    width: var(--kv-thumb);
+    height: var(--kv-thumb);
+    transition: translate var(--spring-snappy), width var(--duration-fast) var(--ease-out);
+  }
+  .kv-switch[data-checked] .kv-switch-thumb {
+    translate: var(--kv-travel) 0;
+  }
+  .kv-switch:is(:active, [data-force-pressed]):not([data-disabled]) .kv-switch-thumb {
+    width: calc(var(--kv-thumb) + 4px);
+  }
+  .kv-switch[data-checked]:is(:active, [data-force-pressed]):not([data-disabled]) .kv-switch-thumb {
+    translate: calc(var(--kv-travel) - 4px) 0;
+  }
+
+  /* Month change: 12px slide + fade in the direction of travel. */
+  .kv-month[data-direction='next'] {
+    animation: kv-month-next var(--duration-base) var(--ease-out);
+  }
+  .kv-month[data-direction='prev'] {
+    animation: kv-month-prev var(--duration-base) var(--ease-out);
+  }
+}
+
+@keyframes kv-skeleton-delay {
+  from,
+  to {
+    opacity: 0;
+  }
+}
+@keyframes kv-month-next {
+  from {
+    opacity: 0;
+    translate: calc(var(--shift-md) * 1.5) 0;
+  }
+}
+@keyframes kv-month-prev {
+  from {
+    opacity: 0;
+    translate: calc(var(--shift-md) * -1.5) 0;
+  }
+}
+
+/* Chat «печатает…»: three dots wave in opacity, 1200ms with a 150ms phase; still under reduced motion. */
+.kv-typing > * {
+  animation: kv-typing 1200ms var(--ease-in-out) infinite;
+}
+.kv-typing > :nth-child(2) {
+  animation-delay: 150ms;
+}
+.kv-typing > :nth-child(3) {
+  animation-delay: 300ms;
+}
+[data-reduce-motion] .kv-typing > * {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kv-typing > * {
+    animation: none;
+  }
+}
+@keyframes kv-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+  }
+  30% {
+    opacity: 1;
+  }
+}

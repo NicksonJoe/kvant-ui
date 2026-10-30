@@ -1,0 +1,16 @@
+{
+  "name": "font-geist",
+  "type": "font",
+  "title": "Шрифт Geist",
+  "description": "Geist и JetBrains Mono для кода и цифр.",
+  "dependencies": [
+    "@fontsource-variable/geist@^5.3.0",
+    "@fontsource-variable/jetbrains-mono@^5.3.0"
+  ],
+  "registryDependencies": [],
+  "files": [],
+  "css": [
+    "@fontsource-variable/geist",
+    "@fontsource-variable/jetbrains-mono"
+  ]
+}

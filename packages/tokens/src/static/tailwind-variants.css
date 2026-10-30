@@ -1,0 +1,19 @@
+/*
+ * Hover styles only for real pointers; touch gets press feedback only.
+ * data-force-hover / -pressed / -focus on the interactive element force a state for docs state matrices;
+ * like real :hover and :active, a forced state also reaches the element's ancestors.
+ */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+  &:is([data-force-hover], :has([data-force-hover])) {
+    @slot;
+  }
+}
+@custom-variant active (&:is(:active, [data-force-pressed], :has([data-force-pressed])));
+@custom-variant focus-visible (&:is(:focus-visible, [data-force-focus]));
+@custom-variant focus-within (&:is(:focus-within, [data-force-focus], :has([data-force-focus])));
+@custom-variant dark (&:where([data-mode='dark'], [data-mode='dark'] *));

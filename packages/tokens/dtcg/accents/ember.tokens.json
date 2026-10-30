@@ -1,0 +1,37 @@
+{
+  "$description": "Accent «ember» (data-accent=\"ember\"): \"light\" applies in both modes, \"dark\" overrides it in dark mode.",
+  "light": {
+    "tint": { "$type": "number", "hue": { "$value": 45 }, "strength": { "$value": 0.9 } },
+    "hue": { "$type": "number", "danger": { "$value": 17 } },
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.575, 0.16, 42] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.535, 0.149, 42] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.495, 0.138, 42] } },
+      "accent-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.955, 0.022, 42] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.935, 0.032, 42] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.53, 0.147, 42] } },
+      "ring": { "$value": "{color.accent}" },
+      "info": { "$value": { "colorSpace": "oklch", "components": [0.559, 0.146, 250] } },
+      "info-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "info-soft": { "$value": { "colorSpace": "oklch", "components": [0.955, 0.03, 250] } },
+      "info-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.52, 0.137, 250] } }
+    }
+  },
+  "dark": {
+    "color": {
+      "$type": "color",
+      "accent": { "$value": { "colorSpace": "oklch", "components": [0.539, 0.15, 42] } },
+      "accent-hover": { "$value": { "colorSpace": "oklch", "components": [0.574, 0.159, 42] } },
+      "accent-pressed": { "$value": { "colorSpace": "oklch", "components": [0.519, 0.144, 42] } },
+      "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 42] } },
+      "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.3, 0.06, 42] } },
+      "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.11, 42] } },
+      "ring": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.13, 42] } },
+      "info": { "$value": { "colorSpace": "oklch", "components": [0.524, 0.137, 250] } },
+      "info-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 250] } },
+      "info-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.097, 250] } }
+    }
+  }
+}

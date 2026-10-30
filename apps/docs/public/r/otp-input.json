@@ -1,0 +1,20 @@
+{
+  "name": "otp-input",
+  "type": "component",
+  "title": "Код подтверждения",
+  "description": "Шесть ячеек тройками — так код легче сверить с СМС. Это одно поле: вставка и автозаполнение кладут код целиком, последняя цифра сразу отправляет проверку.",
+  "dependencies": [
+    "@base-ui/react@^1.9.0"
+  ],
+  "registryDependencies": [
+    "cn"
+  ],
+  "files": [
+    {
+      "target": "components/otp-input.tsx",
+      "content": "import { OTPField } from '@base-ui/react/otp-field';\nimport { Fragment, useId } from 'react';\nimport { cn } from '../lib/cn';\n\nconst cell =\n  'h-13 w-11 shrink-0 rounded-md border border-input bg-field text-center text-[22px]/7 font-semibold text-fg-1 tabular-nums outline-none ' +\n  'transition-[border-color,box-shadow,background-color] duration-(--duration-fast) ease-hover hover:border-fg-3 ' +\n  'focus-visible:border-ring focus-visible:shadow-[0_0_0_1px_var(--color-ring)] ' +\n  'aria-invalid:border-danger data-invalid:border-danger aria-invalid:focus-visible:shadow-[0_0_0_1px_var(--color-danger)] ' +\n  'data-success:border-success data-success:bg-success-soft disabled:bg-surface-2 disabled:hover:border-input';\n\nexport interface OtpInputProps extends Omit<OTPField.Root.Props, 'className' | 'children' | 'length'> {\n  /** Number of cells. */\n  length?: number;\n  /** A dash after every N cells — 3 + 3 is easier to check against the SMS; 0 removes the dashes. */\n  groupSize?: number;\n  /** Wrong code: red cells and one shake of the row. Clear the value afterwards. */\n  invalid?: boolean;\n  /** Code accepted: green cells. */\n  success?: boolean;\n  /** Name of the first cell when there is no visible label. */\n  'aria-label'?: string;\n  className?: string;\n}\n\n/**\n * One-time code by cells (44 × 52). Typing moves to the next cell, Backspace goes back, a paste or an\n * SMS autofill (`one-time-code`) fills them all; `onValueComplete` fires when the last one is filled.\n */\nexport function OtpInput({\n  length = 6,\n  groupSize = 3,\n  invalid = false,\n  success = false,\n  validationType = 'numeric',\n  'aria-label': ariaLabel,\n  className,\n  ...props\n}: OtpInputProps) {\n  const unit = validationType === 'numeric' ? 'Цифра' : 'Символ';\n  const labelId = useId();\n  return (\n    <OTPField.Root\n      data-slot=\"otp-input\"\n      length={length}\n      validationType={validationType}\n      className={cn('flex items-center gap-2 data-disabled:opacity-50', invalid && 'animate-[kv-shake_300ms_var(--ease-out)]', className)}\n      {...props}\n    >\n      {/* Base UI drops aria-label on the first cell: it takes its name from a label element */}\n      {ariaLabel ? (\n        <span id={labelId} hidden>\n          {ariaLabel}\n        </span>\n      ) : null}\n      {Array.from({ length }, (_, index) => (\n        <Fragment key={index}>\n          {groupSize > 0 && index > 0 && index % groupSize === 0 ? (\n            <OTPField.Separator data-slot=\"otp-input-separator\" className=\"h-0.5 w-2.5 shrink-0 rounded-full bg-fg-4\" />\n          ) : null}\n          <OTPField.Input\n            {...(index > 0 ? { 'aria-label': `${unit} ${index + 1} из ${length}` } : ariaLabel ? { 'aria-labelledby': labelId } : {})}\n            // Only ever add aria-invalid: an undefined here would hide the invalid state a Field sets.\n            {...(invalid ? { 'aria-invalid': true } : {})}\n            data-success={success || undefined}\n            className={cell}\n          />\n        </Fragment>\n      ))}\n    </OTPField.Root>\n  );\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

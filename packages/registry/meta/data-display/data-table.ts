@@ -1,0 +1,85 @@
+import type { ReadyComponentMeta } from '../types';
+
+const meta: ReadyComponentMeta = {
+  id: 'data-table',
+  status: 'stable',
+  title: 'Таблица данных',
+  description:
+    'Панель инструментов, таблица и подвал — одна система по высоте 32. Сортировка, выбор строк, пагинация и стеклянная панель массовых действий, которая плавает над строками и не сдвигает их.',
+  category: 'data-display',
+  paperBoard: '5L9-0',
+  anatomy: [
+    'Панель: поиск 260, чипы фильтров, вид, главное действие',
+    'Шапка с кнопками сортировки и флажком «все»',
+    'Строки 48 с флажком и действием «…»',
+    'Стеклянная панель выбора h48 по центру',
+    'Подвал 56: «Показано 1–10 из 248» и пагинация',
+  ],
+  related: ['table', 'pagination', 'checkbox', 'empty-state', 'skeleton'],
+  source: { file: 'components/data-table.tsx', exports: ['DataTable'] },
+  dependencies: { npm: ['lucide-react', '@base-ui/react'], registry: ['table', 'checkbox', 'pagination', 'button', 'skeleton'] },
+  props: [
+    { name: 'aria-label', type: 'string', required: true, description: 'Название таблицы для экранного диктора.', control: false },
+    { name: 'rows', type: 'object', required: true, signature: 'readonly Row[]', description: 'Записи; фильтрацию делает страница, таблица только сортирует и листает.', control: false },
+    {
+      name: 'columns',
+      type: 'object',
+      required: true,
+      signature: 'readonly { id; header; cell(row); sortValue?(row); numeric?; className? }[]',
+      description: 'Колонки. sortValue делает заголовок кнопкой сортировки; numeric — числа вправо.',
+      control: false,
+    },
+    { name: 'getRowId', type: 'function', required: true, signature: '(row: Row) => string', description: 'Ключ строки и значение выбора.', control: false },
+    { name: 'density', type: 'enum', options: ['compact', 'comfortable', 'touch'], default: 'comfortable', description: 'Строки 40 / 48 / 56.' },
+    { name: 'selectable', type: 'boolean', default: false, description: 'Колонка флажков; пробел выбирает строку в фокусе, Esc снимает выбор.' },
+    { name: 'loading', type: 'boolean', default: false, description: 'Скелетон под настоящей шапкой — колонки не прыгают, когда приходят данные.' },
+    { name: 'pageSize', type: 'number', description: 'Строк на странице; подвал показывает диапазон и пагинацию.', control: false },
+    { name: 'selected', type: 'object', signature: 'readonly string[]', description: 'Управляемый выбор (или defaultSelected).', control: false },
+    { name: 'onSelectedChange', type: 'function', signature: '(ids: readonly string[]) => void', description: 'Новый выбор.', control: false },
+    { name: 'sort', type: 'object', signature: '{ column: string; direction: "ascending" | "descending" } | null', description: 'Управляемая сортировка (или defaultSort).', control: false },
+    { name: 'bulkActions', type: 'function', signature: '(ids, clear) => ReactNode', description: 'Кнопки стеклянной панели выбора.', control: false },
+    { name: 'rowActions', type: 'function', signature: '(row: Row) => ReactNode', description: 'Действие строки «…» — видно при наведении и фокусе, на касании всегда.', control: false },
+    { name: 'toolbar', type: 'node', description: 'Панель над таблицей.', control: false },
+    { name: 'empty', type: 'node', description: 'Что показать, когда строк нет, — обычно EmptyState.', control: false },
+    { name: 'total', type: 'number', description: 'Данные с сервера: rows — только текущая страница, total — всего записей.', control: false },
+  ],
+  slots: [
+    { name: 'data-table', description: 'Корень: панель и карточка таблицы.' },
+    { name: 'data-table-toolbar', description: 'Панель инструментов.' },
+    { name: 'table', description: 'Таблица; aria-busy во время загрузки.' },
+    { name: 'data-table-footer', description: 'Подвал с диапазоном и пагинацией.' },
+  ],
+  states: [
+    { id: 'rest', label: 'покой', description: 'Строка 48, разделитель separator, слот действия пуст, но занят.' },
+    { id: 'hover', label: 'наведение', description: 'Фон fill-1, появляется «…» ghost 28.' },
+    { id: 'selected', label: 'выбрано', description: 'Фон accent-soft, флажок включён, в шапке — частичный.' },
+    { id: 'focus', label: 'фокус', description: 'Кольцо 2 ring внутри строки; ↑ ↓ по строкам, пробел — выбор.' },
+    { id: 'loading', label: 'загрузка', description: 'Скелетон fill-2 под шапкой.', props: { loading: true } },
+    { id: 'empty', label: 'пусто', description: 'EmptyState в теле таблицы, шапка остаётся.' },
+  ],
+  keyboard: [
+    { keys: ['Tab'], action: 'Панель → сортировка → строки → подвал' },
+    { keys: ['↑', '↓'], action: 'Соседняя строка' },
+    { keys: ['Home', 'End'], action: 'Первая или последняя строка страницы' },
+    { keys: ['Space'], action: 'Выбирает строку в фокусе' },
+    { keys: ['Esc'], action: 'Снимает выбор и прячет панель массовых действий' },
+  ],
+  a11y: [
+    'Нативная таблица с aria-label; сортируемый заголовок — кнопка внутри th, направление в aria-sort.',
+    'Выбранные строки — aria-selected; у флажка строки название «Выбрать: …» из rowLabel.',
+    'Панель выбора — group «Действия с выбранными»; скрытая панель inert и aria-hidden.',
+    'Подвал говорит, что показано: «Показано 1–10 из 248».',
+  ],
+  motion: [
+    { label: 'Панель выбора', value: 'появление: y 16 + opacity, 250 мс ease-fluid; уход 150 мс ease-exit' },
+    { label: 'Счётчик выбора', value: 'меняется без анимации' },
+    { label: 'Стрелка сортировки', value: 'поворот 180°, 150 мс ease-out' },
+    { label: 'Подсветка строки с клавиатуры', value: '0 мс' },
+  ],
+  examples: [
+    { id: 'deals', title: 'Сделки', description: 'Поиск, фильтры, сортировка по сумме, выбор с панелью действий и пагинация.' },
+    { id: 'states', title: 'Загрузка и пусто', description: 'Скелетон под настоящей шапкой и пустой результат фильтра.' },
+  ],
+};
+
+export default meta;
