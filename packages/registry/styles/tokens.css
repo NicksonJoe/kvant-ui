@@ -242,6 +242,18 @@
   --color-chart-6: oklch(0.62 0.16 140);
   --color-chart-7: oklch(0.62 0.16 295);
   --color-chart-8: oklch(0.62 0.16 25);
+  /* sequential magnitude scale, one chart-1 hue light to dark; seq-1 also fills forecast bands */
+  --color-seq-1: oklch(0.94 0.03 255);
+  --color-seq-2: oklch(0.86 0.07 255);
+  --color-seq-3: oklch(0.76 0.11 255);
+  --color-seq-4: oklch(0.64 0.15 255);
+  --color-seq-5: oklch(0.52 0.16 255);
+  /* diverging polarity scale: neg = chart-2 hue, pos = chart-1 hue, hueless midpoint */
+  --color-div-mid: oklch(0.88 0.004 255);
+  --color-div-neg-2: oklch(0.62 0.151 50);
+  --color-div-neg-1: oklch(0.84 0.07 50);
+  --color-div-pos-1: oklch(0.84 0.07 255);
+  --color-div-pos-2: oklch(0.62 0.16 255);
 
   --shadow-raised: 0 0 0 1px var(--color-hairline), 0 1px 2px oklch(var(--ink) / 0.05);
   --shadow-control: 0 0 0 1px var(--color-border), 0 1px 2px oklch(var(--ink) / 0.06);
@@ -297,6 +309,17 @@
   --color-danger-hover: oklch(0.582 0.19 var(--hue-danger));
   --color-danger-soft: oklch(0.27 0.05 var(--hue-danger));
   --color-danger-soft-fg: oklch(0.8 0.105 var(--hue-danger));
+  /* dark steps of the same scales: low values sink toward the surface, high values rise toward the ink */
+  --color-seq-1: oklch(0.3 0.05 255);
+  --color-seq-2: oklch(0.4 0.09 255);
+  --color-seq-3: oklch(0.52 0.13 255);
+  --color-seq-4: oklch(0.64 0.15 255);
+  --color-seq-5: oklch(0.78 0.12 255);
+  --color-div-mid: oklch(0.4 0.004 255);
+  --color-div-neg-2: oklch(0.7 0.14 50);
+  --color-div-neg-1: oklch(0.48 0.09 50);
+  --color-div-pos-1: oklch(0.48 0.09 255);
+  --color-div-pos-2: oklch(0.7 0.14 255);
 
   --shadow-raised: 0 0 0 1px oklch(1 0 0 / 0.07), inset 0 1px 0 oklch(1 0 0 / 0.06);
   --shadow-control: 0 0 0 1px oklch(1 0 0 / 0.08), inset 0 1px 0 oklch(1 0 0 / 0.06);

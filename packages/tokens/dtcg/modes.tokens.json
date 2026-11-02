@@ -137,7 +137,23 @@
       "chart-5": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 345] } },
       "chart-6": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 140] } },
       "chart-7": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 295] } },
-      "chart-8": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 25] } }
+      "chart-8": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 25] } },
+      "seq-1": {
+        "$description": "sequential magnitude scale, one chart-1 hue light to dark; seq-1 also fills forecast bands",
+        "$value": { "colorSpace": "oklch", "components": [0.94, 0.03, 255] }
+      },
+      "seq-2": { "$value": { "colorSpace": "oklch", "components": [0.86, 0.07, 255] } },
+      "seq-3": { "$value": { "colorSpace": "oklch", "components": [0.76, 0.11, 255] } },
+      "seq-4": { "$value": { "colorSpace": "oklch", "components": [0.64, 0.15, 255] } },
+      "seq-5": { "$value": { "colorSpace": "oklch", "components": [0.52, 0.16, 255] } },
+      "div-mid": {
+        "$description": "diverging polarity scale: neg = chart-2 hue, pos = chart-1 hue, hueless midpoint",
+        "$value": { "colorSpace": "oklch", "components": [0.88, 0.004, 255] }
+      },
+      "div-neg-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.151, 50] } },
+      "div-neg-1": { "$value": { "colorSpace": "oklch", "components": [0.84, 0.07, 50] } },
+      "div-pos-1": { "$value": { "colorSpace": "oklch", "components": [0.84, 0.07, 255] } },
+      "div-pos-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 255] } }
     },
     "shadow": {
       "$type": "shadow",
@@ -273,7 +289,20 @@
       "danger-soft-fg": {
         "$value": { "colorSpace": "oklch", "components": [0.8, 0.105, 27] },
         "$extensions": { "cloud.norda.kvant": { "hue": "danger" } }
-      }
+      },
+      "seq-1": {
+        "$description": "dark steps of the same scales: low values sink toward the surface, high values rise toward the ink",
+        "$value": { "colorSpace": "oklch", "components": [0.3, 0.05, 255] }
+      },
+      "seq-2": { "$value": { "colorSpace": "oklch", "components": [0.4, 0.09, 255] } },
+      "seq-3": { "$value": { "colorSpace": "oklch", "components": [0.52, 0.13, 255] } },
+      "seq-4": { "$value": { "colorSpace": "oklch", "components": [0.64, 0.15, 255] } },
+      "seq-5": { "$value": { "colorSpace": "oklch", "components": [0.78, 0.12, 255] } },
+      "div-mid": { "$value": { "colorSpace": "oklch", "components": [0.4, 0.004, 255] } },
+      "div-neg-2": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.14, 50] } },
+      "div-neg-1": { "$value": { "colorSpace": "oklch", "components": [0.48, 0.09, 50] } },
+      "div-pos-1": { "$value": { "colorSpace": "oklch", "components": [0.48, 0.09, 255] } },
+      "div-pos-2": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.14, 255] } }
     },
     "shadow": {
       "$type": "shadow",

@@ -70,6 +70,16 @@
   --color-chart-6: var(--color-chart-6);
   --color-chart-7: var(--color-chart-7);
   --color-chart-8: var(--color-chart-8);
+  --color-seq-1: var(--color-seq-1);
+  --color-seq-2: var(--color-seq-2);
+  --color-seq-3: var(--color-seq-3);
+  --color-seq-4: var(--color-seq-4);
+  --color-seq-5: var(--color-seq-5);
+  --color-div-mid: var(--color-div-mid);
+  --color-div-neg-2: var(--color-div-neg-2);
+  --color-div-neg-1: var(--color-div-neg-1);
+  --color-div-pos-1: var(--color-div-pos-1);
+  --color-div-pos-2: var(--color-div-pos-2);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
   --color-accent-pressed: var(--color-accent-pressed);
