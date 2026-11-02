@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { oklchToRgba, resolveColors, toHex } from '../src/color.ts';
+import { oklchToRgba, resolveColors, toHex, type Rgba } from '../src/color.ts';
 import { buildTokensCss } from '../src/css.ts';
 import { ACCENTS, DEFAULT_ACCENT, MODES, loadTokens, type Accent, type Mode } from '../src/dtcg.ts';
 import { buildDart, buildPhp } from '../src/native.ts';
@@ -53,6 +53,28 @@ describe('colours', () => {
   it('resolves every colour of every accent in both modes', () => {
     const names = [...resolveColors(sets, DEFAULT_ACCENT, 'light').keys()];
     for (const accent of ACCENTS) for (const mode of MODES) expect([...resolveColors(sets, accent, mode).keys()], `${accent}/${mode}`).toEqual(names);
+  });
+
+  it('keeps fg-4 readable as text (4.5:1) on the surfaces text sits on, in every accent and mode', () => {
+    const luminance = ({ r, g, b }: Rgba): number => {
+      const [R = 0, G = 0, B = 0] = [r, g, b].map((v) => (v / 255 <= 0.04045 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+    };
+    for (const accent of ACCENTS)
+      for (const mode of MODES) {
+        const colors = resolveColors(sets, accent, mode);
+        const color = (name: string): Rgba => {
+          const value = colors.get(name);
+          if (!value) throw new Error(`${accent}/${mode}: no --${name}`);
+          return value;
+        };
+        const fg = luminance(color('color-fg-4'));
+        for (const surface of ['color-background', 'color-surface-1', 'color-surface-2']) {
+          const bg = luminance(color(surface));
+          const ratio = (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05);
+          expect(ratio, `${accent}/${mode} fg-4 on ${surface}`).toBeGreaterThanOrEqual(4.5);
+        }
+      }
   });
 
   it('follows the accent tint in neutrals and the dark mode overrides', () => {

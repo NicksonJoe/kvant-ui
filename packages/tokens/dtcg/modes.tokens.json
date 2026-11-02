@@ -35,10 +35,13 @@
         "$extensions": { "cloud.norda.kvant": { "tint": true } }
       },
       "fg-4": {
+        "$value": { "colorSpace": "oklch", "components": [0.535, 0.016, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "input": {
         "$value": { "colorSpace": "oklch", "components": [0.616, 0.016, 258] },
         "$extensions": { "cloud.norda.kvant": { "tint": true } }
       },
-      "input": { "$value": "{color.fg-4}" },
       "border": {
         "$value": { "colorSpace": "oklch", "components": [0.215, 0.012, 258], "alpha": 0.14 },
         "$extensions": { "cloud.norda.kvant": { "ink": true } }
@@ -198,10 +201,13 @@
         "$extensions": { "cloud.norda.kvant": { "tint": true } }
       },
       "fg-4": {
+        "$value": { "colorSpace": "oklch", "components": [0.64, 0.014, 258] },
+        "$extensions": { "cloud.norda.kvant": { "tint": true } }
+      },
+      "input": {
         "$value": { "colorSpace": "oklch", "components": [0.584, 0.014, 258] },
         "$extensions": { "cloud.norda.kvant": { "tint": true } }
       },
-      "input": { "$value": "{color.fg-4}" },
       "border": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.13 } },
       "hairline": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.09 } },
       "separator": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.07 } },
