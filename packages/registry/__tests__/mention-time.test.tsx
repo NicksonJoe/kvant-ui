@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { MentionField, RelativeTime, formatRelativeTime, type MentionPerson } from '..';
@@ -14,6 +14,17 @@ describe('formatRelativeTime', () => {
     ['2025-12-30T09:00:00', '30 декабря 2025'],
   ])('%s → %s', (date, text) => {
     expect(formatRelativeTime(new Date(date), now)).toBe(text);
+  });
+});
+
+describe('formatRelativeTime across a DST switch', () => {
+  it('still says «вчера» the day after a 25-hour day', () => {
+    vi.stubEnv('TZ', 'Europe/Berlin');
+    try {
+      expect(formatRelativeTime(new Date('2026-10-25T18:00:00'), new Date('2026-10-26T10:00:00'))).toBe('вчера, 18:00');
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 });
 
@@ -62,5 +73,14 @@ describe('MentionField', () => {
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('listbox')).toBeNull();
     expect(box.textContent).toBe('@ил');
+  });
+
+  it('keeps line breaks and mentions on later lines, where the browser wraps each line in a div', () => {
+    const onValueChange = vi.fn();
+    render(<MentionField aria-label="Комментарий" people={people} onValueChange={onValueChange} />);
+    const box = screen.getByRole('textbox', { name: 'Комментарий' });
+    box.innerHTML = 'Первая строка<div>Вторая <span contenteditable="false" data-mention-id="maria">@Мария Ким</span>&nbsp;</div>';
+    fireEvent.input(box);
+    expect(onValueChange).toHaveBeenLastCalledWith({ text: 'Первая строка\nВторая @Мария Ким\u00a0', mentions: ['maria'] });
   });
 });

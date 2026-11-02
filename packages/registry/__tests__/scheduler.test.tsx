@@ -52,4 +52,28 @@ describe('Scheduler', () => {
     await user.click(demo);
     expect(onSelect).toHaveBeenCalledWith('demo');
   });
+
+  it('keeps events outside the shown hours inside the grid, pinned to its edge', () => {
+    render(
+      <Scheduler
+        aria-label="Календарь"
+        events={[
+          { id: 'early', title: 'Ранний созвон', start: '2026-11-02T07:00', end: '2026-11-02T07:30' },
+          { id: 'late', title: 'Поздний', start: '2026-11-02T21:00', end: '2026-11-02T22:00' },
+          { id: 'long', title: 'Выезд', start: '2026-11-02T18:00', end: '2026-11-02T23:00' },
+        ]}
+        defaultView="day"
+        defaultDate="2026-11-02"
+      />,
+    );
+    // 8:00–20:00 at 48px an hour: the grid is 576px tall
+    const early = screen.getByRole('button', { name: /Ранний созвон/ });
+    const late = screen.getByRole('button', { name: /Поздний/ });
+    const long = screen.getByRole('button', { name: /Выезд/ });
+    expect(early.style.top).toBe('0px');
+    expect(Number.parseFloat(late.style.top) + Number.parseFloat(late.style.height)).toBeLessThanOrEqual(576);
+    expect(Number.parseFloat(long.style.top) + Number.parseFloat(long.style.height)).toBeLessThanOrEqual(576);
+    expect(early.dataset.clipped).toBe('start');
+    expect(late.dataset.clipped).toBe('end');
+  });
 });

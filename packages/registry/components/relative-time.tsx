@@ -14,7 +14,9 @@ export function formatRelativeTime(date: Date, now: Date = new Date()): string {
   if (diff >= 0 && diff < HOUR) return `${Math.floor(diff / MINUTE)} мин назад`;
   if (diff >= 0 && diff < 6 * HOUR && startOfDay(date) === startOfDay(now)) return `${Math.floor(diff / HOUR)} ч назад`;
   if (startOfDay(date) === startOfDay(now)) return `сегодня, ${clock(date)}`;
-  if (startOfDay(now) - startOfDay(date) === 24 * HOUR) return `вчера, ${clock(date)}`;
+  // compare calendar days, not 24 hours: a DST day is 23 or 25 hours long
+  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
+  if (startOfDay(date) === yesterday) return `вчера, ${clock(date)}`;
   if (date.getFullYear() === now.getFullYear()) return `${date.getDate()} ${MONTHS[date.getMonth()]}, ${clock(date)}`;
   return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }

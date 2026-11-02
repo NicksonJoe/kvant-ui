@@ -50,10 +50,11 @@ describe('SwipeActions', () => {
       </SwipeActions>,
     );
     const row = screen.getByText('Айдентика для пекарни').parentElement as HTMLElement;
-    expect(screen.getByRole('button', { name: 'Задача' }).tabIndex).toBe(-1);
+    const root = row.parentElement as HTMLElement;
+    expect(root.dataset.state).toBe('closed');
 
     swipe(row, 300, 220);
-    expect(screen.getByRole('button', { name: 'Задача' }).tabIndex).toBe(0);
+    expect(root.dataset.state).toBe('trailing');
     fireEvent.click(screen.getByRole('button', { name: 'Задача' }));
     expect(onTask).toHaveBeenCalledOnce();
   });
@@ -104,5 +105,44 @@ describe('PullToRefresh', () => {
     fireEvent.touchMove(area, { touches: [{ clientX: 0, clientY: 50 }] });
     fireEvent.touchEnd(area, { changedTouches: [{ clientX: 0, clientY: 50 }] });
     expect(onRefresh).not.toHaveBeenCalled();
+  });
+});
+
+describe('SwipeActions from the keyboard', () => {
+  it('opens the side whose action gets focus and closes when focus leaves', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <SwipeActions trailing={[{ id: 'task', label: 'Задача', onSelect: () => {} }]}>
+          <button type="button">Айдентика для пекарни</button>
+        </SwipeActions>
+        <button type="button">после</button>
+      </>,
+    );
+    await user.tab();
+    expect(document.activeElement?.textContent).toBe('Айдентика для пекарни');
+    await user.tab();
+    expect(document.activeElement?.textContent).toBe('Задача');
+    expect(document.querySelector('[data-slot=swipe-actions]')?.getAttribute('data-state')).toBe('trailing');
+    await user.tab();
+    expect(document.querySelector('[data-slot=swipe-actions]')?.getAttribute('data-state')).toBe('closed');
+  });
+});
+
+describe('PullToRefresh with a fast flick', () => {
+  it('refreshes when the move and the release arrive before a render', () => {
+    const onRefresh = vi.fn(async () => undefined);
+    render(
+      <PullToRefresh onRefresh={onRefresh}>
+        <p>Сделки</p>
+      </PullToRefresh>,
+    );
+    const area = screen.getByText('Сделки').parentElement as HTMLElement;
+    act(() => {
+      fireEvent.touchStart(area, { touches: [{ clientX: 0, clientY: 0 }] });
+      fireEvent.touchMove(area, { touches: [{ clientX: 0, clientY: 140 }] });
+      fireEvent.touchEnd(area, { changedTouches: [{ clientX: 0, clientY: 140 }] });
+    });
+    expect(onRefresh).toHaveBeenCalledOnce();
   });
 });

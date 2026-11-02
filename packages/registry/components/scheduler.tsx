@@ -427,19 +427,27 @@ function TimeGrid({
                 const place = lanes.get(event.id) ?? { lane: 0, lanes: 1 };
                 const width = 100 / place.lanes;
                 const selected = event.id === selectedId;
+                // events past the shown hours stay on the grid, pinned to the edge they cross, with their real times
+                const grid = hours.length * HOUR;
+                const rawTop = ((minutes(start) - startHour * 60) / 60) * HOUR;
+                const rawBottom = rawTop + ((end.getTime() - start.getTime()) / 3_600_000) * HOUR;
+                const top = Math.min(Math.max(0, rawTop), grid - 20);
+                const bottom = Math.max(Math.min(grid, rawBottom), top + 20);
+                const clipped = rawTop < 0 ? 'start' : rawBottom > grid ? 'end' : undefined;
                 return (
                   <button
                     key={event.id}
                     type="button"
                     aria-label={timedLabel(event)}
+                    data-clipped={clipped}
                     onClick={() => onSelect?.(event.id)}
                     className={cn(
                       'absolute flex flex-col overflow-hidden rounded-[6px] px-1.5 py-1 text-left text-body-xs text-fg-1',
                       place.lane > 0 && 'shadow-[0_0_0_1px_var(--color-surface-1)]',
                     )}
                     style={{
-                      top: `${((minutes(start) - startHour * 60) / 60) * HOUR}px`,
-                      height: `${Math.max(20, ((end.getTime() - start.getTime()) / 3_600_000) * HOUR - 2)}px`,
+                      top: `${top}px`,
+                      height: `${Math.max(18, bottom - top - 2)}px`,
                       left: `${place.lane * width}%`,
                       width: `${width}%`,
                       background: selected ? color(event) : `color-mix(in oklab, ${color(event)} 16%, var(--color-surface-1))`,
@@ -450,7 +458,9 @@ function TimeGrid({
                       <span className="truncate">{event.title}</span>
                     </span>
                     <span className="truncate text-caption text-fg-2 tabular-nums">
+                      {clipped === 'start' ? '↑ ' : ''}
                       {clock(start)}–{clock(end)}
+                      {clipped === 'end' ? ' ↓' : ''}
                     </span>
                   </button>
                 );

@@ -31,13 +31,23 @@ const LIMIT = 6;
 function serialize(root: HTMLElement): MentionValue {
   let text = '';
   const mentions: string[] = [];
-  root.childNodes.forEach((node) => {
-    if (node instanceof HTMLElement && node.dataset.mentionId) {
-      mentions.push(node.dataset.mentionId);
-      text += node.textContent ?? '';
-    } else if (node instanceof HTMLBRElement) text += '\n';
-    else text += node.textContent ?? '';
-  });
+  // browsers wrap every new line in a div (or p), so walk the whole tree, not just the top level
+  const walk = (parent: Node) => {
+    parent.childNodes.forEach((node) => {
+      if (node instanceof HTMLElement && node.dataset.mentionId) {
+        mentions.push(node.dataset.mentionId);
+        text += node.textContent ?? '';
+      } else if (node instanceof HTMLBRElement) {
+        text += '\n';
+      } else if (node instanceof HTMLElement) {
+        if (/^(DIV|P)$/.test(node.tagName) && text !== '' && !text.endsWith('\n')) text += '\n';
+        walk(node);
+      } else {
+        text += node.textContent ?? '';
+      }
+    });
+  };
+  walk(root);
   return { text, mentions };
 }
 

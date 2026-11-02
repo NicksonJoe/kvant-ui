@@ -30,7 +30,7 @@ export interface SwipeActionsProps extends Omit<ComponentProps<'div'>, 'children
 
 /**
  * Quick actions behind a list row. Opens past 40 % of the actions, a full swipe (60 % of the row) runs the outer
- * positive action; «Ещё» never runs by a swipe. Only touch drags it; the buttons stay in the DOM for screen readers.
+ * positive action; «Ещё» never runs by a swipe. Touch drags it; from the keyboard, Tab onto an action opens its side.
  */
 export function SwipeActions({ leading = [], trailing = [], className, children, ...props }: SwipeActionsProps) {
   const [offset, setOffsetState] = useState(0);
@@ -114,7 +114,7 @@ export function SwipeActions({ leading = [], trailing = [], className, children,
           <button
             key={action.id}
             type="button"
-            tabIndex={open === side ? 0 : -1}
+            onFocus={() => settle(side)}
             onClick={() => {
               action.onSelect();
               settle(null);
@@ -131,9 +131,16 @@ export function SwipeActions({ leading = [], trailing = [], className, children,
     ) : null;
 
   return (
-    <div data-slot="swipe-actions" data-state={open ?? 'closed'} className={cn('relative overflow-hidden bg-background', className)} {...props}>
-      {renderActions('leading', leading)}
-      {renderActions('trailing', trailing)}
+    <div
+      data-slot="swipe-actions"
+      data-state={open ?? 'closed'}
+      // keyboard: focusing an action opens its side, leaving the row closes it
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) settle(null);
+      }}
+      className={cn('relative overflow-hidden bg-background', className)}
+      {...props}
+    >
       <div
         data-slot="swipe-actions-row"
         onPointerDown={onPointerDown}
@@ -144,11 +151,13 @@ export function SwipeActions({ leading = [], trailing = [], className, children,
           setDragging(false);
           settle(open);
         }}
-        className={cn('relative touch-pan-y bg-background', !dragging && 'transition-transform duration-(--duration-moderate) ease-fluid')}
+        className={cn('relative z-10 touch-pan-y bg-background', !dragging && 'transition-transform duration-(--duration-moderate) ease-fluid')}
         style={{ transform: `translateX(${offset}px)` }}
       >
         {children}
       </div>
+      {renderActions('leading', leading)}
+      {renderActions('trailing', trailing)}
     </div>
   );
 }

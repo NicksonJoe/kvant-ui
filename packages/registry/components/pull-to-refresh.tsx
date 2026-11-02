@@ -30,7 +30,13 @@ export function PullToRefresh({ onRefresh, className, children, ...props }: Pull
   const area = useRef<HTMLDivElement>(null);
   const start = useRef<number | null>(null);
   const [pull, setPull] = useState(0);
-  const [phase, setPhase] = useState<Phase>('idle');
+  const [phase, setPhaseState] = useState<Phase>('idle');
+  // the latest phase for touchend, which can arrive before React renders the last touchmove
+  const phaseRef = useRef<Phase>('idle');
+  const setPhase = (next: Phase) => {
+    phaseRef.current = next;
+    setPhaseState(next);
+  };
   const [result, setResult] = useState<ReactNode>(null);
 
   useEffect(() => {
@@ -134,7 +140,7 @@ export function PullToRefresh({ onRefresh, className, children, ...props }: Pull
         onTouchEnd={() => {
           if (start.current === null) return;
           start.current = null;
-          if (phase === 'armed') void refresh();
+          if (phaseRef.current === 'armed') void refresh();
           else {
             setPull(0);
             setPhase('idle');
