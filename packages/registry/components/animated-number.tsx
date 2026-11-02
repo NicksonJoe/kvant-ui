@@ -1,4 +1,4 @@
-import { useEffect, useState, type ComponentProps } from 'react';
+import type { ComponentProps } from 'react';
 import { cn } from '../lib/cn';
 
 const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -17,8 +17,6 @@ export interface AnimatedNumberProps extends Omit<ComponentProps<'span'>, 'child
  * The first render shows the value at once; tabular digits keep the width; screen readers get only the final value.
  */
 export function AnimatedNumber({ value, format = defaultFormat, suffix, className, ...props }: AnimatedNumberProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
   const text = format(value);
   const chars = [...text];
 
@@ -34,10 +32,8 @@ export function AnimatedNumber({ value, format = defaultFormat, suffix, classNam
             <span key={key} data-slot="animated-number-digit" data-value={char} className="relative inline-block h-[1lh] overflow-hidden">
               <span className="invisible">0</span>
               <span
-                className={cn(
-                  'absolute inset-x-0 top-0 flex flex-col motion-reduce:transition-none',
-                  mounted && 'transition-transform duration-(--duration-deliberate) ease-fluid',
-                )}
+                // a transition never runs on the first paint, so the initial value simply stands in place
+                className="absolute inset-x-0 top-0 flex flex-col transition-transform duration-(--duration-deliberate) ease-fluid motion-reduce:transition-none"
                 style={{ transform: `translateY(-${Number(char) * 10}%)` }}
               >
                 {DIGITS.map((digit) => (

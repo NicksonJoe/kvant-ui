@@ -15,6 +15,8 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // the module cache keeps old import.meta.glob results, so new examples stay invisible to meta tests
+    fsModuleCache: false,
     setupFiles: ['./test/setup.ts'],
     css: false,
   },

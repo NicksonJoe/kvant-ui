@@ -493,6 +493,21 @@
       ]
     },
     {
+      "name": "mention",
+      "type": "component",
+      "title": "Упоминания",
+      "description": "«@» в поле открывает список людей прямо под кареткой. Список фильтруется по мере ввода, первая строка активна — Enter вставляет её. Упоминание становится цельным чипом: удаляется одним Backspace.",
+      "dependencies": [],
+      "registryDependencies": [
+        "card",
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/mention-field.tsx"
+      ]
+    },
+    {
       "name": "checkbox",
       "type": "component",
       "title": "Флажок",
@@ -1038,8 +1053,11 @@
         "lucide-react@^1.63.0"
       ],
       "registryDependencies": [
+        "button",
+        "checkbox",
         "cn",
-        "menu"
+        "menu",
+        "sheet"
       ],
       "css": [],
       "files": [
@@ -1241,6 +1259,22 @@
       ]
     },
     {
+      "name": "action-sheet",
+      "type": "component",
+      "title": "Лист действий",
+      "description": "Нижний лист на телефоне со списком действий об одном объекте и отдельной плашкой «Отмена». Отрицательные действия — отдельной группой и через подтверждение.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/action-sheet.tsx"
+      ]
+    },
+    {
       "name": "toast",
       "type": "component",
       "title": "Уведомление",
@@ -1365,6 +1399,23 @@
       "css": [],
       "files": [
         "components/progress.tsx"
+      ]
+    },
+    {
+      "name": "pull-to-refresh",
+      "type": "component",
+      "title": "Обновление жестом",
+      "description": "Потянуть список вниз от верха: кольцо заполняется, на пороге замыкается, после отпускания — спиннер и итог плашкой. Ошибка — полоса с «Повторить», данные остаются.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "spinner"
+      ],
+      "css": [],
+      "files": [
+        "components/pull-to-refresh.tsx"
       ]
     },
     {
@@ -1638,6 +1689,22 @@
       ]
     },
     {
+      "name": "scheduler",
+      "type": "component",
+      "title": "Планировщик",
+      "description": "Календарь событий на одних данных в трёх видах: месяц показывает плотность, неделя и день — точное время и пересечения. Категория — цвет chart-N, одинаковый во всех видах.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/scheduler.tsx"
+      ]
+    },
+    {
       "name": "kanban",
       "type": "component",
       "title": "Канбан",
@@ -1651,6 +1718,32 @@
       "css": [],
       "files": [
         "components/kanban.tsx"
+      ]
+    },
+    {
+      "name": "relative-time",
+      "type": "component",
+      "title": "Относительное время",
+      "description": "Время, как его говорят: «5 мин назад», «вчера, 18:52», «22 октября, 14:05». Точная дата — в подсказке, текст обновляется сам раз в 30 секунд.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "css": [],
+      "files": [
+        "components/relative-time.tsx"
+      ]
+    },
+    {
+      "name": "swipe-actions",
+      "type": "component",
+      "title": "Свайп по строке",
+      "description": "Быстрые действия за строкой списка на телефоне: вправо — отметить, влево — задача и «Ещё». Полный свайп выполняет крайнее положительное действие.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/swipe-actions.tsx"
       ]
     },
     {

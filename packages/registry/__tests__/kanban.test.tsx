@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Kanban, KanbanCard, type KanbanColumn, type KanbanItems } from '..';
 
 interface Deal {
@@ -71,5 +71,40 @@ describe('Kanban', () => {
     fireEvent.drop(column('Счёт выставлен'));
     expect(within(column('Счёт выставлен')).getByText('Иконки')).toBeDefined();
     expect(within(column('Квалификация')).queryByText('Иконки')).toBeNull();
+  });
+
+  describe('on a touch screen', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('moves a card after a long press and a drag to another column', () => {
+      vi.useFakeTimers();
+      render(<Board />);
+      const card = screen.getByRole('button', { name: /Иконки/ });
+      const target = column('Счёт выставлен');
+      document.elementFromPoint = () => target;
+
+      fireEvent.touchStart(card, { touches: [{ clientX: 10, clientY: 10 }] });
+      act(() => vi.advanceTimersByTime(400));
+      fireEvent.touchMove(card, { touches: [{ clientX: 600, clientY: 40 }] });
+      fireEvent.touchEnd(card, { changedTouches: [{ clientX: 600, clientY: 40 }] });
+
+      expect(within(column('Счёт выставлен')).getByText('Иконки')).toBeDefined();
+    });
+
+    it('treats a quick swipe as scrolling, not as a drag', () => {
+      vi.useFakeTimers();
+      render(<Board />);
+      const card = screen.getByRole('button', { name: /Иконки/ });
+      document.elementFromPoint = () => column('Счёт выставлен');
+
+      fireEvent.touchStart(card, { touches: [{ clientX: 10, clientY: 10 }] });
+      fireEvent.touchMove(card, { touches: [{ clientX: 60, clientY: 10 }] });
+      act(() => vi.advanceTimersByTime(400));
+      fireEvent.touchEnd(card, { changedTouches: [{ clientX: 60, clientY: 10 }] });
+
+      expect(within(column('Квалификация')).getByText('Иконки')).toBeDefined();
+    });
   });
 });

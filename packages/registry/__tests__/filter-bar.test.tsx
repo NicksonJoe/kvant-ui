@@ -73,4 +73,20 @@ describe('FilterBar', () => {
     fireEvent.click(await screen.findByRole('menuitemcheckbox', { name: 'Вера' }));
     expect(onValueChange).toHaveBeenLastCalledWith({ stage: ['negotiation'], owner: ['vera'] });
   });
+
+  it('on a narrow screen opens every filter in a bottom sheet', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<FilterBar fields={fields} value={{ stage: ['negotiation'] }} onValueChange={onValueChange} showLabel="Показать 48 сделок" />);
+
+    await user.click(screen.getByRole('button', { name: 'Фильтры, применено: 1' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Фильтры' });
+    expect(sheet).toBeDefined();
+
+    await user.click(screen.getByRole('checkbox', { name: /Олег/ }));
+    expect(onValueChange).toHaveBeenLastCalledWith({ stage: ['negotiation'], owner: ['oleg'] });
+
+    await user.click(screen.getByRole('button', { name: 'Показать 48 сделок' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  });
 });

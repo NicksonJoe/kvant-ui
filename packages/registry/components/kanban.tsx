@@ -69,6 +69,19 @@ export function Kanban<T extends { id: string }>({
   const [announcement, setAnnouncement] = useState('');
   const board = useRef<HTMLDivElement>(null);
   const refocus = useRef<string | null>(null);
+  // touch drag: a long press arms it, so a quick swipe still scrolls the board
+  const touch = useRef<{ id: string; x: number; y: number; timer: number; active: boolean } | null>(null);
+
+  useEffect(() => {
+    const element = board.current;
+    if (!element) return;
+    // React's touchmove is passive; only a native listener can stop the page from scrolling under the finger
+    const hold = (event: TouchEvent) => {
+      if (touch.current?.active) event.preventDefault();
+    };
+    element.addEventListener('touchmove', hold, { passive: false });
+    return () => element.removeEventListener('touchmove', hold);
+  }, []);
 
   useEffect(() => {
     if (refocus.current === null) return;
@@ -84,6 +97,24 @@ export function Kanban<T extends { id: string }>({
     setAnnouncement(`«${getLabel(item)}» — в «${column?.title ?? to.column}», позиция ${position} из ${list.length}`);
     refocus.current = item.id;
     onItemsChange(next);
+  };
+
+  const targetAt = (x: number, y: number): Target | null => {
+    const element = document.elementFromPoint(x, y);
+    const column = element?.closest<HTMLElement>('[data-kanban-column]')?.dataset.kanbanColumn;
+    if (column === undefined) return null;
+    const card = element?.closest<HTMLElement>('[data-kanban-id]');
+    const index = card ? (items[column] ?? []).findIndex((entry) => entry.id === card.dataset.kanbanId) : -1;
+    if (!card || index < 0) return { column, index: items[column]?.length ?? 0 };
+    const rect = card.getBoundingClientRect();
+    return { column, index: y > rect.top + rect.height / 2 ? index + 1 : index };
+  };
+
+  const endTouch = () => {
+    if (touch.current) window.clearTimeout(touch.current.timer);
+    touch.current = null;
+    setDragged(null);
+    setTarget(null);
   };
 
   const drop = (column: string) => {
@@ -114,6 +145,7 @@ export function Kanban<T extends { id: string }>({
             role="group"
             aria-label={`${column.title}, ${cards.length}`}
             data-slot="kanban-column"
+            data-kanban-column={column.id}
             onDragOver={(event) => {
               if (dragged === null) return;
               event.preventDefault();
@@ -171,6 +203,35 @@ export function Kanban<T extends { id: string }>({
                     const rect = event.currentTarget.getBoundingClientRect();
                     setTarget({ column: column.id, index: event.clientY > rect.top + rect.height / 2 ? index + 1 : index });
                   }}
+                  onTouchStart={(event) => {
+                    const point = event.touches[0];
+                    if (!point) return;
+                    const timer = window.setTimeout(() => {
+                      if (!touch.current) return;
+                      touch.current.active = true;
+                      setDragged(item.id);
+                      navigator.vibrate?.(10);
+                    }, 350);
+                    touch.current = { id: item.id, x: point.clientX, y: point.clientY, timer, active: false };
+                  }}
+                  onTouchMove={(event) => {
+                    const point = event.touches[0];
+                    const current = touch.current;
+                    if (!point || !current) return;
+                    if (current.active) setTarget(targetAt(point.clientX, point.clientY));
+                    else if (Math.hypot(point.clientX - current.x, point.clientY - current.y) > 8) endTouch();
+                  }}
+                  onTouchEnd={(event) => {
+                    const point = event.changedTouches[0];
+                    if (touch.current?.active && point) {
+                      // no click after a drag
+                      event.preventDefault();
+                      const to = targetAt(point.clientX, point.clientY) ?? target;
+                      if (to) move(item, to);
+                    }
+                    endTouch();
+                  }}
+                  onTouchCancel={endTouch}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
@@ -189,7 +250,7 @@ export function Kanban<T extends { id: string }>({
                       move(item, { column: column.id, index: index + step });
                     }
                   }}
-                  className="rounded-xl outline-offset-2 transition-opacity duration-(--duration-quick) data-dragging:opacity-40"
+                  className="rounded-xl outline-offset-2 select-none [-webkit-touch-callout:none] transition-opacity duration-(--duration-quick) data-dragging:opacity-40"
                 >
                   {renderCard(item)}
                 </div>

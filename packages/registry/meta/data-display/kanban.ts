@@ -47,6 +47,7 @@ const meta: ReadyComponentMeta = {
   ],
   motion: [
     { label: 'Перетаскивание', value: 'карточка 40 %, место вставки появляется сразу' },
+    { label: 'Касание', value: 'долгое нажатие 350 мс, затем карточка идёт за пальцем', note: 'Сдвиг больше 8 px до этого — обычная прокрутка доски.' },
     { label: 'Наведение', value: 'тень raised → overlay · 150 мс', tokens: ['duration-quick'] },
   ],
   examples: [

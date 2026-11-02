@@ -11,13 +11,14 @@ const meta: ReadyComponentMeta = {
   anatomy: ['Поиск 240', 'Чип фильтра h32 accent-soft', 'Крестик чипа 24', '«+ Фильтр» ghost', 'Счётчик и «Сбросить»'],
   related: ['search-field', 'menu', 'data-table', 'kanban'],
   source: { file: 'components/filter-bar.tsx', exports: ['FilterBar'] },
-  dependencies: { npm: ['lucide-react', '@base-ui/react'], registry: ['menu'] },
+  dependencies: { npm: ['lucide-react', '@base-ui/react'], registry: ['menu', 'sheet', 'checkbox', 'button'] },
   props: [
     { name: 'fields', type: 'object', signature: 'readonly FilterField[]', required: true, control: false, description: 'Поля фильтра: id, подпись, иконка и значения со счётчиками.' },
     { name: 'value', type: 'object', signature: 'FilterValue', required: true, control: false, description: 'Выбранные значения по id поля; поля без значений в объекте нет.' },
     { name: 'onValueChange', type: 'function', signature: '(value: FilterValue) => void', required: true, description: 'Любое изменение: отметка, снятие, сброс.' },
     { name: 'search', type: 'node', control: false, description: 'Слот слева, обычно SearchField.' },
     { name: 'count', type: 'node', description: 'Счётчик справа: «48 из 312».' },
+    { name: 'showLabel', type: 'string', default: 'Показать', description: 'Основная кнопка шита на узком экране: «Показать 48 сделок».' },
   ],
   slots: [
     { name: 'filter-bar', description: 'Строка панели.' },
@@ -27,6 +28,7 @@ const meta: ReadyComponentMeta = {
     { id: 'rest', label: 'покой', description: 'Чипы accent-soft, «+ Фильтр» ghost.' },
     { id: 'open', label: 'открыто', description: 'Чип accent-soft-hover; значения галочками со счётчиками.' },
     { id: 'empty', label: 'без фильтров', description: 'Только «+ Фильтр», «Сбросить» скрыт.' },
+    { id: 'collapsed', label: 'узко', description: 'Уже 720 px: кнопка «Фильтры · N» и нижний шит с галочками, «Сбросить» и «Показать».' },
   ],
   keyboard: [
     { keys: ['Enter', 'Space'], action: 'На чипе или «+ Фильтр»: открывает список' },

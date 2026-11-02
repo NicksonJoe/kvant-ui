@@ -85,6 +85,9 @@
   .kv-sheet[data-side='left']:is([data-starting-style], [data-ending-style]) {
     translate: calc(-100% - 16px) 0;
   }
+  .kv-sheet[data-side='bottom']:is([data-starting-style], [data-ending-style]) {
+    translate: 0 calc(100% + 16px);
+  }
   .kv-sheet[data-ending-style] {
     transition-duration: var(--duration-moderate);
   }
