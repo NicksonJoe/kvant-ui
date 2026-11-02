@@ -6,12 +6,13 @@ import toggleGroup from './toggle-group';
 import fab from './fab';
 import link from './link';
 import copyButton from './copy-button';
+import backToTop from './back-to-top';
 
 const category: CategoryMeta = {
   id: 'actions',
   title: 'Действия',
   description: 'Кнопки и всё, что запускает действие или переключает режим.',
-  components: [button, buttonGroup, toggleButton, toggleGroup, fab, link, copyButton],
+  components: [button, buttonGroup, toggleButton, toggleGroup, fab, link, copyButton, backToTop],
 };
 
 export default category;

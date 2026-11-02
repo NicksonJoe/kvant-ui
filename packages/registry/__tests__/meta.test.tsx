@@ -24,8 +24,8 @@ const enumProps = (meta: ReadyComponentMeta) =>
   new Map(meta.props.filter((prop) => prop.options !== undefined).map((prop) => [prop.name, prop.options ?? []]));
 
 describe('registry meta', () => {
-  it('maps the whole inventory: 114 components with unique ids in 11 categories', () => {
-    expect(components).toHaveLength(114);
+  it('maps the whole inventory: 134 components with unique ids in 11 categories', () => {
+    expect(components).toHaveLength(134);
     expect(new Set(components.map((meta) => meta.id)).size).toBe(components.length);
     expect(categories.map((category) => category.id)).toEqual(CATEGORY_IDS);
     for (const category of categories) {

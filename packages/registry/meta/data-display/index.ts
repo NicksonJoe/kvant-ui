@@ -19,12 +19,19 @@ import codeBlock from './code-block';
 import qrCode from './qr-code';
 import timer from './timer';
 import scheduler from './scheduler';
+import kanban from './kanban';
+import infiniteScroll from './infinite-scroll';
+import sortableList from './sortable-list';
+import jsonViewer from './json-viewer';
+import relativeTime from './relative-time';
+import swipeActions from './swipe-actions';
+import gantt from './gantt';
 
 const category: CategoryMeta = {
   id: 'data-display',
   title: 'Данные',
   description: 'Карточки, списки, таблицы, бейджи, графики и медиа.',
-  components: [card, list, table, dataTable, dataList, avatar, badge, indicator, tag, kbd, accordion, carousel, marquee, timeline, chart, animatedNumber, codeBlock, qrCode, timer, scheduler],
+  components: [card, list, table, dataTable, dataList, avatar, badge, indicator, tag, kbd, accordion, carousel, marquee, timeline, chart, animatedNumber, codeBlock, qrCode, timer, scheduler, kanban, infiniteScroll, sortableList, jsonViewer, relativeTime, swipeActions, gantt],
 };
 
 export default category;

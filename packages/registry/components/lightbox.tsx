@@ -119,7 +119,7 @@ export function Lightbox({
                 style={{ scale, translate: `0 ${dragY}px` }}
                 className={cn(
                   'max-h-full max-w-full rounded-sm object-contain select-none',
-                  dragY === 0 && 'transition-[scale,translate] duration-(--duration-slow) ease-fluid',
+                  dragY === 0 && 'transition-[scale,translate] duration-(--duration-moderate) ease-fluid',
                 )}
               />
             ) : null}

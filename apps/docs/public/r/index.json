@@ -1030,6 +1030,23 @@
       ]
     },
     {
+      "name": "filter-bar",
+      "type": "component",
+      "title": "Панель фильтров",
+      "description": "Строка над списком: поиск, применённые фильтры чипами «поле: значение» и «+ Фильтр». Изменения применяются сразу, счётчик результатов обновляется вместе с ними.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "menu"
+      ],
+      "css": [],
+      "files": [
+        "components/filter-bar.tsx"
+      ]
+    },
+    {
       "name": "dialog",
       "type": "component",
       "title": "Диалог",
@@ -1201,6 +1218,26 @@
       "css": [],
       "files": [
         "components/lightbox.tsx"
+      ]
+    },
+    {
+      "name": "notification-center",
+      "type": "component",
+      "title": "Центр уведомлений",
+      "description": "Колокольчик со счётчиком непрочитанного и панель под ним: вкладки, уведомления по дням, цитата и положительные действия прямо в строке.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "cn",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/notification-center.tsx"
       ]
     },
     {
@@ -1569,6 +1606,20 @@
       ]
     },
     {
+      "name": "animated-number",
+      "type": "component",
+      "title": "Анимированное число",
+      "description": "Показывает, что значение изменилось: прокатываются только изменившиеся разряды, цифры моноширинные, ширина не прыгает. При первом показе число сразу стоит на месте.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/animated-number.tsx"
+      ]
+    },
+    {
       "name": "code-block",
       "type": "component",
       "title": "Блок кода",
@@ -1584,6 +1635,36 @@
       "css": [],
       "files": [
         "components/code-block.tsx"
+      ]
+    },
+    {
+      "name": "kanban",
+      "type": "component",
+      "title": "Канбан",
+      "description": "Этапы слева направо с карточками. Карточку переносят мышью или с клавиатуры, каждое перемещение объявляется; шапка колонки показывает число, сумму и лимит WIP.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/kanban.tsx"
+      ]
+    },
+    {
+      "name": "gantt",
+      "type": "component",
+      "title": "Диаграмма Ганта",
+      "description": "План проекта: список задач слева, недели справа. Полоса показывает план и сделанное, веха — ромб, связи «финиш → старт» со стрелкой, красная линия — сегодня.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/gantt.tsx"
       ]
     },
     {

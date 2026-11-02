@@ -13,12 +13,13 @@ import tagsInput from './tags-input';
 import maskedInput from './masked-input';
 import editable from './editable';
 import richTextEditor from './rich-text-editor';
+import mention from './mention';
 
 const category: CategoryMeta = {
   id: 'forms',
   title: 'Формы и ввод',
   description: 'Подписи и ошибки полей, ввод текста, чисел, кодов и паролей.',
-  components: [field, fieldset, form, input, textarea, inputGroup, searchField, passwordInput, numberField, otpInput, tagsInput, maskedInput, editable, richTextEditor],
+  components: [field, fieldset, form, input, textarea, inputGroup, searchField, passwordInput, numberField, otpInput, tagsInput, maskedInput, editable, richTextEditor, mention],
 };
 
 export default category;

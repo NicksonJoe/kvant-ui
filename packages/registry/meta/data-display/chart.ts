@@ -12,7 +12,7 @@ const meta: ReadyComponentMeta = {
   related: ['card', 'segmented-control', 'table', 'skeleton', 'empty-state'],
   source: {
     file: 'components/chart.tsx',
-    exports: ['AreaChart', 'LineChart', 'BarChart', 'DonutChart', 'Sparkline', 'KpiCard', 'CHART_COLORS', 'niceTicks', 'formatAxisValue'],
+    exports: ['AreaChart', 'LineChart', 'BarChart', 'DonutChart', 'BarList', 'StackedBar', 'Sparkline', 'KpiCard', 'CHART_COLORS', 'niceTicks', 'formatAxisValue'],
   },
   dependencies: { npm: ['lucide-react'], registry: [] },
   propsOf: 'AreaChart',
@@ -51,11 +51,26 @@ const meta: ReadyComponentMeta = {
         { name: 'data', type: 'object', signature: 'readonly number[]', description: 'Спарклайн за 12 недель.' },
       ],
     },
+    {
+      name: 'BarList',
+      description: 'Рейтинг: подпись и значение в строку, полоса 6 под ними, длины от наибольшего; один цвет на все полосы.',
+      props: [
+        { name: 'data', type: 'object', required: true, signature: 'readonly { label: string; value: number }[]', description: 'Строки в порядке показа, обычно по убыванию.' },
+        { name: 'formatValue', type: 'function', signature: '(value: number) => string', description: 'Формат значения.' },
+      ],
+    },
+    {
+      name: 'StackedBar',
+      description: 'Доли одного целого в полосе 12 с разрывами 2 px и легендой со значениями и процентами.',
+      props: [{ name: 'data', type: 'object', required: true, signature: 'readonly { label: string; value: number; color?: string }[]', description: 'Части целого.' }],
+    },
     { name: 'Sparkline', description: 'Форма тренда без осей: линия 1,5, заливка 18 % → 0, конечная точка.', props: [{ name: 'data', type: 'object', required: true, signature: 'readonly number[]', description: 'Значения.' }] },
   ],
   slots: [
     { name: 'chart', description: 'Линейный, площадной или столбчатый график; несёт data-kind.' },
     { name: 'donut-chart', description: 'Кольцо с легендой.' },
+    { name: 'bar-list', description: 'Рейтинг полосами.' },
+    { name: 'stacked-bar', description: 'Доли в одной полосе.' },
     { name: 'sparkline', description: 'Спарклайн.' },
     { name: 'kpi-card', description: 'Карточка показателя.' },
   ],
@@ -88,6 +103,8 @@ const meta: ReadyComponentMeta = {
     { id: 'pipeline', title: 'Сделки по этапам', description: 'Кольцо с итогом и долями этапов.' },
     { id: 'deals', title: 'Новые и закрытые сделки', description: 'Столбцы по месяцам с легендой.' },
     { id: 'sources', title: 'Заявки по источникам', description: 'Три линии за 12 недель.' },
+    { id: 'ranking', title: 'Рейтинг менеджеров', description: 'Горизонтальные полосы одного цвета.' },
+    { id: 'shares', title: 'Доли источников', description: 'Одна полоса из частей с легендой.' },
   ],
 };
 

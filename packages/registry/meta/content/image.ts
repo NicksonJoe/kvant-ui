@@ -61,7 +61,7 @@ const meta: ReadyComponentMeta = {
   motion: [
     { label: 'Загрузка', value: 'мерцание 2000 мс linear', reduced: 'статичная заливка', tokens: ['duration-shimmer'] },
     { label: 'Появление', value: 'прозрачность 0 → 1 · 200 мс · ease-out', tokens: ['duration-base'] },
-    { label: 'Наведение на плитку', value: 'затемнение 20 % · 150 мс', tokens: ['duration-fast'] },
+    { label: 'Наведение на плитку', value: 'затемнение 20 % · 150 мс', tokens: ['duration-quick'] },
   ],
   examples: [
     { id: 'ratios', title: 'Пропорции', description: '1:1, 4:3, 16:9 и 21:9 с подписями.' },

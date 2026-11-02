@@ -40,7 +40,7 @@ const meta: ReadyComponentMeta = {
   ],
   motion: [
     { label: 'Открытие', value: 'прозрачность · 200 мс · ease-out', tokens: ['duration-base'] },
-    { label: 'Масштаб', value: '250 мс · ease-fluid', tokens: ['duration-slow'] },
+    { label: 'Масштаб', value: '250 мс · ease-fluid', tokens: ['duration-moderate'] },
     { label: 'Свайп вниз', value: 'идёт за пальцем; больше 30 % высоты — закрывает' },
   ],
   examples: [

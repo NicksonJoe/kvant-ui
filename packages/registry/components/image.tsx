@@ -133,7 +133,7 @@ export function Gallery({ items, max = 5, onOpen, className, ...props }: Gallery
             <span
               aria-hidden
               className={cn(
-                'absolute inset-0 grid place-items-center rounded-md transition-colors duration-(--duration-fast) ease-out',
+                'absolute inset-0 grid place-items-center rounded-md transition-colors duration-(--duration-quick) ease-out',
                 folded ? 'bg-media-scrim text-heading-md font-semibold text-media-fg-1' : 'bg-media-bg/0 group-hover:bg-media-bg/20',
               )}
             >

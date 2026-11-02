@@ -12,12 +12,15 @@ import colorPicker from './color-picker';
 import fileUpload from './file-upload';
 import signaturePad from './signature-pad';
 import imageCropper from './image-cropper';
+import treeSelect from './tree-select';
+import transferList from './transfer-list';
+import monthPicker from './month-picker';
 
 const category: CategoryMeta = {
   id: 'pickers',
   title: 'Списки и пикеры',
   description: 'Выбор из списков, дат, времени, цвета и файлов.',
-  components: [select, nativeSelect, combobox, listbox, cascader, calendar, datePicker, dateField, timePicker, colorPicker, fileUpload, signaturePad, imageCropper],
+  components: [select, nativeSelect, combobox, listbox, cascader, calendar, datePicker, dateField, timePicker, colorPicker, fileUpload, signaturePad, imageCropper, treeSelect, transferList, monthPicker],
 };
 
 export default category;

@@ -12,12 +12,14 @@ import toolbar from './toolbar';
 import commandPalette from './command-palette';
 import treeView from './tree-view';
 import tableOfContents from './table-of-contents';
+import filterBar from './filter-bar';
+import siteFooter from './site-footer';
 
 const category: CategoryMeta = {
   id: 'navigation',
   title: 'Навигация',
   description: 'Панели, вкладки, крошки, шаги и командная палитра.',
-  components: [topbar, tabBar, sidebar, tabs, breadcrumb, pagination, navigationMenu, menubar, steps, toolbar, commandPalette, treeView, tableOfContents],
+  components: [topbar, tabBar, sidebar, tabs, breadcrumb, pagination, navigationMenu, menubar, steps, toolbar, commandPalette, treeView, tableOfContents, filterBar, siteFooter],
 };
 
 export default category;

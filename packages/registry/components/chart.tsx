@@ -454,6 +454,80 @@ export function DonutChart({ data, totalLabel, size = 136, className, 'aria-labe
   );
 }
 
+/* ---------- Bar list and stacked bar ---------- */
+
+export interface BarListItem {
+  label: string;
+  value: number;
+}
+
+export interface BarListProps extends Omit<ComponentProps<'ul'>, 'children'> {
+  'aria-label': string;
+  data: readonly BarListItem[];
+  formatValue?: (value: number) => string;
+  /** One hue for every bar: a ranking compares lengths, not colours. */
+  color?: string;
+}
+
+/** Ranking: label and value on one line, a 6px bar under them, lengths relative to the largest value. */
+export function BarList({ data, formatValue = (value) => value.toLocaleString('ru-RU'), color = CHART_COLORS[0], className, ...props }: BarListProps) {
+  const max = Math.max(0, ...data.map((item) => item.value));
+  return (
+    <ul data-slot="bar-list" className={cn('flex flex-col gap-3', className)} {...props}>
+      {data.map((item) => (
+        <li key={item.label} className="flex flex-col gap-1.5">
+          <div className="flex items-baseline gap-3 text-body-sm">
+            <span className="min-w-0 flex-1 truncate text-fg-1">{item.label}</span>
+            <span className="font-semibold text-fg-1 tabular-nums">{formatValue(item.value)}</span>
+          </div>
+          <div aria-hidden className="h-1.5 rounded-full bg-fill-2">
+            <div
+              data-slot="bar-list-bar"
+              className="h-full rounded-full"
+              style={{ width: `${max > 0 ? Math.round((item.value / max) * 1000) / 10 : 0}%`, background: color }}
+            />
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export interface StackedBarProps extends Omit<ComponentProps<'div'>, 'children'> {
+  'aria-label': string;
+  data: readonly DonutDatum[];
+  formatValue?: (value: number) => string;
+}
+
+/** Shares of one whole in a single 12px bar with 2px surface gaps, and a legend with values and percents. */
+export function StackedBar({ data, formatValue = (value) => value.toLocaleString('ru-RU'), className, 'aria-label': label, ...props }: StackedBarProps) {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  const parts = data.map((item, index) => ({
+    ...item,
+    color: item.color ?? CHART_COLORS[index % CHART_COLORS.length] ?? 'currentColor',
+    share: total > 0 ? item.value / total : 0,
+  }));
+  return (
+    <div data-slot="stacked-bar" role="group" aria-label={label} className={cn('flex flex-col gap-3', className)} {...props}>
+      <div aria-hidden className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-fill-2">
+        {parts.map((item) => (
+          <span key={item.label} data-slot="stacked-bar-segment" className="h-full" style={{ flexGrow: item.value, background: item.color }} />
+        ))}
+      </div>
+      <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+        {parts.map((item) => (
+          <li key={item.label} className="flex items-center gap-2 text-body-sm">
+            <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: item.color }} />
+            <span className="text-fg-1">{item.label}</span>
+            <span className="font-semibold text-fg-1 tabular-nums">{formatValue(item.value)}</span>
+            <span className="text-fg-3 tabular-nums">{percent(item.share)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /* ---------- Sparkline and KPI card ---------- */
 
 export interface SparklineProps extends Omit<ComponentProps<'div'>, 'children'> {
