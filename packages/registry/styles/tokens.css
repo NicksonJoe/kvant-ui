@@ -254,6 +254,16 @@
   --color-div-neg-1: oklch(0.84 0.07 50);
   --color-div-pos-1: oklch(0.84 0.07 255);
   --color-div-pos-2: oklch(0.62 0.16 255);
+  /* media chrome is always dark, the same in both modes: viewer background and video letterbox */
+  --color-media-bg: oklch(0.16 0.005 258);
+  --color-media-glass: oklch(0.233 0.007 258 / 0.72);
+  --color-media-scrim: oklch(0.16 0.005 258 / 0.7);
+  --color-media-fg-1: oklch(0.965 0.004 258);
+  --color-media-fg-2: oklch(0.775 0.01 258);
+  --color-media-hairline: oklch(1 0 0 / 0.1);
+  --color-media-fill-1: oklch(1 0 0 / 0.08);
+  --color-media-fill-2: oklch(1 0 0 / 0.12);
+  --color-media-ring: oklch(0.7 0.13 258);
 
   --shadow-raised: 0 0 0 1px var(--color-hairline), 0 1px 2px oklch(var(--ink) / 0.05);
   --shadow-control: 0 0 0 1px var(--color-border), 0 1px 2px oklch(var(--ink) / 0.06);

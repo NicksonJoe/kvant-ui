@@ -153,7 +153,16 @@
       "div-neg-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.151, 50] } },
       "div-neg-1": { "$value": { "colorSpace": "oklch", "components": [0.84, 0.07, 50] } },
       "div-pos-1": { "$value": { "colorSpace": "oklch", "components": [0.84, 0.07, 255] } },
-      "div-pos-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 255] } }
+      "div-pos-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 255] } },
+      "media-bg": { "$description": "media chrome is always dark, the same in both modes: viewer background and video letterbox", "$value": { "colorSpace": "oklch", "components": [0.16, 0.005, 258] } },
+      "media-glass": { "$value": { "colorSpace": "oklch", "components": [0.233, 0.007, 258], "alpha": 0.72 } },
+      "media-scrim": { "$value": { "colorSpace": "oklch", "components": [0.16, 0.005, 258], "alpha": 0.7 } },
+      "media-fg-1": { "$value": { "colorSpace": "oklch", "components": [0.965, 0.004, 258] } },
+      "media-fg-2": { "$value": { "colorSpace": "oklch", "components": [0.775, 0.01, 258] } },
+      "media-hairline": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.1 } },
+      "media-fill-1": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.08 } },
+      "media-fill-2": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.12 } },
+      "media-ring": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.13, 258] } }
     },
     "shadow": {
       "$type": "shadow",

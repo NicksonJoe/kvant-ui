@@ -1186,6 +1186,24 @@
       ]
     },
     {
+      "name": "lightbox",
+      "type": "component",
+      "title": "Просмотр медиа",
+      "description": "Полноэкранный просмотр фото поверх страницы, всегда тёмный. Счётчик и имя файла, масштаб, скачивание, стрелки и миниатюры; закрывается Esc, кликом по фону и свайпом вниз.",
+      "dependencies": [
+        "@base-ui/react@^1.9.0",
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "image"
+      ],
+      "css": [],
+      "files": [
+        "components/lightbox.tsx"
+      ]
+    },
+    {
       "name": "toast",
       "type": "component",
       "title": "Уведомление",
@@ -1566,6 +1584,22 @@
       "css": [],
       "files": [
         "components/code-block.tsx"
+      ]
+    },
+    {
+      "name": "image",
+      "type": "component",
+      "title": "Изображение",
+      "description": "Картинка в рамке пропорций: держит место до загрузки, плавно проявляется и не сдвигает страницу. Галерея превью открывает просмотр медиа.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn"
+      ],
+      "css": [],
+      "files": [
+        "components/image.tsx"
       ]
     },
     {
