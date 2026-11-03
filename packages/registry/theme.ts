@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, use, useCallback, useEffect, useMemo, useState } from 'react';
 
 export const ACCENTS = ['graphite', 'cobalt', 'iris', 'aqua', 'jade', 'amber', 'ember', 'orchid'] as const;
 export type Accent = (typeof ACCENTS)[number];
@@ -71,11 +71,32 @@ export function applyTheme(theme: ThemePreferences, root: HTMLElement = document
   root.toggleAttribute('data-reduce-motion', theme.reduceMotion);
 }
 
-/** Theme preferences synced to <html> and localStorage; `system` mode follows the OS live. */
-export function useTheme(): [ThemePreferences, (patch: Partial<ThemePreferences>) => void] {
+export type ThemeState = [ThemePreferences, (patch: Partial<ThemePreferences>) => void];
+
+/** Filled by ThemeProvider: every useTheme below it reads and writes one state. */
+export const ThemeContext = createContext<ThemeState | null>(null);
+
+let settle: ReturnType<typeof setTimeout> | undefined;
+
+/** Colours cross-fade while a switch settles (components.css); a little longer than the 200ms fade itself. */
+function crossFade(): void {
+  const root = document.documentElement;
+  root.setAttribute('data-theme-transition', '');
+  clearTimeout(settle);
+  settle = setTimeout(() => root.removeAttribute('data-theme-transition'), 300);
+}
+
+/**
+ * Theme preferences synced to <html> and localStorage; `system` mode follows the OS live.
+ * Under ThemeProvider every call shares the provider's state, without it each call keeps its own.
+ */
+export function useTheme(): ThemeState {
+  const shared = use(ThemeContext);
+  const own = shared === null;
   const [theme, setTheme] = useState(readThemePreferences);
 
   useEffect(() => {
+    if (!own) return;
     applyTheme(theme);
     try {
       localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
@@ -87,7 +108,12 @@ export function useTheme(): [ThemePreferences, (patch: Partial<ThemePreferences>
     const sync = () => applyTheme(theme);
     query.addEventListener('change', sync);
     return () => query.removeEventListener('change', sync);
-  }, [theme]);
+  }, [theme, own]);
 
-  return [theme, (patch) => setTheme((current) => ({ ...current, ...patch }))];
+  const update = useCallback((patch: Partial<ThemePreferences>) => {
+    crossFade();
+    setTheme((current) => ({ ...current, ...patch }));
+  }, []);
+  const state = useMemo<ThemeState>(() => [theme, update], [theme, update]);
+  return shared ?? state;
 }

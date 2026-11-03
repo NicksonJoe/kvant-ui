@@ -66,7 +66,7 @@ export interface ToastProviderProps {
 
 /**
  * Stack of 3 in the bottom-right corner, 24px from the edges (phone: top centre, under the status bar).
- * Hover or focus expands it; swipe right or down to dismiss (phone: up).
+ * Hover or focus expands it; swipe right or down to dismiss (phone: up). A shown BackToTop sets --kv-toast-lift: the stack rises above it.
  */
 export function ToastProvider({ children, timeout = 4000 }: ToastProviderProps) {
   return (
@@ -75,7 +75,7 @@ export function ToastProvider({ children, timeout = 4000 }: ToastProviderProps) 
       <BaseToast.Portal>
         <BaseToast.Viewport
           data-slot="toast-viewport"
-          className="fixed inset-x-4 top-[max(16px,env(safe-area-inset-top))] z-[60] outline-none sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-6 sm:w-[360px]"
+          className="fixed inset-x-4 top-[max(16px,env(safe-area-inset-top))] z-[60] outline-none sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-[calc(--spacing(6)+var(--kv-toast-lift,0px))] sm:w-[360px] sm:transition-[bottom] sm:duration-(--duration-base) sm:ease-out"
         >
           <ToastList />
         </BaseToast.Viewport>

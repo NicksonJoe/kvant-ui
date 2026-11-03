@@ -156,12 +156,17 @@
       "div-pos-2": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 255] } },
       "media-bg": { "$description": "media chrome is always dark, the same in both modes: viewer background and video letterbox", "$value": { "colorSpace": "oklch", "components": [0.16, 0.005, 258] } },
       "media-glass": { "$value": { "colorSpace": "oklch", "components": [0.233, 0.007, 258], "alpha": 0.72 } },
+      "media-glass-strong": { "$value": { "colorSpace": "oklch", "components": [0.233, 0.007, 258], "alpha": 0.9 } },
       "media-scrim": { "$value": { "colorSpace": "oklch", "components": [0.16, 0.005, 258], "alpha": 0.7 } },
       "media-fg-1": { "$value": { "colorSpace": "oklch", "components": [0.965, 0.004, 258] } },
       "media-fg-2": { "$value": { "colorSpace": "oklch", "components": [0.775, 0.01, 258] } },
+      "media-fg-3": { "$value": { "colorSpace": "oklch", "components": [0.648, 0.012, 258] } },
       "media-hairline": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.1 } },
       "media-fill-1": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.08 } },
       "media-fill-2": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.12 } },
+      "media-track": { "$description": "progress rail on dark media, 3:1 against media-bg", "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.4 } },
+      "media-buffer": { "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.6 } },
+      "media-ghost": { "$description": "progress preview from the playhead to the pointer", "$value": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 0.8 } },
       "media-ring": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.13, 258] } }
     },
     "shadow": {

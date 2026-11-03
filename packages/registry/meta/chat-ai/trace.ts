@@ -1,13 +1,132 @@
-import type { PlannedComponentMeta } from '../types';
+import type { ReadyComponentMeta } from '../types';
 
-const meta: PlannedComponentMeta = {
+const meta: ReadyComponentMeta = {
   id: 'trace',
-  status: 'planned',
+  status: 'beta',
   title: 'Шаги агента',
-  description: 'Рассуждения, вызовы инструментов, план и подтверждения.',
+  description:
+    'Что агент делает, по шагам и на языке задачи, а вызов инструмента — мелко и моноширинным. Шаг идёт, готов, упал или ждёт в очереди; упавший можно повторить. Всё, что меняет данные клиента или пишет людям, ждёт явного «Разрешить» в карточке подтверждения, а после решения она сворачивается в строку. В ходе разговора шаги прячутся за строкой статуса «Готово за 14 с» и раскрываются по нажатию.',
   category: 'chat-ai',
   paperBoard: '70H-0',
-  anatomy: ['Шаг', 'Статус', 'Заголовок', 'Детали'],
+  anatomy: [
+    'Карточка: r16, surface-1, поля 24 (сверху 20), шапка и шаги через 20',
+    'Шапка: лицо агента 32, «Агент Норды» 14/20 600, задача и «3 из 5 шагов» 13/18 fg-3, время, «Остановить» sm',
+    'Шаг: иконка 20 на рельсе 1 border, между шагами 16',
+    'Заголовок шага 14/20 500; в очереди — fg-3',
+    'Вызов: mono 11/16 fg-3; у ошибки — danger-soft-fg и «Повторить»',
+    'Идёт: спиннер accent, полоса 160×4 и «3 из 18»',
+    'В очереди: пунктирное кольцо fg-4, «Понадобится ваше подтверждение» warning-soft-fg',
+    'Строка статуса: иконка 16, «В процессе» / «Готово» 13/18 fg-2, время caption fg-3, шеврон',
+    'Подтверждение: щит 40 warning-soft, вопрос 16/24 600, бейдж «Нужно подтверждение», детали на surface-2, «Разрешить» / «Отклонить» md',
+  ],
+  related: ['conversation', 'questionnaire', 'steps', 'timeline', 'progress'],
+  source: { file: 'components/trace.tsx', exports: ['Trace', 'TraceApproval', 'TraceApprovalDetail', 'traceProgress', 'traceAnnouncement'] },
+  dependencies: { npm: ['lucide-react'], registry: ['badge', 'button', 'conversation', 'spinner', 'visually-hidden'] },
+  props: [
+    {
+      name: 'steps',
+      type: 'object',
+      required: true,
+      control: false,
+      signature: 'readonly TraceStepData[]',
+      description: 'Шаги по порядку: id, title, status (pending · running · done · error), tool, detail, progress { value, max }, needsApproval, onRetry.',
+    },
+    { name: 'variant', type: 'enum', options: ['card', 'inline'], default: 'card', description: 'card — весь ход работы с шапкой; inline — строка статуса в ответе агента, которая раскрывает шаги.' },
+    { name: 'title', type: 'node', default: 'Агент Норды', description: 'Шапка карточки: кто работает.' },
+    { name: 'task', type: 'string', description: 'Шапка карточки: задача перед «3 из 5 шагов» — «Письма клиентам без активности».' },
+    { name: 'time', type: 'string', description: 'Таймер или итог: «0:42» в карточке, «6 с» / «за 14 с» в строке статуса.' },
+    { name: 'stopped', type: 'boolean', default: false, description: 'Человек остановил агента: «Остановить» пропадает, строка говорит «Остановлено».' },
+    { name: 'onStop', type: 'function', signature: '() => void', control: false, description: '«Остановить» sm secondary в шапке, пока шаги идут.' },
+    { name: 'open', type: 'boolean', control: false, description: 'inline: шаги раскрыты (управляемо).' },
+    { name: 'defaultOpen', type: 'boolean', default: false, description: 'inline: раскрыты сразу.' },
+    { name: 'onOpenChange', type: 'function', signature: '(open: boolean) => void', control: false, description: 'inline: строку статуса нажали.' },
+    { name: 'children', type: 'node', control: false, description: 'Под шагами: TraceApproval.' },
+  ],
+  parts: [
+    {
+      name: 'TraceStepData',
+      description: 'Шаг для steps.',
+      props: [
+        { name: 'id', type: 'string', required: true, description: 'Ключ шага: по нему видно, что шаг сменил состояние.' },
+        { name: 'title', type: 'string', required: true, description: 'На языке задачи: «Нашёл 18 клиентов без активности за 30 дней».' },
+        { name: 'status', type: 'enum', options: ['pending', 'running', 'done', 'error'], required: true, description: 'В очереди, идёт, готово, ошибка.' },
+        { name: 'tool', type: 'string', description: 'Вызов инструмента: «crm.contacts.search».' },
+        { name: 'detail', type: 'string', description: 'После вызова: «0,8 с», «таймаут 10 с».' },
+        { name: 'progress', type: 'object', signature: '{ value: number; max: number }', description: 'Идущий шаг с известным объёмом: полоса 160 и «3 из 18».' },
+        { name: 'needsApproval', type: 'boolean', description: 'Шаг в очереди будет ждать «Разрешить».' },
+        { name: 'onRetry', type: 'function', signature: '() => void', description: '«Повторить» рядом с упавшим вызовом.' },
+      ],
+    },
+    {
+      name: 'TraceApproval',
+      description: 'Карточка подтверждения. После решения сворачивается в строку: высота 200 мс ease-standard.',
+      props: [
+        { name: 'title', type: 'node', required: true, description: 'Вопрос: «Отправить письмо 18 клиентам?».' },
+        { name: 'description', type: 'node', description: 'Что агент не сделает без вас.' },
+        { name: 'badge', type: 'node', default: 'Нужно подтверждение', description: 'Бейдж warning рядом с вопросом.' },
+        { name: 'details', type: 'node', description: 'Строки TraceApprovalDetail на surface-2: «Тема», «Кому».' },
+        { name: 'onApprove', type: 'function', required: true, signature: '() => void', description: '«Разрешить» primary md с галочкой.' },
+        { name: 'onReject', type: 'function', required: true, signature: '() => void', description: '«Отклонить» secondary md.' },
+        { name: 'approveLabel', type: 'string', default: 'Разрешить', description: 'Текст кнопки согласия.' },
+        { name: 'rejectLabel', type: 'string', default: 'Отклонить', description: 'Текст кнопки отказа.' },
+        { name: 'edit', type: 'node', description: 'Ссылка справа: «Изменить письмо».' },
+        { name: 'decision', type: 'enum', options: ['approved', 'rejected'], description: 'Решение принято: вместо карточки строка «Разрешено» / «Отклонено».' },
+        { name: 'result', type: 'node', description: 'После слова решения fg-3: «18 писем отправлено в 14:12».' },
+        { name: 'pending', type: 'boolean', description: 'Решение уходит: спиннер на «Разрешить», «Отклонить» ждёт.' },
+      ],
+    },
+    {
+      name: 'TraceApprovalDetail',
+      description: 'Строка деталей: подпись caption fg-3 в колонке 44, значение 14/20.',
+      props: [
+        { name: 'label', type: 'node', required: true, description: '«Тема», «Кому».' },
+        { name: 'children', type: 'node', required: true, description: 'Значение: тема, аватары получателей.' },
+      ],
+    },
+    {
+      name: 'traceProgress · traceAnnouncement',
+      description: 'Чистые функции: сколько шагов закончено (готово + ошибка) и идёт ли работа; что сказать диктору после обновления — «Готово: …», «Ошибка: …».',
+      props: [],
+    },
+  ],
+  slots: [
+    { name: 'trace', description: 'Корень; data-variant и data-status (running · done · stopped).' },
+    { name: 'trace-step', description: 'Шаг listitem; data-id и data-status.' },
+    { name: 'trace-status-icon', description: 'Иконка шага или строки статуса; data-status.' },
+    { name: 'trace-rail', description: 'Рельс 1 border между иконками; у последнего шага его нет.' },
+    { name: 'trace-approval', description: 'Карточка подтверждения (role="group") или строка решения с data-decision.' },
+    { name: 'trace-approval-detail', description: 'Строка деталей подтверждения.' },
+  ],
+  states: [
+    { id: 'loading', label: 'идёт', description: 'Есть шаги в работе или в очереди: «Остановить», в строке — «В процессе» и таймер.', selector: 'data-status=running', props: { run: 'running' } },
+    { id: 'checked', label: 'готово', description: 'Все шаги закончены: «Остановить» нет, в строке — «Готово за 14 с».', selector: 'data-status=done', props: { run: 'done' } },
+    { id: 'disabled', label: 'остановлено', description: 'Человек остановил агента: строка «Остановлено».', props: { stopped: true } },
+    { id: 'collapsed', label: 'строка статуса', description: 'inline: шаги свёрнуты за строкой, aria-expanded="false".', props: { variant: 'inline' } },
+    { id: 'expanded', label: 'шаги раскрыты', description: 'inline: под строкой список шагов.', props: { variant: 'inline', defaultOpen: true } },
+  ],
+  keyboard: [
+    { keys: ['Tab'], action: '«Остановить», строка статуса, «Повторить», «Разрешить», «Отклонить», «Изменить письмо»' },
+    { keys: ['Enter', 'Space'], action: 'Строка статуса раскрывает и сворачивает шаги' },
+  ],
+  a11y: [
+    'Шаги — список <ol aria-label="Шаги агента">, у каждого скрытое слово состояния: «готово», «ошибка», «идёт», «ожидает». Состояние не передаётся только цветом иконки.',
+    'Закончившиеся и упавшие шаги объявляются через Announce (polite): «Готово: Составил письмо…», «Ошибка: Календарь не ответил…».',
+    'Строка статуса — кнопка с aria-expanded и aria-controls на список шагов.',
+    'Полоса идущего шага — role="progressbar" с aria-valuenow и aria-valuemax, названа заголовком шага.',
+    'Подтверждение — role="group" с именем-вопросом и описанием; решение принимается только кнопкой, Esc и клик мимо его не принимают.',
+    'Иконки aria-hidden: смысл несут слова.',
+  ],
+  motion: [
+    { label: 'Новый шаг', value: 'y 8 + opacity · 200 мс · ease-out', easing: 'ease-out', reduced: 'только opacity', tokens: ['duration-base', 'shift-md'] },
+    { label: 'Спиннер', value: '800 мс на оборот · linear', easing: 'linear', reduced: '1600 мс на оборот', tokens: ['duration-spinner'] },
+    { label: 'Галочка', value: 'отрисовка 150 мс + пружина с отскоком', detail: 'иконка scale .5 → 1 на spring-10 300 мс', easing: 'spring-10', reduced: 'без отскока', tokens: ['duration-quick', 'duration-slow'] },
+    { label: 'Свёртка решения', value: 'высота · 200 мс · ease-standard', easing: 'ease-standard', reduced: '150 мс', tokens: ['duration-base'] },
+    { label: 'Раскрытие шагов', value: 'opacity · 200 мс, шеврон поворачивается 150 мс', easing: 'ease-standard', tokens: ['duration-base', 'duration-quick'] },
+  ],
+  examples: [
+    { id: 'run', title: 'Письма клиентам', description: 'Шаги идут по таймеру, календарь падает и повторяется, отправка ждёт «Разрешить»; решение сворачивается в строку.' },
+    { id: 'inline', title: 'Строка статуса в ответе', description: '«В процессе 6 с» с таймером, потом «Готово за 14 с»; по нажатию — шаги.' },
+  ],
 };
 
 export default meta;

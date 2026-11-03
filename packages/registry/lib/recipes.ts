@@ -14,3 +14,12 @@ export const listSeparator = 'mx-1 my-1 h-px bg-separator';
 
 /** Positioners float above page chrome. */
 export const positioner = 'z-50 outline-none';
+
+/**
+ * Rows without gaps where neighbours merge: selected rows in a run form one plate (r12 only at its outer corners),
+ * and a hovered row touching the run sticks to it. Rows mark selection with aria-selected.
+ */
+export const mergedRows =
+  'aria-selected:[&:has(+[aria-selected=true])]:rounded-b-none [[aria-selected=true]+&]:aria-selected:rounded-t-none ' +
+  'hover:[&:has(+[aria-selected=true])]:rounded-b-none hover:[[aria-selected=true]+&]:rounded-t-none ' +
+  'aria-selected:[&:has(+:hover)]:rounded-b-none aria-selected:[:hover+&]:rounded-t-none';

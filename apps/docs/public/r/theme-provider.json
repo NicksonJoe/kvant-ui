@@ -1,0 +1,18 @@
+{
+  "name": "theme-provider",
+  "type": "component",
+  "title": "Тема и окружение",
+  "description": "Тема, режим, шрифт, форма, плотность и сниженное движение живут атрибутами data-* на <html>, язык — в lang. Компоненты читают только var(--color-…), поэтому смена атрибута перекрашивает интерфейс без правки разметки; без атрибутов действует cobalt в светлом режиме. themeScript ставит сохранённый выбор до первой отрисовки, ThemeProvider даёт приложению одно общее состояние, useTheme читает и меняет его.",
+  "dependencies": [],
+  "registryDependencies": [
+    "theme"
+  ],
+  "files": [
+    {
+      "target": "components/theme-provider.tsx",
+      "content": "import { useEffect, type ReactNode } from 'react';\nimport { ACCENTS, DENSITIES, FONTS, MODES, SHAPES, THEME_STORAGE_KEY, ThemeContext, useTheme } from '../theme';\n\nconst ALLOWED = { accent: ACCENTS, mode: MODES, font: FONTS, shape: SHAPES, density: DENSITIES };\n\n/**\n * Put it first in `<head>`, inline: the saved theme lands on `<html>` before first paint, so a dark theme never\n * flashes light. Same storage key and values as useTheme; unknown values are skipped.\n */\nexport const themeScript = `(function () {\n  try {\n    var saved = JSON.parse(localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)}) || '{}');\n    var allowed = ${JSON.stringify(ALLOWED)};\n    var root = document.documentElement;\n    for (var key in allowed) {\n      var value = saved[key];\n      if (key === 'mode' && value === 'system') value = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';\n      if (allowed[key].indexOf(value) >= 0) root.setAttribute('data-' + key, value);\n    }\n    if (saved.reduceMotion === true) root.setAttribute('data-reduce-motion', '');\n  } catch (error) {}\n})();`;\n\nexport interface ThemeProviderProps {\n  /** Interface language on `<html lang>`: hyphenation, the screen reader voice, dates and numbers. */\n  lang?: string;\n  children: ReactNode;\n}\n\n/** One theme state for the app: accent, mode, font, shape, density and motion on `<html>`, shared by every useTheme below. */\nexport function ThemeProvider({ lang = 'ru', children }: ThemeProviderProps) {\n  const theme = useTheme();\n\n  useEffect(() => {\n    const root = document.documentElement;\n    const previous = root.lang;\n    root.lang = lang;\n    return () => {\n      root.lang = previous;\n    };\n  }, [lang]);\n\n  return <ThemeContext value={theme}>{children}</ThemeContext>;\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

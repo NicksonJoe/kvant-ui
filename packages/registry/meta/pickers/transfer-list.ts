@@ -1,13 +1,104 @@
-import type { PlannedComponentMeta } from '../types';
+import type { ReadyComponentMeta } from '../types';
 
-const meta: PlannedComponentMeta = {
+const meta: ReadyComponentMeta = {
   id: 'transfer-list',
-  status: 'planned',
+  status: 'beta',
   title: 'Перенос между списками',
-  description: 'Два списка с поиском и кнопками переноса: доступные и выбранные.',
+  description:
+    'Когда выбор из длинного списка нужно видеть целиком: доступ к воронке, поля в выгрузке, участники рассылки. Слева — что можно добавить, справа — что уже выбрано. Отмечаете строки и переносите кнопкой, Enter или двойным нажатием; поиск и счётчик у каждого списка свои. Перенос в обе стороны — правка выбора, а не удаление: без подтверждения и без плашки отмены.',
   category: 'pickers',
   paperBoard: '1DPQ-0',
-  anatomy: ['Доступные', 'Кнопки переноса', 'Выбранные', 'Счётчики'],
+  anatomy: [
+    'Список surface-1 r20 + hairline, оба одной высоты, прокрутка внутри',
+    'Шапка 52: «отметить все» с частичным состоянием, название 14/20 600, счётчик 12/16 tnum',
+    'Поиск h32 fill-1, в фокусе — surface-1 и кольцо 2 внутрь',
+    'Строка 44 r12: чекбокс 18, аватар 28, имя, описание fg-3',
+    'Закреплённая строка: замок вместо чекбокса',
+    'Кнопки 64 × 36 между списками: главная accent с числом, обратная, «всё» ghost 32',
+    'Подсказка пустого списка, ошибка с «Повторить», скелет загрузки',
+  ],
+  related: ['listbox', 'checkbox', 'search-field', 'tree-select', 'virtualizer'],
+  source: { file: 'components/transfer-list.tsx', exports: ['TransferList'] },
+  dependencies: { npm: ['@base-ui/react', 'lucide-react'], registry: ['checkbox'] },
+  props: [
+    { name: 'items', type: 'object', signature: 'readonly TransferItem[]', required: true, control: false, description: 'Все строки обоих списков: id, label, description, avatar; locked — закреплена, disabled — нельзя отметить.' },
+    { name: 'value', type: 'object', signature: 'readonly string[]', control: false, description: 'Id строк в правом списке (управляемое значение).' },
+    { name: 'defaultValue', type: 'object', signature: 'readonly string[]', control: false, description: 'Правый список по умолчанию.' },
+    { name: 'onValueChange', type: 'function', signature: '(ids: string[]) => void', control: false, description: 'Правый список после переноса: прежний порядок и перенесённые id в конце.' },
+    { name: 'titles', type: 'object', signature: 'readonly [string, string]', default: 'Доступные, Выбранные', control: false, description: 'Названия списков; они же — имена listbox.' },
+    { name: 'searchPlaceholder', type: 'string', default: 'Поиск', description: 'Подсказка в поиске обоих списков: «Имя или отдел».' },
+    { name: 'rows', type: 'number', options: [4, 6, 8], default: 6, description: 'Строк до прокрутки: высота списка = rows × 44 + 8.' },
+    { name: 'loading', type: 'boolean', default: false, description: 'Левый список грузится: скелет через 300 мс, кнопки .5, aria-busy.' },
+    { name: 'disabled', type: 'boolean', default: false, description: 'Только чтение: списки .5 на surface-2, ничего не нажимается.' },
+    { name: 'empty', type: 'object', signature: '{ title: string; description?: string }', control: false, description: 'Подсказка пустого правого списка; по умолчанию «Пока ничего не выбрано».' },
+    { name: 'movedText', type: 'string', default: 'Только что добавлено', description: 'Вместо описания у строки, которая только что пришла направо, 1,5 с.' },
+    { name: 'error', type: 'object', signature: '{ title: string; description?: string }', control: false, description: 'Левый список не загрузился: причина в центре и «Повторить».' },
+    { name: 'onRetry', type: 'function', signature: '() => void', control: false, description: 'Нажата «Повторить».' },
+    { name: 'className', type: 'string', control: false, description: 'Класс корня.' },
+  ],
+  parts: [
+    {
+      name: 'TransferItem',
+      description: 'Тип строки.',
+      props: [
+        { name: 'id', type: 'string', required: true, description: 'Уникален.' },
+        { name: 'label', type: 'string', required: true, description: 'Имя; по нему сортируются списки и ищет поиск.' },
+        { name: 'description', type: 'string', description: 'Справа 12/16 fg-3: отдел, роль; поиск ищет и по нему.' },
+        { name: 'avatar', type: 'node', description: 'Слот 28 перед именем: <Avatar size={28} />.' },
+        { name: 'locked', type: 'boolean', description: 'Закреплена (владелец): замок, не отмечается и не переносится, стоит первой.' },
+        { name: 'disabled', type: 'boolean', description: 'Нельзя отметить: приглашение не принято. Строка .5.' },
+      ],
+    },
+  ],
+  slots: [
+    { name: 'transfer-list', description: 'Корень, @container: списки в ряд, когда он шире 768, иначе друг под другом.' },
+    { name: 'transfer-list-panel', description: 'Список с шапкой и поиском.' },
+    { name: 'transfer-list-header', description: 'Шапка 52: «отметить все», название, счётчик.' },
+    { name: 'transfer-list-actions', description: 'Кнопки переноса; на узком экране — строкой, стрелки повёрнуты вниз и вверх.' },
+    { name: 'checkbox-mark', description: 'Чекбокс строки — вид, состояние на строке (aria-selected).' },
+    { name: 'transfer-list-lock', description: 'Замок закреплённой строки.' },
+    { name: 'transfer-list-notice', description: 'Пусто, ничего не нашлось или ошибка — в центре списка.' },
+  ],
+  states: [
+    { id: 'rest', label: 'покой', description: 'Строка прозрачная, чекбокс с рамкой input.' },
+    { id: 'hover', label: 'наведение', description: 'Строка fill-1, рамка чекбокса fg-3.' },
+    { id: 'pressed', label: 'нажатие', description: 'Строка fill-3, чекбокс fill-2 и scale .94.' },
+    { id: 'focus', label: 'фокус', description: 'Кольцо 2 внутрь строки, ↑↓ ведут его по списку.' },
+    { id: 'checked', label: 'отмечено', description: 'accent-soft, чекбокс accent; подряд отмеченные — одна плашка, скругления только снаружи.', selector: 'aria-selected' },
+    { id: 'empty', label: 'пусто', description: 'Подсказка вместо строк; поиск без совпадений — «0 из 24».' },
+    { id: 'loading', label: 'загрузка', description: 'Скелет через 300 мс, кнопки .5.', props: { loading: true } },
+    { id: 'disabled', label: 'отключено', description: 'Списки .5 на surface-2, читаются, но не меняются.', props: { disabled: true } },
+  ],
+  matrix: {
+    columns: ['rest', 'loading', 'disabled'],
+    notes: ['кнопка переноса: accent · есть отмеченные · hover accent-hover · нажатие accent-pressed .97 · фокус ring 2 offset 2 · 99+ · нет отмеченных — fill-2 .5'],
+  },
+  keyboard: [
+    { keys: ['Tab'], action: 'Между шапкой, поиском, списками и кнопками' },
+    { keys: ['↑', '↓'], action: 'Строка выше или ниже; Home / End — края списка' },
+    { keys: ['Space'], action: 'Отметить строку' },
+    { keys: ['Shift', 'нажатие'], action: 'Отметить строки от прошлой отметки до этой' },
+    { keys: ['⌘A'], action: 'Отметить весь список (с учётом поиска), второй раз — снять' },
+    { keys: ['Enter'], action: 'Перенести отмеченные, а без отметок — строку в фокусе' },
+  ],
+  a11y: [
+    'Каждый список — role="listbox" с aria-multiselectable и именем из titles; строки — option с aria-selected, фокус бегает по ним.',
+    'Закреплённые и недоступные строки — aria-disabled, у закреплённой замок вместо чекбокса.',
+    'Кнопки переноса подписаны словами: «Перенести отмеченные вправо», «Вернуть все влево»; число на кнопке — визуальная подсказка.',
+    'Загрузка — aria-busy на списке; при ошибке причина и «Повторить» — обычный текст и кнопка.',
+    'Перенос не удаляет данные, поэтому нет подтверждения: строку можно вернуть той же кнопкой.',
+    'Сотни строк в списке — признак того, что нужен поиск по серверу; длинный список стоит виртуализировать (VirtualList).',
+  ],
+  motion: [
+    { label: 'Перенесённая строка', value: 'высота 0 → 44 + прозрачность · 150 мс · ease-standard', easing: 'ease-standard', reduced: 'без высоты', tokens: ['duration-quick'] },
+    { label: 'Подсветка', value: 'success-soft 1,5 с, затем фон гаснет за 150 мс', note: 'Строка встаёт на место по алфавиту.', tokens: ['duration-quick'] },
+    { label: 'Отметка', value: 'фон и чекбокс · 150 мс · ease-hover', easing: 'ease-hover', tokens: ['duration-quick'] },
+  ],
+  examples: [
+    { id: 'access', title: 'Доступ к воронке', description: 'Сотрудники с аватарами, владелец закреплён, приглашённый недоступен.' },
+    { id: 'export-fields', title: 'Поля в выгрузке', description: 'Пустой правый список и поиск без совпадений.' },
+    { id: 'states', title: 'Загрузка и ошибка', description: 'Скелет через 300 мс, затем ошибка с «Повторить».' },
+  ],
 };
 
 export default meta;

@@ -82,12 +82,17 @@
   --color-div-pos-2: var(--color-div-pos-2);
   --color-media-bg: var(--color-media-bg);
   --color-media-glass: var(--color-media-glass);
+  --color-media-glass-strong: var(--color-media-glass-strong);
   --color-media-scrim: var(--color-media-scrim);
   --color-media-fg-1: var(--color-media-fg-1);
   --color-media-fg-2: var(--color-media-fg-2);
+  --color-media-fg-3: var(--color-media-fg-3);
   --color-media-hairline: var(--color-media-hairline);
   --color-media-fill-1: var(--color-media-fill-1);
   --color-media-fill-2: var(--color-media-fill-2);
+  --color-media-track: var(--color-media-track);
+  --color-media-buffer: var(--color-media-buffer);
+  --color-media-ghost: var(--color-media-ghost);
   --color-media-ring: var(--color-media-ring);
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);

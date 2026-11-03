@@ -316,6 +316,66 @@
   .kv-month[data-direction='prev'] {
     animation: kv-month-prev var(--duration-base) var(--ease-out);
   }
+
+  /*
+   * Presence, content motion from the catalogue. fade: opacity 200ms ease-out in, 150ms out (skeleton → content).
+   * rise: list cascade, 8px up + opacity 200ms ease-out, rows 35ms apart up to the eighth (--kv-i).
+   * collapse: a row in a shown list, height 0 → auto + opacity 200ms ease-standard.
+   * rise and collapse leave as a removed row: opacity 100ms, then height 150ms. They size their one child.
+   */
+  .kv-presence {
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+  .kv-presence:is([data-starting-style], [data-ending-style]) {
+    opacity: 0;
+  }
+  .kv-presence[data-ending-style] {
+    transition: opacity var(--duration-quick) var(--ease-out);
+  }
+  /* minmax(0, …): a fixed-height row still folds to 0; clip-margin keeps the 4px focus ring of what is inside. */
+  .kv-presence:is([data-motion='rise'], [data-motion='collapse']) {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .kv-presence[data-motion='collapse'],
+  .kv-presence[data-motion='rise'][data-ending-style] {
+    overflow: clip;
+    overflow-clip-margin: 4px;
+  }
+  .kv-presence[data-motion='rise'] {
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      translate var(--duration-base) var(--ease-out);
+    transition-delay: calc(min(var(--kv-i, 0), 7) * 35ms);
+  }
+  .kv-presence[data-motion='rise'][data-starting-style] {
+    translate: 0 var(--shift-md);
+  }
+  .kv-presence[data-motion='collapse'] {
+    transition:
+      grid-template-rows var(--duration-base) var(--ease-standard),
+      opacity var(--duration-base) var(--ease-standard);
+  }
+  .kv-presence[data-motion='collapse'][data-starting-style] {
+    grid-template-rows: minmax(0, 0fr);
+  }
+  .kv-presence:is([data-motion='rise'], [data-motion='collapse'])[data-ending-style] {
+    grid-template-rows: minmax(0, 0fr);
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      grid-template-rows var(--duration-quick) var(--ease-standard) var(--duration-fast);
+  }
+  /* Reduced motion: no cascade and the height jumps (doubled attribute outranks the exit rule); shifts and durations come from the tokens. */
+  [data-reduce-motion] .kv-presence[data-motion][data-motion] {
+    transition-property: opacity;
+    transition-delay: 0ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root .kv-presence[data-motion][data-motion] {
+      transition-property: opacity;
+      transition-delay: 0ms;
+    }
+  }
 }
 
 @keyframes kv-skeleton-delay {
@@ -355,6 +415,34 @@
     animation: none;
   }
 }
+/* Streaming answer: the caret blinks 1000ms in steps; still under reduced motion. */
+.kv-caret {
+  animation: kv-caret 1000ms steps(1, end) infinite;
+}
+[data-reduce-motion] .kv-caret {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kv-caret {
+    animation: none;
+  }
+}
+@keyframes kv-caret {
+  50% {
+    opacity: 0;
+  }
+}
+/* Theme switch: colours cross-fade 200ms ease-standard, shadows and layout change at once (useTheme sets the attribute). */
+[data-theme-transition],
+[data-theme-transition] *,
+[data-theme-transition] *::before,
+[data-theme-transition] *::after {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke !important;
+  transition-duration: var(--duration-base) !important;
+  transition-timing-function: var(--ease-standard) !important;
+  transition-delay: 0ms !important;
+}
+
 @keyframes kv-typing {
   0%,
   60%,
@@ -363,5 +451,69 @@
   }
   30% {
     opacity: 1;
+  }
+}
+
+/* Marquee: the track slides one row per loop, linear; stops under the pointer and while focus is inside. */
+.kv-marquee [data-slot='marquee-track'] {
+  animation: kv-marquee var(--kv-marquee-duration) linear infinite;
+}
+.kv-marquee:is(:hover, :focus-within) [data-slot='marquee-track'] {
+  animation-play-state: paused;
+}
+/* Reduced motion: one still row in the middle, no copies. */
+[data-reduce-motion] .kv-marquee {
+  justify-content: center;
+}
+[data-reduce-motion] .kv-marquee [data-slot='marquee-track'] {
+  animation: none;
+}
+[data-reduce-motion] .kv-marquee [data-slot='marquee-list'] {
+  padding-right: 0;
+}
+[data-reduce-motion] .kv-marquee [data-slot='marquee-list'][aria-hidden] {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kv-marquee {
+    justify-content: center;
+  }
+  .kv-marquee [data-slot='marquee-track'] {
+    animation: none;
+  }
+  .kv-marquee [data-slot='marquee-list'] {
+    padding-right: 0;
+  }
+  .kv-marquee [data-slot='marquee-list'][aria-hidden] {
+    display: none;
+  }
+}
+
+@keyframes kv-marquee {
+  to {
+    translate: calc(-100% / var(--kv-marquee-copies)) 0;
+  }
+}
+
+/* Timer «Идёт запись»: the ring around the dot breathes every 2000ms; still under reduced motion. */
+.kv-timer-pulse {
+  animation: kv-timer-pulse 2000ms var(--ease-in-out) infinite;
+}
+[data-reduce-motion] .kv-timer-pulse {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kv-timer-pulse {
+    animation: none;
+  }
+}
+
+@keyframes kv-timer-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--color-success-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--color-success-soft) 40%, transparent);
   }
 }

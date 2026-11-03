@@ -1,0 +1,16 @@
+{
+  "name": "portal",
+  "type": "component",
+  "title": "Портал и слои",
+  "description": "Portal выносит свой слой в конец <body> — из-под overflow: hidden, transform и contain родителей — и ставит его на шкалу z-index. Шкала LAYERS — семь значений на всю библиотеку: тост выше диалога, чтобы подтверждение было видно поверх окна, подсказка выше всего. Меню, поповеры, диалоги, шиты и тосты Kvant уже выносятся через Base UI; Portal нужен для слоёв, которые вы собираете сами.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "target": "components/portal.tsx",
+      "content": "import { useSyncExternalStore, type ReactNode } from 'react';\nimport { createPortal } from 'react-dom';\n\n/**\n * Seven z-index values for the whole library. Toast is above dialog so a confirmation shows over the window,\n * tooltip is above everything. 11–39 are left for product layers (floating panels, pinned columns); a new layer\n * takes a value from the scale, not «one above the neighbour», and never 999 or 9999.\n */\nexport const LAYERS = {\n  /** Feed, cards, tables. */\n  content: 0,\n  /** Sticky headers, navigation bars. */\n  sticky: 10,\n  /** Menus, dropdown lists, popovers. */\n  dropdown: 40,\n  /** Scrim under a modal window. */\n  overlay: 50,\n  /** Dialogs, sheets, the command palette. */\n  modal: 60,\n  /** Toasts: seen over a dialog too. */\n  toast: 70,\n  /** Tooltips: always on top. */\n  tooltip: 80,\n} as const;\nexport type Layer = keyof typeof LAYERS;\n\nconst noSubscribe = () => () => {};\n\nexport interface PortalProps {\n  /** Place on the z-index scale; the whole portal is one stacking context at that height. */\n  layer: Layer;\n  /** Where to render (default `<body>`): pass the element that carries a scoped `data-accent` and `data-mode`. */\n  container?: Element | null;\n  children: ReactNode;\n}\n\n/**\n * Renders children at the end of `<body>`, out of every `overflow: hidden`, `transform` and `contain` above them.\n * For layers of your own: Kvant overlays already portal through Base UI.\n */\nexport function Portal({ layer, container, children }: PortalProps) {\n  // false on the server and while hydrating: <body> exists only on the client\n  const client = useSyncExternalStore(noSubscribe, () => true, () => false);\n  if (!client) return null;\n  return createPortal(\n    <div data-slot=\"portal\" data-layer={layer} className=\"relative\" style={{ zIndex: LAYERS[layer] }}>\n      {children}\n    </div>,\n    container ?? document.body,\n  );\n}\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

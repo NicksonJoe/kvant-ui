@@ -1,7 +1,9 @@
 import { Button as BaseButton } from '@base-ui/react/button';
+import { mergeProps } from '@base-ui/react/merge-props';
 import { Toolbar } from '@base-ui/react/toolbar';
+import { useRender } from '@base-ui/react/use-render';
 import { X } from 'lucide-react';
-import { createContext, use, type ReactNode } from 'react';
+import { cloneElement, createContext, isValidElement, use, type ComponentProps, type ReactNode } from 'react';
 import { cn } from '../lib/cn';
 import { Spinner } from './spinner';
 
@@ -95,20 +97,13 @@ export function Button({
   disabled,
   className,
   children,
+  render,
+  nativeButton,
   ...props
 }: ButtonProps) {
   const overlaySpinner = loading && !leadingIcon && !trailingIcon;
-  return (
-    <BaseButton
-      data-slot="button"
-      data-variant={variant}
-      data-size={size}
-      disabled={disabled || loading}
-      focusableWhenDisabled={loading}
-      aria-busy={loading || undefined}
-      className={cn(buttonClasses({ variant, size }), className)}
-      {...props}
-    >
+  const content = (
+    <>
       {loading && leadingIcon ? <Spinner inherit /> : leadingIcon}
       {overlaySpinner ? (
         <span className="absolute inset-0 grid place-items-center">
@@ -119,8 +114,47 @@ export function Button({
         {children}
       </span>
       {loading && !leadingIcon && trailingIcon ? <Spinner inherit /> : trailingIcon}
+    </>
+  );
+  const own = {
+    'data-slot': 'button',
+    'data-variant': variant,
+    'data-size': size,
+    'aria-busy': loading || undefined,
+    className: cn(buttonClasses({ variant, size }), className),
+  };
+  if (render) {
+    return (
+      <ComposedButton render={render} disabled={disabled || loading} {...own} {...props}>
+        {content}
+      </ComposedButton>
+    );
+  }
+  return (
+    <BaseButton disabled={disabled || loading} focusableWhenDisabled={loading} nativeButton={nativeButton} {...own} {...props}>
+      {content}
     </BaseButton>
   );
+}
+
+type ComposedButtonProps = Omit<ButtonProps, 'variant' | 'size' | 'leadingIcon' | 'trailingIcon' | 'loading' | 'nativeButton'> & {
+  render: NonNullable<ButtonProps['render']>;
+};
+
+/** Button look on another tag: the tag keeps its own role (a link stays a link); disabled is aria-disabled and keeps focus. */
+function ComposedButton({ render, disabled = false, style, onClick, ref, ...props }: ComposedButtonProps) {
+  const anchor = isValidElement<ComponentProps<'a'>>(render) && render.type === 'a';
+  return useRender({
+    // The element's own href wins the merge, so a disabled link drops it here.
+    render: disabled && anchor ? cloneElement(render, { href: undefined }) : render,
+    ref,
+    state: { disabled },
+    props: mergeProps<'button'>(props, {
+      style: typeof style === 'function' ? style({ disabled }) : style,
+      onClick: disabled ? (event) => event.preventDefault() : onClick,
+      ...(disabled ? { 'aria-disabled': true, tabIndex: 0, role: anchor ? 'link' : undefined } : {}),
+    }),
+  });
 }
 
 export interface IconButtonProps extends Omit<ButtonProps, 'leadingIcon' | 'trailingIcon' | 'children'> {

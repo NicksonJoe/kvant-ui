@@ -1,13 +1,90 @@
-import type { PlannedComponentMeta } from '../types';
+import type { ReadyComponentMeta } from '../types';
 
-const meta: PlannedComponentMeta = {
+const meta: ReadyComponentMeta = {
   id: 'infinite-scroll',
-  status: 'planned',
+  status: 'beta',
   title: 'Бесконечная лента',
-  description: 'Догрузка следующей страницы у конца списка, со скелетом и ошибкой.',
+  description:
+    'Лента, которая подгружает следующую порцию раньше, чем читатель доберётся до низа: сторожевая строка за полтора экрана до конца, одновременно только один запрос. Хвост списка всегда честно говорит, что происходит — грузим, не вышло или данных больше нет. Если под списком есть подвал или итог, вместо автоподгрузки ставьте кнопку «Показать ещё». Для тысяч однотипных строк в окне фиксированной высоты берите виртуальный список.',
   category: 'data-display',
   paperBoard: '1DPV-0',
-  anatomy: ['Список', 'Страж догрузки', 'Скелет', 'Ошибка с повтором'],
+  anatomy: [
+    'Лист surface-1 r20, строки через separator',
+    'Сторожевая строка: IntersectionObserver, rootMargin 150 % высоты окна',
+    'Хвост 56: спиннер 16 fg-3 и «Загружаем ещё» 13/16',
+    'Скелетоны порции: точка fill-3, строки fill-2 / fill-1, вторая .6',
+    'Ошибка 56: значок danger, текст danger-soft-fg, «Повторить» 32',
+    'Конец данных 72: итог 13/16 fg-2 и ссылка расширить период',
+    '«Показать ещё» 36 outline, ширина 236, остаток tabular fg-3',
+  ],
+  related: ['virtualizer', 'list', 'pull-to-refresh', 'empty-state', 'skeleton'],
+  source: { file: 'components/infinite-scroll.tsx', exports: ['InfiniteScroll'] },
+  dependencies: { npm: ['lucide-react'], registry: ['button', 'spinner', 'visually-hidden'] },
+  props: [
+    { name: 'aria-label', type: 'string', required: true, description: 'Название ленты для диктора: «События за 30 дней».' },
+    { name: 'items', type: 'object', signature: 'readonly T[]', required: true, control: false, description: 'Загруженные строки; новые порции дописываются в конец.' },
+    { name: 'getKey', type: 'function', signature: '(item: T) => string', required: true, description: 'Ключ строки: id события.' },
+    { name: 'renderItem', type: 'function', signature: '(item: T) => ReactNode', required: true, description: 'Строка ленты; разделители между строками рисует лента.' },
+    { name: 'hasMore', type: 'boolean', required: true, description: 'За последней строкой есть ещё. false — сторож снимается, внизу end.' },
+    {
+      name: 'status',
+      type: 'enum',
+      options: ['idle', 'loading', 'error'],
+      default: 'idle',
+      description: 'Состояние следующей порции: loading — хвост и aria-busy, error — загруженное остаётся, внизу ошибка с «Повторить».',
+    },
+    {
+      name: 'onLoadMore',
+      type: 'function',
+      signature: '() => void',
+      required: true,
+      description: 'Запросить следующую порцию (по курсору, не по номеру страницы). Повторно не вызывается, пока не сменится status или число строк.',
+    },
+    { name: 'trigger', type: 'enum', options: ['auto', 'button'], default: 'auto', description: 'auto — у конца списка; button — по кнопке «Показать ещё», когда под списком подвал или итог.' },
+    { name: 'loader', type: 'enum', options: ['spinner', 'skeleton'], default: 'spinner', description: 'spinner — «Загружаем ещё»; skeleton — строки порции, только если её размер известен и не больше 3 экранов.' },
+    { name: 'pageSize', type: 'number', default: 20, description: 'Строк в порции, для «Показать ещё 20». Порция 20–50.' },
+    { name: 'remaining', type: 'number', description: 'Сколько ещё не загружено, для «из 148».' },
+    { name: 'error', type: 'string', default: 'Не загрузилось', description: 'Текст ошибки порции: «Не загрузилось — нет сети».' },
+    { name: 'end', type: 'node', control: false, description: 'Под последней строкой, когда данных больше нет: «Это все события за 30 дней» и ссылка расширить период.' },
+    { name: 'empty', type: 'node', control: false, description: 'Вместо ленты, когда строк нет и больше не будет.' },
+    { name: 'className', type: 'string', control: false, description: 'Корень: ширина ленты.' },
+  ],
+  slots: [
+    { name: 'infinite-scroll', description: 'Корень: лист, хвост и объявления; data-empty в пустом состоянии.' },
+    { name: 'infinite-scroll-item', description: 'Строка listitem, tabIndex −1: на первую новую строку переходит фокус после «Показать ещё».' },
+    { name: 'infinite-scroll-sentinel', description: 'Сторожевая строка 1 px после списка, aria-hidden; только при trigger auto и hasMore.' },
+    { name: 'infinite-scroll-tail', description: 'Хвост: спиннер, скелетоны, ошибка или кнопка; data-status="error" при ошибке.' },
+    { name: 'infinite-scroll-skeleton', description: 'Строка-скелет порции, aria-hidden.' },
+    { name: 'infinite-scroll-end', description: 'Итог, когда данных больше нет.' },
+  ],
+  states: [
+    { id: 'rest', label: 'покой', description: 'Строки и незаметный сторож за последней.' },
+    { id: 'loading', label: 'подгрузка', description: 'Хвост 56 со спиннером или скелетоны; у списка aria-busy, у кнопки — спиннер вместо стрелки, ширина та же.', props: { status: 'loading', hasMore: true } },
+    { id: 'invalid', label: 'ошибка', description: 'Загруженное остаётся, внизу «Не загрузилось — нет сети» и «Повторить»; один автоповтор через 3 с.', props: { status: 'error', hasMore: true } },
+    { id: 'filled', label: 'конец данных', description: 'Итог и ссылка расширить период; сторож снят.', props: { hasMore: false } },
+    { id: 'empty', label: 'пусто', description: 'Вместо ленты — empty.' },
+  ],
+  keyboard: [
+    { keys: ['Tab'], action: 'По ссылкам и кнопкам строк, затем к «Повторить» или «Показать ещё»' },
+    { keys: ['Enter', 'Space'], action: '«Показать ещё»: фокус переходит на первую новую строку' },
+  ],
+  a11y: [
+    'role="list" с aria-label; пока идёт загрузка — aria-busy="true".',
+    'Пришла порция — Announce вежливо говорит «Загружено 20», ошибка — её текст. Фокус в режиме auto не двигается.',
+    'После «Показать ещё» фокус переходит на первую новую строку: Tab продолжает с неё, а не с кнопки, которая уехала вниз.',
+    'Кнопка в загрузке остаётся в фокусе с aria-busy и той же шириной, повторный клик ничего не делает.',
+    'Подвал под бесконечной лентой недостижим — для таких экранов trigger="button".',
+  ],
+  motion: [
+    { label: 'Спиннер', value: 'вращение 800 мс · linear', easing: 'linear', reduced: '1600 мс', tokens: ['duration-spinner'] },
+    { label: 'Новые строки', value: 'без анимации', note: 'Порция встаёт под последней строкой, прокрутка не прыгает.' },
+    { label: 'Автоповтор', value: 'через 3 с после ошибки, один раз', note: 'Следующая удачная порция возвращает автоповтор.' },
+  ],
+  examples: [
+    { id: 'feed', title: 'Журнал событий', description: '148 событий порциями по 20, догрузка у конца, итог периода.' },
+    { id: 'load-more', title: '«Показать ещё»', description: 'Под списком итог: кнопка с остатком, фокус на первую новую строку.' },
+    { id: 'errors', title: 'Ошибка и скелетоны', description: 'Без сети порция не грузится: «Повторить» и автоповтор через 3 с.' },
+  ],
 };
 
 export default meta;

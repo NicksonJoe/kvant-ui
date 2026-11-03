@@ -55,6 +55,48 @@ export function Checkbox({ children, size = 'md', invalid, className, ...props }
   );
 }
 
+export interface CheckboxMarkProps {
+  checked: boolean | 'mixed';
+  disabled?: boolean;
+  className?: string;
+}
+
+/**
+ * The checkbox look without its behaviour, for rows that are the control themselves (tree, transfer list):
+ * the row carries aria-checked or aria-selected, the mark is decoration. Pair the row with `checkboxMarkRow`.
+ */
+export function CheckboxMark({ checked, disabled = false, className }: CheckboxMarkProps) {
+  return (
+    <span
+      aria-hidden
+      data-slot="checkbox-mark"
+      data-checked={checked === true || undefined}
+      data-indeterminate={checked === 'mixed' || undefined}
+      className={cn(
+        'grid size-[18px] shrink-0 place-items-center rounded-xs text-accent-fg transition-[background-color,box-shadow,scale] duration-(--duration-quick) ease-hover',
+        checked ? 'bg-accent' : cn('shadow-[inset_0_0_0_1.5px_var(--color-input)]', disabled ? 'bg-surface-2' : 'bg-field'),
+        disabled && 'opacity-50',
+        className,
+      )}
+    >
+      {checked === 'mixed' ? (
+        <svg viewBox="0 0 12 12" className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
+          <path d="M2.5 6h7" />
+        </svg>
+      ) : checked ? (
+        <svg viewBox="0 0 12 12" className="size-3" fill="none" stroke="currentColor" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2.25 6.25 4.75 8.75 9.75 3.5" />
+        </svg>
+      ) : null}
+    </span>
+  );
+}
+
+/** Row states reaching its CheckboxMark: hover — frame fg-3, press — fill-2 and scale .94. */
+export const checkboxMarkRow =
+  'hover:[&_[data-slot=checkbox-mark]:not([data-checked],[data-indeterminate])]:shadow-[inset_0_0_0_1.5px_var(--color-fg-3)] ' +
+  'active:[&_[data-slot=checkbox-mark]]:scale-(--scale-press-icon) active:[&_[data-slot=checkbox-mark]:not([data-checked],[data-indeterminate])]:bg-fill-2';
+
 export interface RadioGroupProps extends Omit<BaseRadioGroup.Props<string>, 'className'> {
   orientation?: 'vertical' | 'horizontal';
   /** Visible group name (13/16 500 fg-2) that also names the radiogroup; without it pass aria-label. */

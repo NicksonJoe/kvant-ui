@@ -1,13 +1,98 @@
-import type { PlannedComponentMeta } from '../types';
+import type { ReadyComponentMeta } from '../types';
 
-const meta: PlannedComponentMeta = {
+const meta: ReadyComponentMeta = {
   id: 'popconfirm',
-  status: 'planned',
+  status: 'beta',
   title: 'Подтверждение у кнопки',
-  description: 'Маленький поповер «Точно удалить?» у самого действия вместо диалога.',
+  description:
+    'Короткое «точно?» прямо у триггера — для действий, которые легко сделать случайно, но которые не требуют чтения. Вопрос, одна строка пояснения и две кнопки. Архив и удаление зовутся только из меню «Ещё» и после ответа дают 7 секунд на отмену плашкой toast. Если нужен список последствий, ввод названия или действие чужое и необратимое — это AlertDialog.',
   category: 'overlays',
   paperBoard: '1DQ9-0',
-  anatomy: ['Триггер', 'Поповер', 'Вопрос', 'Действия'],
+  anatomy: [
+    'Триггер или якорь «Ещё»',
+    'Поверхность w 288 · p 16 · r 20 · overlay, без стрелки, 8 от триггера',
+    'Иконка 20, текст сдвигается на 32',
+    'Вопрос 14/20 600 fg-1: глагол + объект + «?»',
+    'Пояснение 13/18 fg-2: последствие',
+    'Ошибка danger-soft',
+    'Кнопки sm 32 справа, gap 8',
+  ],
+  related: ['popover', 'alert-dialog', 'menu', 'toast'],
+  source: { file: 'components/popconfirm.tsx', exports: ['Popconfirm', 'POPCONFIRM_TONES', 'POPCONFIRM_SIZES'] },
+  dependencies: { npm: ['@base-ui/react', 'lucide-react'], registry: ['button', 'spinner'] },
+  props: [
+    { name: 'title', type: 'string', required: true, description: 'Вопрос: глагол + объект + «?», не длиннее двух строк — «Удалить комментарий?».' },
+    { name: 'description', type: 'string', description: 'Последствие, а не повтор вопроса: «Отменить можно в течение 7 секунд». Только в md.' },
+    { name: 'tone', type: 'enum', options: ['neutral', 'danger'], default: 'neutral', description: 'danger — подтверждение красное, фокус встаёт на «Отмена»; neutral — primary, фокус на подтверждении.' },
+    { name: 'size', type: 'enum', options: ['md', 'sm'], default: 'md', description: 'sm — одна строка в строке таблицы: вопрос и две кнопки xs 24, r 16, p 8/8/8/14.' },
+    { name: 'confirmLabel', type: 'string', description: 'Глагол действия: «В архив», «Отправить». По умолчанию «Удалить» у danger и «Подтвердить» у neutral.' },
+    { name: 'cancelLabel', type: 'string', default: 'Отмена', description: 'Вторая кнопка, secondary (в sm — тихая xs fg-2).' },
+    { name: 'retryLabel', type: 'string', default: 'Повторить', description: 'Подпись подтверждения после ошибки.' },
+    { name: 'icon', type: 'node', control: false, description: 'Иконка 20 в слоте 20 перед текстом: warning-soft-fg, у danger — danger-soft-fg. Для необратимой отправки наружу.' },
+    {
+      name: 'onConfirm',
+      type: 'function',
+      signature: '() => unknown',
+      required: true,
+      description: 'Вернёт промис — поповер остаётся открытым со спиннером, пока он не выполнится; отказ показывает ошибку и «Повторить». Без промиса закрывается сразу.',
+    },
+    { name: 'onCancel', type: 'function', signature: '() => void', description: '«Отмена», Esc, щелчок мимо, повторное нажатие триггера, уход фокуса.' },
+    { name: 'loading', type: 'boolean', default: false, description: 'Занят снаружи: спиннер перед подписью, «Отмена» disabled, Esc и щелчок мимо не закрывают.' },
+    { name: 'error', type: 'string', description: 'Текст ошибки в плашке danger-soft под пояснением; подтверждение становится «Повторить». Без него после отказа — «Не получилось. Попробуйте ещё раз.»' },
+    { name: 'side', type: 'enum', options: ['top', 'bottom', 'left', 'right'], default: 'bottom', description: 'Сторона от триггера; у края экрана переворачивается, 8 от края.' },
+    { name: 'align', type: 'enum', options: ['start', 'center', 'end'], default: 'start', description: 'Выравнивание по краю триггера.' },
+    { name: 'children', type: 'node', control: false, description: 'Триггер: получает aria-expanded и aria-controls. Без него передайте anchor и управляйте open.' },
+    { name: 'anchor', type: 'object', signature: 'RefObject<Element | null> | Element', control: false, description: 'Возле чего встать без своего триггера: кнопка «Ещё» строки, из меню которой выбрали «Удалить…». Фокус после закрытия вернётся на неё.' },
+    { name: 'open', type: 'boolean', control: false, description: 'Управляемое открытие, вместе с onOpenChange.' },
+    { name: 'defaultOpen', type: 'boolean', default: false, control: false, description: 'Открыт при первом показе.' },
+    { name: 'onOpenChange', type: 'function', signature: '(open: boolean) => void', description: 'Открылся или закрылся. Пока идёт запрос, закрыть нельзя.' },
+    { name: 'className', type: 'string', control: false, description: 'Поверхность поповера.' },
+  ],
+  slots: [
+    { name: 'popconfirm-trigger', description: 'Триггер.' },
+    { name: 'popconfirm', description: 'Поверхность role="alertdialog": data-size, data-tone; aria-labelledby — вопрос, aria-describedby — пояснение.' },
+    { name: 'popconfirm-icon', description: 'Слот иконки 20.' },
+    { name: 'popconfirm-title', description: 'Вопрос.' },
+    { name: 'popconfirm-description', description: 'Пояснение.' },
+    { name: 'popconfirm-error', description: 'Ошибка role="alert", danger-soft, появляется opacity 150 мс без тряски.' },
+  ],
+  states: [
+    { id: 'open', label: 'открыт', description: 'Поповер у триггера, тень overlay; триггер нажат (aria-expanded).' },
+    { id: 'loading', label: 'загрузка', description: 'Спиннер перед подписью, «Отмена» disabled, Esc и щелчок мимо не закрывают.' },
+    { id: 'invalid', label: 'ошибка', description: 'Плашка danger-soft с причиной, кнопка «Повторить»; поповер не трясётся.' },
+  ],
+  keyboard: [
+    { keys: ['Enter', 'Space'], action: 'На триггере — открывают; на кнопке — нажимают её' },
+    { keys: ['Esc'], action: '«Отмена»: закрывает, фокус возвращается на триггер или якорь' },
+    { keys: ['Tab'], action: 'Между «Отмена» и подтверждением; уход фокуса из поповера — тоже «Отмена»' },
+  ],
+  a11y: [
+    'role="alertdialog": имя — вопрос (aria-labelledby), описание — пояснение (aria-describedby).',
+    'Фокус при открытии: в danger — на «Отмена», чтобы случайный Enter ничего не удалил; в neutral — сразу на подтверждение.',
+    '«Отмена», Esc и щелчок мимо возвращают фокус на триггер; без триггера — на якорь «Ещё», а не на закрывшийся пункт меню.',
+    'Пока идёт запрос, кнопка подтверждения aria-busy, а закрыть поповер нельзя: пользователь не узнал бы, ушёл ли запрос.',
+    'Ошибка — role="alert", диктор прочтёт её сразу.',
+    'После «В архив» и «Удалить» продукт показывает плашку «Отменить» на 7 секунд (toast с actionProps) — фокус на неё переводит продукт.',
+    'На телефоне не используется: там лист действий (ActionSheet) или Alert по центру.',
+  ],
+  motion: [
+    {
+      label: 'Открытие',
+      value: 'opacity + scale .96 + 4 px от триггера · 150 мс · ease-out',
+      detail: 'origin — сторона триггера, как у всех поповеров',
+      easing: 'ease-out',
+      reduced: 'только opacity',
+      tokens: ['duration-quick', 'scale-enter', 'shift-sm'],
+    },
+    { label: 'Закрытие', value: 'opacity · 100 мс', easing: 'ease-out', tokens: ['duration-fast'] },
+    { label: 'Ошибка', value: 'плашка opacity · 150 мс', note: 'Без тряски: поповер стоит на месте.', easing: 'ease-out', tokens: ['duration-quick'] },
+  ],
+  examples: [
+    { id: 'send', title: 'Обычный, снизу', description: 'Отправка счёта: neutral, фокус сразу на «Отправить».' },
+    { id: 'row-actions', title: 'Из меню «Ещё»: архив и удаление', description: 'Пункты «В архив…» и «Удалить…» открывают подтверждение у кнопки «Ещё», после ответа — плашка «Отменить» на 7 секунд.' },
+    { id: 'inline', title: 'В строке, size="sm"', description: 'Одна строка над строкой таблицы: «Удалить черновик?».' },
+    { id: 'states', title: 'Иконка, загрузка, ошибка', description: 'Необратимая отправка с иконкой, запрос 1,5 с со спиннером, ошибка с «Повторить».' },
+  ],
 };
 
 export default meta;

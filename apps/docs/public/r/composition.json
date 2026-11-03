@@ -1,0 +1,18 @@
+{
+  "name": "composition",
+  "type": "component",
+  "title": "Композиция",
+  "description": "Один компонент — разные элементы: кнопка становится ссылкой, пункт меню — переходом по роутеру. Проп render меняет тег, а вид и поведение держатся на data-slot и data-атрибутах состояния, поэтому смена тега их не ломает. Части Kvant собраны на useRender и mergeProps из Base UI, и библиотека отдаёт их как есть — для своих частей, когда готового компонента нет. Своего кода у утилиты нет: это два реэкспорта и правило, по которому написана вся библиотека.",
+  "dependencies": [
+    "@base-ui/react@^1.9.0"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "target": "components/composition.tsx",
+      "content": "/**\n * The composition every Kvant part is built on, for parts of your own: `render` swaps the tag, props and handlers\n * merge, className joins, ref reaches the final tag, state turns into data-* attributes (`{ selected }` → `data-selected`).\n */\nexport { mergeProps } from '@base-ui/react/merge-props';\nexport { useRender } from '@base-ui/react/use-render';\n",
+      "barrel": true
+    }
+  ],
+  "css": []
+}

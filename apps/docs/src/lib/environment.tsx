@@ -1,17 +1,13 @@
-import { createContext, use, type ReactNode } from 'react';
-import { useTheme, type Accent, type ThemePreferences } from '@/kvant';
+import { use, type ReactNode } from 'react';
+import { ThemeContext, ThemeProvider, type Accent, type ThemePreferences, type ThemeState } from '@/kvant';
 
-type Environment = ReturnType<typeof useTheme>;
-
-const EnvironmentContext = createContext<Environment | null>(null);
-
-/** One environment for the whole site: theme, mode, font, shape, density and motion live on <html>. */
+/** One environment for the whole site: theme, mode, font, shape, density and motion live on <html>; examples' useTheme shares it. */
 export function EnvironmentProvider({ children }: { children: ReactNode }) {
-  return <EnvironmentContext value={useTheme()}>{children}</EnvironmentContext>;
+  return <ThemeProvider>{children}</ThemeProvider>;
 }
 
-export function useEnvironment(): Environment {
-  const environment = use(EnvironmentContext);
+export function useEnvironment(): ThemeState {
+  const environment = use(ThemeContext);
   if (!environment) throw new Error('useEnvironment must be used inside <EnvironmentProvider>');
   return environment;
 }
