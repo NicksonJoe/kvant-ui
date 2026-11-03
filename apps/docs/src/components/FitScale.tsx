@@ -24,8 +24,9 @@ export function FitScale({ children, className, max = 1 }: { children: ReactNode
   }, [max]);
 
   return (
-    <div ref={outerRef} className={cn('grid place-items-center overflow-hidden', className)}>
-      <div ref={innerRef} className="w-max" style={{ scale }}>
+    // flex, not grid: an auto grid track grows to the wide content and pins it to the start; flex centres the overflow on both sides
+    <div ref={outerRef} className={cn('flex items-center justify-center overflow-hidden', className)}>
+      <div ref={innerRef} className="w-max shrink-0" style={{ scale }}>
         {children}
       </div>
     </div>
