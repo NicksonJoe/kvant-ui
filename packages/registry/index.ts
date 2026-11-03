@@ -78,3 +78,4 @@ export * from './components/toggle';
 export * from './components/toolbar';
 export * from './components/tour';
 export * from './components/tree-view';
+export * from './components/virtual-list';

@@ -1,4 +1,5 @@
 import { ScrollArea as BaseScrollArea } from '@base-ui/react/scroll-area';
+import type { Ref } from 'react';
 import { cn } from '../lib/cn';
 
 // The fade grows with the distance to the edge (Base UI exposes it) and is absent where content ends.
@@ -16,6 +17,8 @@ export interface ScrollAreaProps extends Omit<BaseScrollArea.Root.Props, 'classN
   fade?: boolean;
   /** Root class: give it a height (or width). */
   className?: string;
+  /** The element that scrolls, for virtual lists and scroll restoration. */
+  viewportRef?: Ref<HTMLDivElement>;
 }
 
 function Scrollbar({ orientation }: { orientation: 'vertical' | 'horizontal' }) {
@@ -40,10 +43,14 @@ function Scrollbar({ orientation }: { orientation: 'vertical' | 'horizontal' }) 
 }
 
 /** One scrolling style everywhere: a thin bar that shows while scrolling and fades that hint at more content. */
-export function ScrollArea({ orientation = 'vertical', fade = true, className, children, ...props }: ScrollAreaProps) {
+export function ScrollArea({ orientation = 'vertical', fade = true, className, viewportRef, children, ...props }: ScrollAreaProps) {
   return (
     <BaseScrollArea.Root data-slot="scroll-area" className={cn('relative flex min-h-0 min-w-0 overflow-hidden', className)} {...props}>
-      <BaseScrollArea.Viewport className={cn('size-full overscroll-contain rounded-[inherit]', fade && orientation !== 'both' && fades[orientation])}>
+      <BaseScrollArea.Viewport
+        ref={viewportRef}
+        data-slot="scroll-area-viewport"
+        className={cn('size-full overscroll-contain rounded-[inherit]', fade && orientation !== 'both' && fades[orientation])}
+      >
         {children}
       </BaseScrollArea.Viewport>
       {orientation !== 'horizontal' ? <Scrollbar orientation="vertical" /> : null}

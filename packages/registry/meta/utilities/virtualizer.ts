@@ -1,13 +1,116 @@
-import type { PlannedComponentMeta } from '../types';
+import type { ReadyComponentMeta } from '../types';
 
-const meta: PlannedComponentMeta = {
+const meta: ReadyComponentMeta = {
   id: 'virtualizer',
-  status: 'planned',
-  title: 'Виртуализация',
-  description: 'Рисует только видимые строки длинных списков.',
+  status: 'beta',
+  title: 'Виртуальный список',
+  description:
+    'Длинный список, в DOM которого живёт только окно видимых строк и запас сверху и снизу, остальное — пустая высота. Полоса прокрутки честная, заголовки групп прилипают, строки без данных стоят плейсхолдерами той же высоты, при быстром броске всплывает позиция. Нужен от ~300 однотипных строк: клиенты, контакты, журнал, история. До 200 строк и для таблиц с пагинацией берите обычный список или DataTable: в них работает поиск браузера и печать.',
   category: 'utilities',
-  paperBoard: '1GJ-0',
-  anatomy: ['Область прокрутки', 'Видимые строки', 'Распорки'],
+  paperBoard: '1DPV-0',
+  anatomy: [
+    'Область прокрутки ScrollArea',
+    'Липкий заголовок текущей группы: glass-strong, тень 0 4 8 6 %',
+    'Пустая высота сверху: строки-скелеты фоном',
+    'Запас сверху: 6 строк',
+    'Окно — видимые строки 56 (плотные 48)',
+    'Запас снизу: 6, в сторону прокрутки 10',
+    'Пустая высота снизу: строки-скелеты фоном',
+    'Подвал после последней строки',
+    'Позиция: капсула fg-1 h36 у правого края',
+  ],
+  related: ['scroll-area', 'list', 'data-table', 'infinite-scroll', 'empty-state'],
+  source: { file: 'components/virtual-list.tsx', exports: ['VirtualList'] },
+  dependencies: { npm: ['@base-ui/react'], registry: ['scroll-area'] },
+  props: [
+    { name: 'aria-label', type: 'string', required: true, description: 'Название списка для диктора: «Клиенты».' },
+    { name: 'count', type: 'number', options: [0, 100, 1284, 100000], default: 1284, required: true, description: 'Строк во всём списке, загруженных и нет; это aria-setsize.' },
+    {
+      name: 'renderRow',
+      type: 'function',
+      signature: '(index: number) => ReactNode',
+      required: true,
+      description: 'Строка по номеру во всём списке. Пока данных нет, верните null — встанет плейсхолдер той же высоты. Разметку, наведение и действия строки задаёт сама строка.',
+    },
+    { name: 'rowHeight', type: 'number', options: [48, 56], default: 56, description: 'Высота строки: 56, плотная 48. С measureRows — оценка до первого показа.' },
+    { name: 'measureRows', type: 'boolean', default: false, description: 'Строки разной высоты (сообщения, записи журнала): каждая измеряется, когда появляется, и при изменении размера.' },
+    { name: 'groups', type: 'object', signature: 'readonly VirtualListGroup[]', control: false, description: 'Группы подряд: title («К»), description («86 клиентов»), count. Над каждой — заголовок 32, заголовок текущей прилипает.' },
+    {
+      name: 'onRangeChange',
+      type: 'function',
+      signature: '(start: number, end: number) => void',
+      description: 'Первая и последняя строка в DOM (окно и запас), чтобы грузить страницы по 50 вокруг окна. Вызывается при каждой смене диапазона — запросы держите идемпотентными.',
+    },
+    { name: 'placeholder', type: 'node', control: false, description: 'Свой плейсхолдер строки без данных; по умолчанию аватар 32, две линии и сумма, fill-2 / fill-1 без мерцания. Фон пустой высоты при быстром броске всегда рисует плейсхолдер по умолчанию.' },
+    { name: 'loading', type: 'boolean', default: false, description: 'Первая загрузка: 12 плейсхолдеров на высоту окна, aria-busy.' },
+    { name: 'empty', type: 'node', control: false, description: 'Показывается вместо списка, когда count = 0: обычно EmptyState с «Сбросить фильтр».' },
+    { name: 'footer', type: 'node', control: false, description: 'После последней строки: «Это все 1 284 клиента» или ошибка следующей страницы с «Повторить».' },
+    { name: 'className', type: 'string', control: false, description: 'Корень: задайте списку высоту.' },
+  ],
+  parts: [
+    {
+      name: 'VirtualListGroup',
+      description: 'Тип группы для groups.',
+      props: [
+        { name: 'title', type: 'string', required: true, description: 'Буква или название в заголовке, label-md semibold.' },
+        { name: 'description', type: 'string', description: 'Вторая часть заголовка, caption fg-3: «86 клиентов».' },
+        { name: 'count', type: 'number', required: true, description: 'Строк в группе; сумма по группам равна count.' },
+      ],
+    },
+  ],
+  slots: [
+    { name: 'virtual-list', description: 'Корень: область прокрутки и позиция; data-empty в пустом состоянии.' },
+    { name: 'scroll-area-viewport', description: 'Элемент, который прокручивается; Tab доходит до него, когда список длиннее окна.' },
+    { name: 'virtual-list-sticky', description: 'Липкий заголовок текущей группы, aria-hidden: он копирует заголовок в списке.' },
+    { name: 'virtual-list-filler', description: 'Пустая высота над и под отрисованными строками. Её фон — строки-скелеты с шагом rowHeight: кадры, которые браузер прокрутил раньше скрипта, показывают их, а не белое.' },
+    { name: 'virtual-list-group', description: 'Заголовок группы в списке: 32, surface-2.' },
+    { name: 'virtual-list-row', description: 'Строка listitem: aria-posinset, aria-setsize, aria-busy без данных; data-index — место в раскладке с заголовками.' },
+    { name: 'virtual-list-placeholder', description: 'Плейсхолдер строки без данных; data-delayed — в покое ждёт 100 мс, строки, въехавшие при прокрутке, показывают его сразу.' },
+    { name: 'virtual-list-position', description: 'Капсула позиции «К 412–419 из 1 284»; data-visible при быстром броске.' },
+  ],
+  states: [
+    { id: 'rest', label: 'покой', description: 'Окно строк, заголовок текущей группы прилип сверху.' },
+    { id: 'loading', label: 'первая загрузка', description: 'Скелет на высоту окна, aria-busy.', props: { loading: true } },
+    { id: 'empty', label: 'пусто', description: 'Вместо списка — empty: фильтр ничего не нашёл.', props: { count: 0 } },
+    { id: 'highlighted', label: 'быстрый бросок', description: 'Строки без данных — плейсхолдеры, справа капсула позиции; гаснет через 800 мс после остановки.', selector: 'data-visible' },
+    {
+      id: 'invalid',
+      label: 'ошибка страницы',
+      description: 'Первая строка незагруженной страницы показывает «Не удалось загрузить 50 клиентов» и «Повторить», остальные ждут плейсхолдерами.',
+    },
+  ],
+  keyboard: [
+    { keys: ['Tab'], action: 'В область списка, затем по кнопкам и ссылкам в строках' },
+    { keys: ['Home'], action: 'К первой строке, фокус на ней' },
+    { keys: ['End'], action: 'К последней строке, фокус на ней, даже если её данные ещё грузятся' },
+    { keys: ['PageUp', 'PageDown'], action: 'На окно вверх или вниз — прокрутка браузера' },
+    { keys: ['↑', '↓'], action: 'Плавная прокрутка браузера, когда фокус на области' },
+  ],
+  a11y: [
+    'role="list" с aria-label, у каждой строки role="listitem", aria-setsize = count и aria-posinset: диктор называет «412 из 1 284», хотя в DOM около 20 строк.',
+    'Строка без данных — aria-busy="true". Когда данные приходят, строка остаётся тем же элементом, и фокус на ней не теряется.',
+    'Строка, в которой фокус, не уходит из DOM при прокрутке: её держит запас окна.',
+    'Липкий заголовок и позиция aria-hidden: заголовок дублирует строку группы в списке, позиция повторяет aria-posinset.',
+    'Поиск браузера Ctrl+F видит только строки в DOM, поэтому коротким спискам виртуализация не нужна.',
+    'Строки с раскрытием и формами внутри не виртуализируйте: ввод в строке, ушедшей из окна, теряется.',
+  ],
+  motion: [
+    { label: 'Плейсхолдер', value: 'в покое — через 100 мс без данных, при прокрутке — сразу', note: 'Быстрая загрузка не мигает, а при броске строки не пустеют.' },
+    {
+      label: 'Позиция',
+      value: 'opacity · 150 мс · ease-out',
+      detail: 'показ от 3 экранов в секунду, скрытие через 800 мс',
+      easing: 'ease-out',
+      reduced: 'так же: это смена прозрачности, не движение',
+      tokens: ['duration-quick'],
+    },
+    { label: 'Строки и заголовок', value: 'без анимации', note: 'Окно перерисовывается вместе с прокруткой.' },
+  ],
+  examples: [
+    { id: 'clients', title: 'Клиенты по алфавиту', description: '1 284 клиента, буквы прилипают, страницы по 50 приходят через 400 мс.' },
+    { id: 'journal', title: 'Журнал разной высоты', description: '5 000 записей, каждая измеряется при показе.' },
+    { id: 'states', title: 'Загрузка, пусто, ошибка страницы', description: 'Скелет, EmptyState и «Повторить» в строке страницы.' },
+  ],
 };
 
 export default meta;

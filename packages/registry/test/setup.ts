@@ -29,5 +29,7 @@ window.matchMedia ??= (query: string): MediaQueryList => ({
 });
 
 Element.prototype.scrollIntoView ??= function scrollIntoView() {};
+// Base UI ScrollArea reads it when scrolling stops.
+Element.prototype.getAnimations ??= () => [];
 
 afterEach(() => cleanup());

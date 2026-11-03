@@ -236,6 +236,31 @@
       var(--animate-shimmer);
   }
 
+  /*
+   * Virtual list: skeleton rows painted by the background, one per --kv-row, in the empty height around the
+   * rendered rows — the frames the browser scrolls to before the script draws them show these instead of white.
+   * Same geometry as the row placeholder: avatar 32 at 20, lines 176×10 and 112×8 at 64, sum 80×10 at the right.
+   */
+  .kv-virtual-filler {
+    --kv-mid: calc(var(--kv-row) / 2);
+    background-image:
+      radial-gradient(circle at 36px var(--kv-mid), var(--color-fill-2) 15.5px, transparent 16px),
+      linear-gradient(transparent calc(var(--kv-mid) - 13px), var(--color-fill-2) 0 calc(var(--kv-mid) - 3px), transparent 0),
+      linear-gradient(transparent calc(var(--kv-mid) + 5px), var(--color-fill-1) 0 calc(var(--kv-mid) + 13px), transparent 0),
+      linear-gradient(transparent calc(var(--kv-mid) - 5px), var(--color-fill-2) 0 calc(var(--kv-mid) + 5px), transparent 0);
+    background-size:
+      100% var(--kv-row),
+      176px var(--kv-row),
+      112px var(--kv-row),
+      80px var(--kv-row);
+    background-position:
+      0 0,
+      64px 0,
+      64px 0,
+      right 20px top 0;
+    background-repeat: repeat-y;
+  }
+
   /* Checkbox mark draws in 150ms, leaves in 100ms. */
   .kv-check-draw path {
     stroke-dasharray: 1;
