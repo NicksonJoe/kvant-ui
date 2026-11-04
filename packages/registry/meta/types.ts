@@ -13,6 +13,7 @@ export const CATEGORY_IDS = [
   'charts',
   'content',
   'chat-ai',
+  'canvas',
   'utilities',
 ] as const;
 export type CategoryId = (typeof CATEGORY_IDS)[number];

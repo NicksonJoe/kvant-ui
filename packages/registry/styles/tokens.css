@@ -242,6 +242,13 @@
   --color-chart-6: oklch(0.62 0.16 140);
   --color-chart-7: oklch(0.62 0.16 295);
   --color-chart-8: oklch(0.62 0.16 25);
+  /* collaborator colours: cursors, foreign selection, presence avatars */
+  --color-presence-1: oklch(0.56 0.2 320);
+  --color-presence-2: oklch(0.55 0.12 215);
+  --color-presence-3: oklch(0.55 0.14 135);
+  --color-presence-fg: oklch(0.995 0 0);
+  /* service logo plate in step palette and nodes */
+  --color-brand-telegram: oklch(0.685 0.135 232);
   /* sequential magnitude scale, one chart-1 hue light to dark; seq-1 also fills forecast bands */
   --color-seq-1: oklch(0.94 0.03 255);
   --color-seq-2: oklch(0.86 0.07 255);
