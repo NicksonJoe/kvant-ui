@@ -258,6 +258,40 @@ describe('NodeCanvas', () => {
       });
     };
 
+    it('fits again when the canvas grows, until the user moves the view', () => {
+      let width = 200;
+      vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+        return this.dataset.slot === 'node-canvas' ? width : 0;
+      });
+      vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function (this: HTMLElement) {
+        return this.dataset.slot === 'node-canvas' ? 600 : 0;
+      });
+      const resized: ((entries: ResizeObserverEntry[]) => void)[] = [];
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          constructor(callback: (entries: ResizeObserverEntry[]) => void) {
+            resized.push(callback);
+          }
+          observe(): void {}
+          unobserve(): void {}
+          disconnect(): void {}
+        },
+      );
+      const onViewportChange = vi.fn();
+      render(<Harness defaultViewport={undefined} onViewportChange={onViewportChange} />);
+      const narrow = onViewportChange.mock.lastCall?.[0].zoom as number;
+      width = 800;
+      act(() => resized.forEach((callback) => callback([])));
+      expect(onViewportChange.mock.lastCall?.[0].zoom).toBeGreaterThan(narrow);
+      fireEvent.wheel(root(), { deltaX: 10, deltaY: 50 });
+      const moved = onViewportChange.mock.lastCall?.[0];
+      width = 400;
+      act(() => resized.forEach((callback) => callback([])));
+      expect(onViewportChange.mock.lastCall?.[0]).toEqual(moved);
+      vi.unstubAllGlobals();
+    });
+
     it('fits the graph on mount when no viewport is given', () => {
       sized();
       const onViewportChange = vi.fn();

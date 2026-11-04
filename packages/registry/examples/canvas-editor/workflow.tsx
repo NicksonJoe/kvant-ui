@@ -1,26 +1,102 @@
 import { useState } from 'react';
-import { Button, CanvasEditor, CanvasNodeCard, CanvasNote, StepPalette, type CanvasSaveState, type CanvasStepTemplate } from '@/kvant';
+import {
+  Button,
+  CanvasControls,
+  CanvasEditor,
+  CanvasMiniMap,
+  CanvasNodeCard,
+  CanvasNote,
+  CanvasPanel,
+  NodeCanvas,
+  StepPalette,
+  useCanvasHistory,
+  type CanvasGraph,
+  type CanvasNode,
+  type CanvasNodeRenderState,
+  type CanvasPort,
+  type CanvasRunStatus,
+  type CanvasSaveState,
+  type CanvasStepTemplate,
+} from '@/kvant';
 import { STEP_GROUPS } from '../step-palette/data';
 
-/** Static picture of the graph: the real editor puts the canvas engine here. */
+interface DemoStep {
+  title: string;
+  subtitle?: string;
+  summary?: string;
+  statusText?: string;
+  outputCount?: number;
+  changed?: boolean;
+}
+
+const IN: CanvasPort = { id: 'in', side: 'top', direction: 'in', type: 'flow' };
+const OUT: CanvasPort = { id: 'out', side: 'bottom', direction: 'out', type: 'flow' };
+
+const demoStep = (id: string, kind: CanvasNode['kind'], x: number, y: number, data: DemoStep, status?: CanvasRunStatus): CanvasNode<DemoStep> => ({
+  id,
+  kind,
+  position: { x, y },
+  ports: kind === 'trigger' ? [OUT] : kind === 'note' ? [] : [IN, OUT],
+  status,
+  data,
+  ...(kind === 'note' ? { width: 220, height: 120 } : {}),
+});
+
+const DEMO_GRAPH: CanvasGraph<DemoStep> = {
+  nodes: [
+    demoStep('trigger', 'trigger', 0, 0, { title: 'Новое сообщение', subtitle: 'Триггер · Telegram', summary: '@norda_bot · личные', outputCount: 12 }, 'done'),
+    demoStep('agent', 'agent', -16, 160, { title: 'Разобрать заявку', subtitle: 'Агент Норды', statusText: 'Выполняется · 1,2 с' }, 'running'),
+    demoStep('budget', 'condition', 0, 330, { title: 'Есть бюджет?', summary: 'budget ≥ 50 000', changed: true }),
+    demoStep('note', 'note', 280, 0, { title: 'Порог бюджета согласовать с Игорем — может, 30 000 ₽ для повторных клиентов?' }),
+  ],
+  edges: [
+    { id: 'e1', source: 'trigger', sourcePort: 'out', target: 'agent', targetPort: 'in', status: 'done' },
+    { id: 'e2', source: 'agent', sourcePort: 'out', target: 'budget', targetPort: 'in', status: 'running' },
+  ],
+};
+
+const renderDemoNode = (node: CanvasNode<DemoStep>, state: CanvasNodeRenderState) =>
+  node.kind === 'note' ? (
+    <CanvasNote className="size-full" author={{ name: 'Анна', color: 'var(--color-chart-2)' }} time="2 мин назад">
+      {node.data.title}
+    </CanvasNote>
+  ) : (
+    <CanvasNodeCard
+      kind={node.kind}
+      title={node.data.title}
+      subtitle={node.data.subtitle}
+      summary={node.data.summary}
+      status={node.status}
+      statusText={node.data.statusText}
+      outputCount={node.data.outputCount}
+      changed={node.data.changed}
+      selected={state.selected}
+    />
+  );
+const demoLabel = (node: CanvasNode<DemoStep>) => node.data.title;
+
+/** The canvas of the editor examples: the real engine, so the graph pans, zooms and fits like in the product. */
 export function DemoCanvas() {
+  const history = useCanvasHistory(DEMO_GRAPH);
   return (
-    <div className="relative size-full min-h-[560px] bg-[radial-gradient(circle,var(--color-fill-3)_1.2px,transparent_1.4px)] bg-size-[20px_20px]">
-      <CanvasNodeCard className="absolute top-16 left-[280px]" kind="trigger" title="Новое сообщение" subtitle="Триггер · Telegram" summary="@norda_bot · личные" status="done" outputCount={12} />
-      <CanvasNodeCard
-        className="absolute top-52 left-[264px]"
-        kind="agent"
-        title="Разобрать заявку"
-        subtitle="Агент Норды"
-        status="running"
-        statusText="Выполняется · 1,2 с"
-        selected
-      />
-      <CanvasNodeCard className="absolute top-[360px] left-[280px]" kind="condition" title="Есть бюджет?" summary="budget ≥ 50 000" changed />
-      <CanvasNote className="absolute top-16 left-[560px]" author={{ name: 'Анна', color: 'var(--color-chart-2)' }} time="2 мин назад">
-        Порог бюджета согласовать с Игорем — может, 30 000 ₽ для повторных клиентов?
-      </CanvasNote>
-    </div>
+    <NodeCanvas<DemoStep>
+      aria-label="Воркфлоу «Заявка из Telegram → сделка»"
+      className="size-full min-h-[480px]"
+      nodes={history.graph.nodes}
+      edges={history.graph.edges}
+      onGraphChange={history.change}
+      onUndo={history.undo}
+      onRedo={history.redo}
+      renderNode={renderDemoNode}
+      nodeLabel={demoLabel}
+    >
+      <CanvasPanel position="bottom-left">
+        <CanvasControls />
+      </CanvasPanel>
+      <CanvasPanel position="bottom-right">
+        <CanvasMiniMap />
+      </CanvasPanel>
+    </NodeCanvas>
   );
 }
 

@@ -781,7 +781,9 @@ export function NodeCanvas<TData = unknown>({
   const clipboard = useRef<CanvasGraph<TData> | null>(null);
   const stopView = useRef<() => void>(() => {});
   const layoutRun = useRef<(options: CanvasLayoutOptions & { fit?: boolean }, duration: number) => void>(() => {});
+  // The view belongs to the host or the user once either sets it; until then the graph is refitted to the canvas size.
   const fitted = useRef(viewportProp !== undefined || defaultViewport !== undefined);
+  const autoFitting = useRef(false);
 
   /* ----- derived graph ----- */
 
@@ -882,6 +884,7 @@ export function NodeCanvas<TData = unknown>({
     setViewportState_.current = setViewportState;
   });
   const setViewport = useCallback((next: CanvasViewport) => {
+    if (!autoFitting.current) fitted.current = true;
     viewportRef.current = next;
     setViewportState_.current(next);
   }, []);
@@ -1043,8 +1046,9 @@ export function NodeCanvas<TData = unknown>({
 
   useEffect(() => {
     if (fitted.current || size.width === 0 || nodes.length === 0) return;
-    fitted.current = true;
+    autoFitting.current = true;
     api.fitView({ duration: 0 });
+    autoFitting.current = false;
   }, [api, size, nodes.length]);
 
   /* ----- wheel: pan, ⌘/pinch zoom ----- */
