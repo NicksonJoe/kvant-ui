@@ -5,6 +5,7 @@ const events = [
   { id: 'brief', title: 'Бриф', start: '2026-11-02T10:00', end: '2026-11-02T11:00' },
   { id: 'call', title: 'Звонок', start: '2026-11-02T10:30', end: '2026-11-02T11:00' },
   { id: 'deadline', title: 'Срок сметы', start: '2026-11-03', allDay: true },
+  { id: 'trip', title: 'Командировка', start: '2026-11-04', end: '2026-11-06', allDay: true },
 ];
 
 const playground: Playground = {

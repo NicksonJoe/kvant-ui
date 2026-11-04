@@ -6,7 +6,7 @@ const meta: ReadyComponentMeta = {
   title: 'График',
   description:
     'Данные — главный слой, всё остальное отступает: сетка цвета separator, ось нуля — border, подписи 12/16 fg-3 с сокращением «тыс». Наведение и ← → показывают вертикаль, точку и подсказку. Плюс кольцо, спарклайн и карточка KPI.',
-  category: 'data-display',
+  category: 'charts',
   paperBoard: 'DHS-0',
   anatomy: ['Легенда-кнопки h28', 'Ось Y 48 с подписями', 'Сетка separator, ноль border', 'Серии chart-1…8', 'Вертикаль 1 fg-4 штрих 3/3 и точка 9', 'Подсказка overlay r12'],
   related: ['card', 'segmented-control', 'table', 'skeleton', 'empty-state'],

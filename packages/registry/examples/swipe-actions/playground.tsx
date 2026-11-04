@@ -8,7 +8,7 @@ const playground: Playground = {
         leading={[{ id: 'done', label: 'Готово', tone: 'success', onSelect: () => {} }]}
         trailing={[{ id: 'task', label: 'Задача', onSelect: () => {} }, { id: 'more', label: 'Ещё', tone: 'neutral', onSelect: () => {} }]}
       >
-        <div className="px-4 py-3 text-label-md">Проведите по строке пальцем</div>
+        <div className="px-4 py-3 text-label-md">Потяните строку пальцем, мышью или двумя пальцами по трекпаду</div>
       </SwipeActions>
     </div>
   ),

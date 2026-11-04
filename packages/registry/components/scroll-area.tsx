@@ -24,6 +24,7 @@ export interface ScrollAreaProps extends Omit<BaseScrollArea.Root.Props, 'classN
 function Scrollbar({ orientation }: { orientation: 'vertical' | 'horizontal' }) {
   return (
     <BaseScrollArea.Scrollbar
+      data-slot="scroll-area-scrollbar"
       orientation={orientation}
       className={cn(
         'group/bar flex rounded-full p-0.5 opacity-0 [transition:opacity_300ms_var(--ease-out)_1000ms,background-color_var(--duration-fast)_var(--ease-hover)]',

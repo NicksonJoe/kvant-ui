@@ -40,6 +40,7 @@ const FONT_ITEMS: Record<Font, { title: string; description: string; packages: s
 const LIB_TEXT: Record<string, { title: string; description: string }> = {
   cn: { title: 'cn', description: 'Склеивает классы; className — для раскладки, не для переопределения рецепта.' },
   recipes: { title: 'Рецепты списков', description: 'Общие классы всплывающих списков: меню, выбор, комбобокс.' },
+  'chart-kit': { title: 'Основа графиков', description: 'Палитры, шкалы, кривые, измерение подписей, легенда, подсказка и доступная область графика с таблицей данных.' },
 };
 
 const readJson = (url: URL): { dependencies?: Record<string, string>; devDependencies?: Record<string, string> } =>

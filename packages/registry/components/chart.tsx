@@ -1,83 +1,25 @@
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
-import { useEffect, useId, useRef, useState, type ComponentProps, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import { useId, useState, type ComponentProps, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import {
+  CHART_COLORS,
+  ChartLegend,
+  ChartPlot,
+  ChartTooltip,
+  ValueAxis,
+  columnPath,
+  formatNumber as number,
+  formatPercent as percent,
+  niceTicks,
+  seriesColor,
+  smoothPath,
+  stepIndex,
+  svgId,
+  useHiddenSeries,
+  useWidth,
+} from '../lib/chart-kit';
 import { cn } from '../lib/cn';
 
-/** Series colours in legend order; all eight keep 3:1 against the surfaces in every theme. */
-export const CHART_COLORS = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `var(--color-chart-${n})`);
-
-const number = (value: number) => value.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
-
-/** Round ticks from 0 to just above `max`: steps of 1, 2, 2.5 or 5 × 10ⁿ, about four intervals. */
-export function niceTicks(max: number, intervals = 4): number[] {
-  if (!(max > 0)) return [0, 1];
-  const raw = max / intervals;
-  const power = 10 ** Math.floor(Math.log10(raw));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * power).find((candidate) => candidate >= raw) ?? 10 * power;
-  const top = Math.ceil(max / step) * step;
-  const ticks: number[] = [];
-  for (let value = 0; value <= top + step / 2; value += step) ticks.push(Math.round(value * 1e6) / 1e6);
-  return ticks;
-}
-
-/** Axis label: «80 тыс», «1,5 млн», «15». */
-export function formatAxisValue(value: number): string {
-  const abs = Math.abs(value);
-  if (abs >= 1e6) return `${number(value / 1e6)} млн`;
-  if (abs >= 1e3) return `${number(value / 1e3)} тыс`;
-  return number(value);
-}
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-/** Monotone cubic curve through the points: smooth, never overshoots the data. */
-function smoothPath(points: readonly Point[]): string {
-  const n = points.length;
-  const first = points[0];
-  if (!first) return '';
-  if (n === 1) return `M${first.x} ${first.y}`;
-  const at = (i: number): Point => points[i] ?? first;
-  const slope = (i: number) => (at(i + 1).y - at(i).y) / (at(i + 1).x - at(i).x || 1);
-  const tangent = (i: number) => {
-    if (i === 0) return slope(0);
-    if (i === n - 1) return slope(n - 2);
-    const left = slope(i - 1);
-    const right = slope(i);
-    if (left * right <= 0) return 0;
-    const dl = at(i).x - at(i - 1).x;
-    const dr = at(i + 1).x - at(i).x;
-    return (3 * (dl + dr)) / ((2 * dr + dl) / left + (dr + 2 * dl) / right);
-  };
-  let d = `M${first.x} ${first.y}`;
-  for (let i = 0; i < n - 1; i += 1) {
-    const a = at(i);
-    const b = at(i + 1);
-    const third = (b.x - a.x) / 3;
-    d += ` C${a.x + third} ${a.y + tangent(i) * third} ${b.x - third} ${b.y - tangent(i + 1) * third} ${b.x} ${b.y}`;
-  }
-  return d;
-}
-
-/** Width of the element, measured; `fallback` until the first layout (and in tests). */
-function useWidth(fallback: number) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(fallback);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry && entry.contentRect.width > 0) setWidth(Math.round(entry.contentRect.width));
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return [ref, width] as const;
-}
-
-/** SVG ids from useId may contain characters that break `url(#…)`. */
-const svgId = (id: string) => `kv${id.replace(/[^\w-]/g, '')}`;
+export { CHART_COLORS, formatAxisValue, niceTicks } from '../lib/chart-kit';
 
 /* ---------- Line, area and bar charts ---------- */
 
@@ -108,16 +50,6 @@ export interface XYChartProps extends Omit<ComponentProps<'div'>, 'children'> {
 
 const MARGIN = { top: 8, right: 8, bottom: 28, left: 48 };
 
-function LegendMarker({ kind, color, hidden }: { kind: XYKind; color: string; hidden?: boolean }) {
-  return (
-    <span
-      aria-hidden
-      className={cn('shrink-0', kind === 'line' ? 'h-0.5 w-3 rounded-full' : 'size-2 rounded-[2px]')}
-      style={hidden ? { boxShadow: 'inset 0 0 0 1px var(--color-fg-4)' } : { background: color }}
-    />
-  );
-}
-
 function XYChart({
   kind,
   labels,
@@ -132,12 +64,12 @@ function XYChart({
 }: XYChartProps & { kind: XYKind }) {
   const [ref, width] = useWidth(560);
   const gradient = svgId(useId());
-  const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set());
+  const [hidden, toggle] = useHiddenSeries();
   const [hovered, setHovered] = useState<string | null>(null);
   const [active, setActive] = useState<number | null>(null);
   const [spoken, setSpoken] = useState('');
 
-  const colored = series.map((item, index) => ({ ...item, color: item.color ?? CHART_COLORS[index % CHART_COLORS.length] ?? 'currentColor' }));
+  const colored = series.map((item, index) => ({ ...item, color: seriesColor(index, item.color) }));
   const shown = colored.filter((item) => !hidden.has(item.name));
   const n = labels.length;
   const ticks = niceTicks(Math.max(0, ...shown.flatMap((item) => item.values)));
@@ -162,22 +94,12 @@ function XYChart({
     `${tooltipLabels?.[index] ?? labels[index] ?? ''}: ${shown.map((item) => `${item.name} ${formatValue(item.values[index] ?? 0)}`).join(', ')}`;
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const keys: Record<string, number> = { ArrowRight: (active ?? -1) + 1, ArrowLeft: (active ?? n) - 1, Home: 0, End: n - 1 };
-    const next = keys[event.key];
-    if (next === undefined || n === 0) return;
+    const index = stepIndex(event.key, active, n);
+    if (index === null) return;
     event.preventDefault();
-    const index = Math.min(n - 1, Math.max(0, next));
     setActive(index);
     setSpoken(describe(index));
   };
-
-  const toggle = (name: string) =>
-    setHidden((current) => {
-      const next = new Set(current);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
 
   const groupWidth = (count: number) => {
     const bar = Math.max(4, Math.min(16, (band * 0.7 - 4 * (count - 1)) / Math.max(1, count)));
@@ -187,51 +109,22 @@ function XYChart({
   return (
     <div data-slot="chart" data-kind={kind} className={cn('flex flex-col gap-3', className)} {...props}>
       {showLegend ? (
-        <div className="flex flex-wrap justify-end gap-1">
-          {colored.map((item) => (
-            <button
-              key={item.name}
-              type="button"
-              aria-pressed={!hidden.has(item.name)}
-              onClick={() => toggle(item.name)}
-              onPointerEnter={() => setHovered(item.name)}
-              onPointerLeave={() => setHovered(null)}
-              onFocus={() => setHovered(item.name)}
-              onBlur={() => setHovered(null)}
-              className="kv-pressable inline-flex h-7 items-center gap-2 rounded-full px-2.5 text-label-sm text-fg-2 hover:bg-fill-2 hover:text-fg-1 aria-[pressed=false]:text-fg-3 aria-[pressed=false]:line-through"
-            >
-              <LegendMarker kind={kind} color={item.color} hidden={hidden.has(item.name)} />
-              {item.name}
-            </button>
-          ))}
-        </div>
+        <ChartLegend items={colored} marker={kind === 'line' ? 'line' : 'square'} hidden={hidden} onToggle={toggle} onHover={setHovered} />
       ) : null}
-      <div
+      <ChartPlot
         ref={ref}
-        role="group"
-        aria-roledescription="график"
         aria-label={label}
-        tabIndex={0}
+        table={{
+          rowHeader: 'Период',
+          columns: colored.map((item) => item.name),
+          rows: labels.map((text, i) => ({ header: tooltipLabels?.[i] ?? text, cells: colored.map((item) => formatValue(item.values[i] ?? 0)) })),
+        }}
+        spoken={spoken}
         onKeyDown={onKeyDown}
         onBlur={() => setActive(null)}
-        className="relative w-full rounded-md focus-visible:outline-offset-4"
       >
         <svg aria-hidden width={width} height={height + MARGIN.top + MARGIN.bottom} className="block overflow-visible">
-          {ticks.map((tick) => (
-            <g key={tick}>
-              <line
-                x1={MARGIN.left}
-                x2={MARGIN.left + plotW}
-                y1={y(tick)}
-                y2={y(tick)}
-                stroke={tick === 0 ? 'var(--color-border)' : 'var(--color-separator)'}
-                shapeRendering="crispEdges"
-              />
-              <text x={MARGIN.left - 12} y={y(tick)} textAnchor="end" dominantBaseline="middle" className="fill-fg-3 text-caption tabular-nums">
-                {formatAxisValue(tick)}
-              </text>
-            </g>
-          ))}
+          <ValueAxis ticks={ticks} y={y} left={MARGIN.left} right={MARGIN.left + plotW} />
           {labels.map((text, i) =>
             i % stride === 0 ? (
               <text key={i} x={x(i)} y={baseline + 20} textAnchor="middle" className="fill-fg-3 text-caption">
@@ -252,13 +145,11 @@ function XYChart({
                 <g key={item.name} className="transition-opacity duration-(--duration-quick)" opacity={dim ? 0.3 : 1}>
                   {item.values.map((value, i) => {
                     const left = x(i) - total / 2 + seriesIndex * (bar + 4);
-                    const top = y(value);
-                    const r = Math.min(4, bar / 2, baseline - top);
                     return (
                       <path
                         key={i}
                         fill={item.color}
-                        d={`M${left} ${baseline}V${top + r}Q${left} ${top} ${left + r} ${top}H${left + bar - r}Q${left + bar} ${top} ${left + bar} ${top + r}V${baseline}Z`}
+                        d={columnPath(left, y(value), bar, baseline)}
                         style={{ transitionDelay: `${i * 35}ms` }}
                         className="origin-bottom transition-[scale] duration-(--duration-slow) ease-standard [transform-box:fill-box] starting:scale-y-0"
                       />
@@ -315,54 +206,16 @@ function XYChart({
         </svg>
 
         {active !== null && shown.length > 0 ? (
-          <div
-            className="pointer-events-none absolute top-1 z-10 flex min-w-44 flex-col gap-1.5 rounded-md bg-overlay px-3 py-2 text-label-sm shadow-overlay transition-opacity duration-(--duration-quick) starting:opacity-0"
-            style={x(active) > width * 0.6 ? { left: x(active) - 12, translate: '-100% 0' } : { left: x(active) + 12 }}
-          >
-            <p className="text-caption text-fg-2">{tooltipLabels?.[active] ?? labels[active]}</p>
-            {shown.map((item) => (
-              <div key={item.name} className="flex items-center gap-2">
-                <LegendMarker kind={kind} color={item.color} />
-                <span className="flex-1 text-fg-2">{item.name}</span>
-                <span className="font-semibold text-fg-1 tabular-nums">{formatValue(item.values[active] ?? 0)}</span>
-              </div>
-            ))}
-            {shown.length > 1 ? (
-              <div className="mt-0.5 flex border-t border-separator pt-1.5">
-                <span className="flex-1 text-fg-2">Всего</span>
-                <span className="font-semibold text-fg-1 tabular-nums">{formatValue(shown.reduce((sum, item) => sum + (item.values[active] ?? 0), 0))}</span>
-              </div>
-            ) : null}
-          </div>
+          <ChartTooltip
+            x={x(active)}
+            width={width}
+            title={tooltipLabels?.[active] ?? labels[active]}
+            marker={kind === 'line' ? 'line' : 'square'}
+            rows={shown.map((item) => ({ name: item.name, color: item.color, value: formatValue(item.values[active] ?? 0) }))}
+            total={shown.length > 1 ? formatValue(shown.reduce((sum, item) => sum + (item.values[active] ?? 0), 0)) : undefined}
+          />
         ) : null}
-
-        <p aria-live="polite" className="sr-only">
-          {spoken}
-        </p>
-        <table className="sr-only">
-          <caption>{label}</caption>
-          <thead>
-            <tr>
-              <th scope="col">Период</th>
-              {colored.map((item) => (
-                <th key={item.name} scope="col">
-                  {item.name}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {labels.map((text, i) => (
-              <tr key={i}>
-                <th scope="row">{tooltipLabels?.[i] ?? text}</th>
-                {colored.map((item) => (
-                  <td key={item.name}>{formatValue(item.values[i] ?? 0)}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      </ChartPlot>
     </div>
   );
 }
@@ -399,7 +252,6 @@ export interface DonutChartProps extends Omit<ComponentProps<'div'>, 'children'>
   size?: number;
 }
 
-const percent = (share: number) => `${(share * 100).toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;
 
 /** Ring 16 wide with 2px gaps, the total in the centre and a legend with counts and shares. */
 export function DonutChart({ data, totalLabel, size = 136, className, 'aria-label': label, ...props }: DonutChartProps) {
@@ -410,7 +262,7 @@ export function DonutChart({ data, totalLabel, size = 136, className, 'aria-labe
     const before = data.slice(0, index).reduce((sum, other) => sum + other.value, 0);
     return {
       ...item,
-      color: item.color ?? CHART_COLORS[index % CHART_COLORS.length] ?? 'currentColor',
+      color: seriesColor(index, item.color),
       share: total > 0 ? item.value / total : 0,
       offset: total > 0 ? (before / total) * circumference : 0,
     };
@@ -504,7 +356,7 @@ export function StackedBar({ data, formatValue = (value) => value.toLocaleString
   const total = data.reduce((sum, item) => sum + item.value, 0);
   const parts = data.map((item, index) => ({
     ...item,
-    color: item.color ?? CHART_COLORS[index % CHART_COLORS.length] ?? 'currentColor',
+    color: seriesColor(index, item.color),
     share: total > 0 ? item.value / total : 0,
   }));
   return (

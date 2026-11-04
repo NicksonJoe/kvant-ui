@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState, type ComponentProps } from 'react';
+import { useId, useState, type ComponentProps } from 'react';
 import { cn } from '../lib/cn';
+import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from './popover';
 
 export interface SchedulerCategory {
   id: string;
@@ -46,8 +47,11 @@ export interface SchedulerProps extends Omit<ComponentProps<'div'>, 'children' |
 }
 
 const HOUR = 48;
+/** Rows of a month cell: every event when they fit, otherwise one row less and «+N ещё» in the last. */
+const MONTH_ROWS = 3;
 const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 const MONTHS_GEN = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const SHORT_MONTHS = MONTHS_GEN.map((month) => month.slice(0, 3));
 const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const WEEKDAYS_FULL = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
 const VIEW_LABELS: Record<SchedulerView, string> = { month: 'Месяц', week: 'Неделя', day: 'День' };
@@ -65,6 +69,26 @@ const addDays = (date: Date, days: number) => new Date(date.getFullYear(), date.
 const weekday = (date: Date) => (date.getDay() + 6) % 7;
 const startOfWeek = (date: Date) => addDays(date, -weekday(date));
 const minutes = (date: Date) => date.getHours() * 60 + date.getMinutes();
+// round() absorbs a DST hour
+const daysBetween = (from: Date, to: Date) => Math.round((to.getTime() - from.getTime()) / 86_400_000);
+
+/** First and last day of an event, ISO dates; an end before the start counts as one day. */
+function dayRange(event: SchedulerEvent): [string, string] {
+  const first = isoDay(parse(event.start));
+  const last = event.allDay && event.end ? isoDay(parse(event.end)) : first;
+  return [first, last > first ? last : first];
+}
+
+/** «10–12 ноября», «30 октября – 2 декабря»; undefined for a one-day event. */
+function rangeLabel(event: SchedulerEvent, months: readonly string[]): string | undefined {
+  const [firstDay, lastDay] = dayRange(event);
+  if (firstDay === lastDay) return undefined;
+  const first = parse(firstDay);
+  const last = parse(lastDay);
+  return first.getMonth() === last.getMonth() && first.getFullYear() === last.getFullYear()
+    ? `${first.getDate()}–${last.getDate()} ${months[last.getMonth()]}`
+    : `${first.getDate()} ${months[first.getMonth()]} – ${last.getDate()} ${months[last.getMonth()]}`;
+}
 
 function eventsWord(count: number): string {
   const tens = count % 100;
@@ -79,12 +103,53 @@ function eventsWord(count: number): string {
 function eventsOn(events: readonly SchedulerEvent[], day: string): SchedulerEvent[] {
   return events
     .filter((event) => {
-      const first = isoDay(parse(event.start));
-      if (!event.allDay) return first === day;
-      const last = event.end ? isoDay(parse(event.end)) : first;
+      const [first, last] = dayRange(event);
       return first <= day && day <= last;
     })
     .sort((a, b) => Number(b.allDay ?? false) - Number(a.allDay ?? false) || parse(a.start).getTime() - parse(b.start).getTime());
+}
+
+interface Span {
+  event: SchedulerEvent;
+  /** Column of the first shown day and the number of shown days. */
+  start: number;
+  span: number;
+  lane: number;
+  /** The event goes on before or after the shown days: that edge is cut square. */
+  clipped?: 'start' | 'end' | 'both';
+  /** The first piece of the event on screen; only it is announced and reached by Tab. */
+  primary: boolean;
+}
+
+/** All-day events of a row of days as bars, stacked in lanes greedily: by start, longer first, then input order. */
+function layoutSpans(events: readonly SchedulerEvent[], from: Date, length: number): Span[] {
+  const pieces = events
+    .flatMap((event) => {
+      if (!event.allDay) return [];
+      const [firstDay, lastDay] = dayRange(event);
+      const first = daysBetween(from, parse(firstDay));
+      const last = daysBetween(from, parse(lastDay));
+      if (last < 0 || first >= length) return [];
+      const start = Math.max(0, first);
+      const end = Math.min(length - 1, last);
+      const clipped = first < start ? (last > end ? 'both' : 'start') : last > end ? 'end' : undefined;
+      return [{ event, start, span: end - start + 1, clipped } as const];
+    })
+    .sort((a, b) => a.start - b.start || b.span - a.span);
+  const laneEnds: number[] = [];
+  return pieces.map((piece) => {
+    let lane = laneEnds.findIndex((end) => end < piece.start);
+    if (lane < 0) lane = laneEnds.length;
+    laneEnds[lane] = piece.start + piece.span - 1;
+    return { ...piece, lane, primary: true };
+  });
+}
+
+/** Lanes of one column: the bar crossing it in each lane, or a gap that keeps lower lanes in line. */
+function lanesAt(spans: readonly Span[], column: number): (Span | undefined)[] {
+  const lanes: (Span | undefined)[] = [];
+  for (const span of spans) if (span.start <= column && column < span.start + span.span) lanes[span.lane] = span;
+  return Array.from(lanes);
 }
 
 /** Side-by-side lanes for overlapping timed events: width 1/lanes of the cluster, left by lane. */
@@ -233,10 +298,6 @@ export function Scheduler({
           timedLabel={timedLabel}
           selectedId={selectedId}
           onSelect={onSelect}
-          onMore={(day) => {
-            setDate(day);
-            setView('day');
-          }}
         />
       ) : (
         <TimeGrid
@@ -265,26 +326,152 @@ interface GridProps {
   onSelect?: (id: string) => void;
 }
 
-function AllDayEvent({ event, color, selected, onSelect }: { event: SchedulerEvent; color: string; selected: boolean; onSelect?: (id: string) => void }) {
+const allDayLabel = (event: SchedulerEvent) => {
+  const range = rangeLabel(event, MONTHS_GEN);
+  return range ? `${range}, ${event.title}` : `Весь день, ${event.title}`;
+};
+// on the grid the fill is opaque, so the day lines do not show through a bar
+const softFill = (color: string, ground = 'transparent') => `color-mix(in oklab, ${color} 16%, ${ground})`;
+
+/**
+ * An all-day event as a bar over `span` equal columns. It sits in the flow of its first column, so lanes line up
+ * with the gaps of the others; `gap` is a column's padding on both sides plus its border, `pad` the padding a cut
+ * edge bleeds into.
+ */
+function SpanEvent({
+  span,
+  color,
+  selected,
+  onSelect,
+  gap,
+  pad,
+}: {
+  span: Span;
+  color: string;
+  selected: boolean;
+  onSelect?: (id: string) => void;
+  gap: number;
+  pad: number;
+}) {
+  const { event, clipped } = span;
+  const cutStart = clipped === 'start' || clipped === 'both';
+  const cutEnd = clipped === 'end' || clipped === 'both';
+  const range = rangeLabel(event, SHORT_MONTHS);
   return (
     <button
       type="button"
-      aria-label={`Весь день, ${event.title}`}
+      data-slot="scheduler-span"
+      data-span={span.span}
+      data-lane={span.lane}
+      data-clipped={clipped}
+      aria-label={allDayLabel(event)}
+      aria-hidden={span.primary ? undefined : true}
+      tabIndex={span.primary ? undefined : -1}
       onClick={() => onSelect?.(event.id)}
-      className="truncate rounded-xs px-1.5 py-0.5 text-left text-body-xs font-medium text-fg-1"
-      style={{ background: selected ? color : `color-mix(in oklab, ${color} 16%, transparent)` }}
+      className={cn(
+        'relative z-1 flex h-5 shrink-0 items-center gap-1 self-start overflow-hidden text-left text-body-xs font-medium text-fg-1',
+        range ? 'pr-2 pl-[7px]' : 'px-1.5',
+        clipped === undefined && 'rounded-[5px]',
+        clipped === 'start' && 'rounded-r-[5px]',
+        clipped === 'end' && 'rounded-l-[5px]',
+      )}
+      style={{
+        width: `calc(${span.span} * (100% + ${gap}px) - ${gap - (cutStart ? pad : 0) - (cutEnd ? pad : 0)}px)`,
+        marginLeft: cutStart ? -pad : undefined,
+        background: selected ? color : softFill(color, 'var(--color-surface-1)'),
+      }}
     >
-      {event.title}
+      {range && !selected ? <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: color }} /> : null}
+      <span className="truncate">{range ? `${event.title} · ${range}` : event.title}</span>
     </button>
   );
 }
 
-function MonthGrid({ current, events, todayDay, color, timedLabel, selectedId, onSelect, onMore }: GridProps & { current: Date; onMore: (day: Date) => void }) {
+/** Bars and gaps of one column, up to `limit` lanes. */
+function SpanLanes({ spans, column, limit, gap, pad, color, selectedId, onSelect }: Omit<GridProps, 'events' | 'todayDay' | 'timedLabel'> & { spans: readonly Span[]; column: number; limit: number; gap: number; pad: number }) {
+  return lanesAt(spans, column)
+    .slice(0, limit)
+    .map((span, lane) =>
+      span && span.start === column ? (
+        <SpanEvent key={lane} span={span} color={color(span.event)} selected={span.event.id === selectedId} onSelect={onSelect} gap={gap} pad={pad} />
+      ) : (
+        <div key={lane} aria-hidden className="h-5 shrink-0" />
+      ),
+    );
+}
+
+/** «+N ещё» and its popover with every event of the day. */
+function DayMore({ day, list, hidden, color, timedLabel, selectedId, onSelect }: Omit<GridProps, 'events' | 'todayDay'> & { day: Date; list: readonly SchedulerEvent[]; hidden: number }) {
+  const id = useId();
+  const date = `${day.getDate()} ${MONTHS_GEN[day.getMonth()]}`;
+  return (
+    <Popover>
+      <PopoverTrigger aria-label={`Ещё ${eventsWord(hidden)}, ${date}`} className="self-start rounded-xs px-1 text-body-xs font-semibold whitespace-nowrap text-accent-soft-fg hover:bg-fill-1">
+        +{hidden} ещё
+      </PopoverTrigger>
+      <PopoverContent data-slot="scheduler-day" align="start" sideOffset={4} aria-labelledby={`${id}-title`} aria-describedby={`${id}-count`} className="w-75! gap-1! rounded-lg! p-3!">
+        <div className="flex items-center justify-between gap-3 px-1 pb-1.5">
+          <h3 id={`${id}-title`} className="text-label-md font-semibold text-fg-1">
+            {WEEKDAYS[weekday(day)]}, {date}
+          </h3>
+          <span id={`${id}-count`} className="text-caption text-fg-3">
+            {eventsWord(list.length)}
+          </span>
+        </div>
+        {list.map((event) => {
+          const selected = event.id === selectedId;
+          const range = rangeLabel(event, SHORT_MONTHS);
+          return event.allDay ? (
+            <PopoverClose
+              key={event.id}
+              aria-label={allDayLabel(event)}
+              onClick={() => onSelect?.(event.id)}
+              className="flex h-7 min-w-0 shrink-0 items-center rounded-xs px-1.5 text-left text-body-xs font-medium text-fg-1"
+              style={{ background: selected ? color(event) : softFill(color(event)) }}
+            >
+              <span className="truncate">{range ? `${event.title} · ${range}` : event.title}</span>
+            </PopoverClose>
+          ) : (
+            <PopoverClose
+              key={event.id}
+              aria-label={timedLabel(event)}
+              onClick={() => onSelect?.(event.id)}
+              className={cn('flex h-7 min-w-0 shrink-0 items-center gap-2 rounded-xs px-1 text-left hover:bg-fill-1', selected && 'bg-fill-2')}
+            >
+              <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: color(event) }} />
+              <span className="w-10 shrink-0 font-mono text-overline font-medium text-fg-3 tabular-nums">{clock(parse(event.start))}</span>
+              <span className="truncate text-body-xs text-fg-1">{event.title}</span>
+            </PopoverClose>
+          );
+        })}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function MonthGrid({ current, events, todayDay, color, timedLabel, selectedId, onSelect }: GridProps & { current: Date }) {
   const first = new Date(current.getFullYear(), current.getMonth(), 1);
   const last = new Date(current.getFullYear(), current.getMonth() + 1, 0);
   const start = startOfWeek(first);
   // from the Monday before the 1st to the Sunday after the last day; round() absorbs a DST hour
   const weeks = Math.round(((last.getTime() - start.getTime()) / 86_400_000 + 7 - weekday(last)) / 7);
+  const announced = new Set<string>();
+  const weekSpans = Array.from({ length: weeks }, (_, week) =>
+    layoutSpans(events, addDays(start, week * 7), 7).map((span) => {
+      const primary = !announced.has(span.event.id);
+      announced.add(span.event.id);
+      return { ...span, primary };
+    }),
+  );
+  // a day shows all its events when they fit; a bar in the last row also needs every day under it to fit,
+  // or it would run over a neighbour's «+N ещё»
+  const weekFits = weekSpans.map((spans, week) =>
+    Array.from({ length: 7 }, (_, index) => {
+      const timed = eventsOn(events, isoDay(addDays(start, week * 7 + index))).filter((event) => !event.allDay).length;
+      return lanesAt(spans, index).length + timed <= MONTH_ROWS;
+    }),
+  );
+  const fitsUnder = (span: Span, fits: readonly boolean[]) => fits.slice(span.start, span.start + span.span).every(Boolean);
 
   return (
     <div role="grid" aria-readonly="true" data-slot="scheduler-month" className="flex flex-col">
@@ -295,13 +482,21 @@ function MonthGrid({ current, events, todayDay, color, timedLabel, selectedId, o
           </div>
         ))}
       </div>
-      {Array.from({ length: weeks }, (_, week) => (
+      {weekSpans.map((spans, week) => (
         <div key={week} role="row" className="grid grid-cols-7 border-b border-separator last:border-b-0">
           {Array.from({ length: 7 }, (_, index) => {
             const day = addDays(start, week * 7 + index);
             const key = isoDay(day);
             const list = eventsOn(events, key);
-            const shown = list.slice(0, 3);
+            const allLanes = lanesAt(spans, index);
+            const allTimed = list.filter((event) => !event.allDay);
+            const fits = weekFits[week] ?? [];
+            const rows = fits[index] && allLanes.every((span) => !span || span.lane < MONTH_ROWS - 1 || fitsUnder(span, fits)) ? MONTH_ROWS : MONTH_ROWS - 1;
+            const lanes = allLanes.slice(0, rows);
+            // a cut-off trailing gap holds no bar, so its row can go to a timed event
+            while (lanes.length > 0 && lanes[lanes.length - 1] === undefined) lanes.pop();
+            const timed = allTimed.slice(0, rows - lanes.length);
+            const hidden = list.length - lanes.filter(Boolean).length - timed.length;
             const outside = day.getMonth() !== current.getMonth();
             const isToday = key === todayDay;
             return (
@@ -318,36 +513,25 @@ function MonthGrid({ current, events, todayDay, color, timedLabel, selectedId, o
                     isToday ? 'bg-accent font-semibold text-accent-fg' : outside ? 'text-fg-3' : 'text-fg-1',
                   )}
                 >
-                  {day.getDate() === 1 ? `${day.getDate()} ${MONTHS_GEN[day.getMonth()]?.slice(0, 3)}` : day.getDate()}
+                  {day.getDate() === 1 ? `${day.getDate()} ${SHORT_MONTHS[day.getMonth()]}` : day.getDate()}
                 </span>
-                {shown.map((event) =>
-                  event.allDay ? (
-                    <AllDayEvent key={event.id} event={event} color={color(event)} selected={event.id === selectedId} onSelect={onSelect} />
-                  ) : (
-                    <button
-                      key={event.id}
-                      type="button"
-                      aria-label={timedLabel(event)}
-                      onClick={() => onSelect?.(event.id)}
-                      className={cn('flex min-w-0 items-center gap-1.5 rounded-xs px-1 text-left text-body-xs hover:bg-fill-1', outside ? 'text-fg-3' : 'text-fg-1', event.id === selectedId && 'bg-fill-2')}
-                    >
-                      <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: color(event) }} />
-                      <span className="truncate">
-                        <span className="tabular-nums">{clock(parse(event.start))}</span> {event.title}
-                      </span>
-                    </button>
-                  ),
-                )}
-                {list.length > shown.length ? (
+                {/* a cell is 6px padding on each side plus a 1px border */}
+                <SpanLanes spans={spans} column={index} limit={lanes.length} gap={13} pad={6} color={color} selectedId={selectedId} onSelect={onSelect} />
+                {timed.map((event) => (
                   <button
+                    key={event.id}
                     type="button"
-                    aria-label={`Ещё ${eventsWord(list.length - shown.length)}, ${day.getDate()} ${MONTHS_GEN[day.getMonth()]}`}
-                    onClick={() => onMore(day)}
-                    className="self-start rounded-xs px-1 text-body-xs font-semibold text-accent-soft-fg hover:bg-fill-1"
+                    aria-label={timedLabel(event)}
+                    onClick={() => onSelect?.(event.id)}
+                    className={cn('flex h-5 min-w-0 shrink-0 items-center gap-1.5 rounded-xs px-1 text-left text-body-xs hover:bg-fill-1', outside ? 'text-fg-3' : 'text-fg-1', event.id === selectedId && 'bg-fill-2')}
                   >
-                    +{list.length - shown.length} ещё
+                    <span aria-hidden className="size-1.5 shrink-0 rounded-full" style={{ background: color(event) }} />
+                    <span className="truncate">
+                      <span className="tabular-nums">{clock(parse(event.start))}</span> {event.title}
+                    </span>
                   </button>
-                ) : null}
+                ))}
+                {hidden > 0 ? <DayMore day={day} list={list} hidden={hidden} color={color} timedLabel={timedLabel} selectedId={selectedId} onSelect={onSelect} /> : null}
               </div>
             );
           })}
@@ -372,6 +556,7 @@ function TimeGrid({
   const hours = Array.from({ length: endHour - startHour }, (_, index) => startHour + index);
   const nowTop = ((minutes(now) - startHour * 60) / 60) * HOUR;
   const nowVisible = nowTop >= 0 && nowTop <= hours.length * HOUR;
+  const spans = days[0] ? layoutSpans(events, days[0], days.length) : [];
 
   return (
     <div data-slot="scheduler-time" className="flex flex-col overflow-x-auto">
@@ -391,13 +576,10 @@ function TimeGrid({
       </div>
       <div className="flex border-b border-separator">
         <div className="flex w-14 shrink-0 items-center px-2 text-caption text-fg-3">весь день</div>
-        {days.map((day) => (
+        {days.map((day, index) => (
           <div key={isoDay(day)} className="flex min-h-8 min-w-28 flex-1 flex-col gap-0.5 border-l border-separator p-1">
-            {eventsOn(events, isoDay(day))
-              .filter((event) => event.allDay)
-              .map((event) => (
-                <AllDayEvent key={event.id} event={event} color={color(event)} selected={event.id === selectedId} onSelect={onSelect} />
-              ))}
+            {/* a column is 4px padding on each side plus a 1px border */}
+            <SpanLanes spans={spans} column={index} limit={Infinity} gap={9} pad={4} color={color} selectedId={selectedId} onSelect={onSelect} />
           </div>
         ))}
       </div>

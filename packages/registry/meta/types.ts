@@ -10,6 +10,7 @@ export const CATEGORY_IDS = [
   'overlays',
   'feedback',
   'data-display',
+  'charts',
   'content',
   'chat-ai',
   'utilities',

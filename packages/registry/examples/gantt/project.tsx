@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Avatar, Gantt, type GanttTask } from '@/kvant';
+import { Avatar, Gantt, type GanttChange, type GanttTask } from '@/kvant';
 
-const tasks: GanttTask[] = [
+const initialTasks: GanttTask[] = [
   { id: 'brief', group: 'Дизайн', title: 'Бриф и исследование', start: '2026-10-27', end: '2026-10-31', progress: 1, assignee: <Avatar name="Анна Северова" size={20} /> },
   { id: 'proto', group: 'Дизайн', title: 'Прототип', start: '2026-11-02', end: '2026-11-06', progress: 0.7, dependsOn: ['brief'], assignee: <Avatar name="Вера Лебедева" size={20} /> },
   { id: 'pages', group: 'Дизайн', title: 'Макеты страниц', start: '2026-11-09', end: '2026-11-17', progress: 0.1, dependsOn: ['proto'], assignee: <Avatar name="Вера Лебедева" size={20} /> },
@@ -12,7 +12,9 @@ const tasks: GanttTask[] = [
 ];
 
 export default function GanttProject() {
+  const [tasks, setTasks] = useState(initialTasks);
   const [selected, setSelected] = useState('proto');
+  const onChange = (change: GanttChange) => setTasks((list) => list.map((task) => (task.id === change.id ? { ...task, ...change } : task)));
   return (
     <Gantt
       aria-label="План работ: сайт для «Полюса»"
@@ -23,6 +25,7 @@ export default function GanttProject() {
       today="2026-11-03"
       selectedId={selected}
       onSelect={setSelected}
+      onChange={onChange}
     />
   );
 }

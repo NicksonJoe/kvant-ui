@@ -1,4 +1,4 @@
-import { createContext, memo, use, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type ReactNode } from 'react';
+import { createContext, memo, use, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { cn } from '../lib/cn';
 import { ScrollArea } from './scroll-area';
@@ -157,6 +157,8 @@ export function VirtualList({
   const viewport = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLDivElement>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // the scrollbar thumb is held: the position stays up at any speed until it is let go
+  const thumbHeld = useRef(false);
   const [offset, setOffset] = useState(0);
   const [height, setHeight] = useState(0);
   const [direction, setDirection] = useState<'forward' | 'backward' | null>(null);
@@ -235,7 +237,7 @@ export function VirtualList({
       if (screen > 0 && distance > screen && (distance / screen / Math.max(elapsed, 1)) * 1000 > FAST_SCREENS) {
         setFast(true);
         clearTimeout(hideTimer.current);
-        hideTimer.current = setTimeout(() => setFast(false), POSITION_HOLD);
+        if (!thumbHeld.current) hideTimer.current = setTimeout(() => setFast(false), POSITION_HOLD);
       }
       if (elapsed > 250) anchor = { offset: top, time: now };
       clearTimeout(idle);
@@ -255,6 +257,20 @@ export function VirtualList({
     };
   }, [hasList]);
   useEffect(() => () => clearTimeout(hideTimer.current), []);
+
+  const holdThumb = (event: PointerEvent<HTMLDivElement>) => {
+    if (!(event.target instanceof Element) || !event.target.closest('[data-slot=scroll-area-scrollbar]')) return;
+    thumbHeld.current = true;
+    clearTimeout(hideTimer.current);
+    setFast(true);
+    const release = () => {
+      if (!thumbHeld.current) return;
+      thumbHeld.current = false;
+      hideTimer.current = setTimeout(() => setFast(false), POSITION_HOLD);
+    };
+    window.addEventListener('pointerup', release, { once: true });
+    window.addEventListener('pointercancel', release, { once: true });
+  };
 
   // Rows of different heights: a ResizeObserver reports each row when it mounts and whenever it resizes.
   const measure = useEffectEvent(() => {
@@ -361,7 +377,7 @@ export function VirtualList({
   }
 
   return (
-    <div data-slot="virtual-list" className={cn('relative flex min-h-0 flex-col', className)}>
+    <div data-slot="virtual-list" onPointerDown={holdThumb} className={cn('relative flex min-h-0 flex-col', className)}>
       <ScrollArea viewportRef={viewport} fade={false} className="size-full" onKeyDown={onKeyDown}>
         {loading ? (
           <div role="list" aria-label={label} aria-busy="true" className="flex flex-col">
@@ -438,7 +454,6 @@ export function VirtualList({
           data-slot="virtual-list-position"
           data-visible={fast ? '' : undefined}
           aria-hidden="true"
-          // shortcut: shows on fling speed only; dragging the thumb slowly does not bring it up, add a thumb listener if asked
           className="pointer-events-none absolute top-1/2 right-4 z-20 flex h-9 -translate-y-1/2 items-center gap-2 rounded-full bg-fg-1 pr-3.5 pl-1.5 text-label-md font-medium whitespace-nowrap text-surface-1 tabular-nums opacity-0 shadow-tooltip transition-opacity duration-(--duration-quick) ease-out data-visible:opacity-100"
         >
           {group ? <span className="flex size-6 items-center justify-center rounded-full bg-surface-1/15 text-caption font-semibold">{group.title}</span> : null}

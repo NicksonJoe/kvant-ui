@@ -1,0 +1,207 @@
+import type { ReadyComponentMeta } from '../types';
+
+const ariaLabel = { name: 'aria-label', type: 'string', required: true, description: 'Что показывает график; данные дублируются скрытой таблицей.', control: false } as const;
+const formatValue = { name: 'formatValue', type: 'function', signature: '(value: number) => string', description: 'Формат чисел в подписях и подсказке.', control: false } as const;
+const legend = {
+  name: 'legend',
+  type: 'object',
+  signature: 'readonly { name: string; color: string }[]',
+  description: 'Статичная легенда над графиком: смысловой поток и остальные.',
+} as const;
+const flowLinks = { type: 'object', required: true, signature: 'readonly { source: string; target: string; value: number }[]' } as const;
+
+const meta: ReadyComponentMeta = {
+  id: 'chart-flow',
+  status: 'beta',
+  title: 'Поток и процесс',
+  description:
+    'Куда уходит? Воронка — шаги от общего нуля с конверсией перехода; водопад — мост от плана к факту; санкей — потоки между этапами; хорды — переходы внутри замкнутого набора; граф связей — что с чем встречается; дуговая диаграмма — переходы по пути вперёд и назад; когорты — удержание по месяцам. Раскладки считаются один раз и детерминированно.',
+  category: 'charts',
+  paperBoard: '1PKK-0',
+  anatomy: [
+    'Легенда h28 над графиком: статичная или кнопки, скрывающие группу',
+    'Область графика — group «график» со скрытой таблицей',
+    'Метки: полосы, столбцы, узлы, ленты, дуги, клетки',
+    'Подписи значений fg-1 600, вторичные fg-2/fg-3',
+    'Подсказка overlay r12 при наведении и ← →',
+  ],
+  related: ['chart', 'card', 'table'],
+  source: {
+    file: 'components/chart-flow.tsx',
+    exports: [
+      'FunnelChart',
+      'WaterfallChart',
+      'SankeyChart',
+      'ChordChart',
+      'NetworkChart',
+      'ArcDiagramChart',
+      'CohortChart',
+      'waterfallLayout',
+      'sankeyLayout',
+      'chordLayout',
+      'networkLayout',
+    ],
+  },
+  dependencies: { npm: [], registry: [] },
+  propsOf: 'FunnelChart',
+  props: [
+    ariaLabel,
+    { name: 'data', type: 'object', required: true, signature: 'readonly { label: string; value: number }[]', description: 'Шаги сверху вниз; каждый сравнивается с прошлым.', control: false },
+    formatValue,
+    { name: 'color', type: 'string', description: 'Цвет полос, по умолчанию chart-1.', control: false },
+  ],
+  parts: [
+    {
+      name: 'WaterfallChart',
+      description: 'Мост P&L: итоги от нуля fg-3, рост chart-1 и потери chart-2 висят на уровне прошлого итога, соединители штрихом 2/2, знак в подписи.',
+      props: [
+        ariaLabel,
+        { name: 'data', type: 'object', required: true, signature: 'readonly { label: string; value?: number; total?: boolean }[]', description: 'Шаги; total — столбец от нуля до накопленной суммы, его value прибавляется до этого (так задаётся «План»).' },
+        formatValue,
+        { name: 'height', type: 'number', default: 196, description: 'Высота области без подписей, px.' },
+        { name: 'legend', type: 'boolean', default: true, description: 'Легенда «Итог · Рост · Потеря».' },
+      ],
+    },
+    {
+      name: 'SankeyChart',
+      description: 'Узлы 12 по слоям топологии, высота узла — сумма потоков, ленты Безье шириной в объём; нейтральные fill-3, смысловой поток seq-2, у последнего слоя ещё и доля.',
+      props: [
+        ariaLabel,
+        { name: 'nodes', type: 'object', required: true, signature: 'readonly { id: string; label?: string; color?: string }[]', description: 'Узлы; первый слой окрашивается палитрой, остальные fg-2.' },
+        { name: 'links', ...flowLinks, description: 'Потоки; петли и ссылки на себя отбрасываются.' },
+        { name: 'highlight', type: 'string', description: 'id узла: потоки в него — seq-2.' },
+        legend,
+        formatValue,
+        { name: 'height', type: 'number', default: 300, description: 'Высота, px.' },
+      ],
+    },
+    {
+      name: 'ChordChart',
+      description: 'Кольцо 12 с зазором 4°: дуга — все входы и выходы группы; ленты fill-3, потоки группы в фокусе — её цветом поверх. Читается до 6–7 групп.',
+      props: [
+        ariaLabel,
+        { name: 'groups', type: 'object', required: true, signature: 'readonly { id: string; label?: string; color?: string }[]', description: 'Группы по кругу от 12 часов.' },
+        { name: 'flows', ...flowLinks, description: 'Потоки из группы в группу.' },
+        { name: 'highlight', type: 'string', description: 'id группы, чьи исходящие потоки окрашены; наведение и ← → делают то же.' },
+        legend,
+        formatValue,
+      ],
+    },
+    {
+      name: 'NetworkChart',
+      description: 'Силовая укладка, детерминированная: связанные ближе, радиус ∝ √числа связей с кольцом поверхности 2, рёбра border 1–4 под узлами. До ~50 узлов.',
+      props: [
+        ariaLabel,
+        { name: 'nodes', type: 'object', required: true, signature: 'readonly { id: string; label?: string; group?: string; x?: number; y?: number }[]', description: 'Узлы; x и y 0…1 — раскладка из макета вместо расчёта.' },
+        { name: 'links', type: 'object', required: true, signature: 'readonly { source: string; target: string; value?: number }[]', description: 'Пары; value — как часто, толщина и притяжение.' },
+        { name: 'groups', type: 'object', signature: 'readonly string[]', description: 'Порядок групп для цветов и легенды.' },
+        { name: 'height', type: 'number', default: 300, description: 'Высота, px.' },
+        { name: 'seed', type: 'number', default: 1, description: 'Зерно раскладки.' },
+        formatValue,
+      ],
+    },
+    {
+      name: 'ArcDiagramChart',
+      description: 'Узлы на одной оси в порядке пути, радиус ∝ √визитов; дуги 1–10 по объёму, крупные снизу; вперёд — сверху chart-1, назад — снизу chart-2; подписаны два главных потока.',
+      props: [
+        ariaLabel,
+        { name: 'nodes', type: 'object', required: true, signature: 'readonly { id: string; label?: string; value?: number }[]', description: 'Узлы в порядке пути; value — визиты.' },
+        { name: 'links', ...flowLinks, description: 'Переходы; направление по порядку узлов.' },
+        { name: 'formatValue', type: 'function', signature: '(value: number) => string', description: 'Формат чисел, по умолчанию «62 тыс».', control: false },
+      ],
+    },
+    {
+      name: 'CohortChart',
+      description: 'Треугольник удержания: строка — месяц первой покупки, клетки — доля от первой колонки на seq-1…5, пустые клетки не рисуются.',
+      props: [
+        ariaLabel,
+        { name: 'data', type: 'object', required: true, signature: 'readonly { label: string; values: readonly number[] }[]', description: 'Люди по периодам; первое значение — размер когорты.' },
+        { name: 'columns', type: 'object', signature: 'readonly string[]', description: 'Заголовки колонок, по умолчанию «Месяц 0…».' },
+        { name: 'formatSize', type: 'function', signature: '(value: number) => string', description: 'Размер когорты, по умолчанию «1 240 чел».' },
+        { name: 'thresholds', type: 'object', signature: 'readonly number[]', description: 'Пороги долей для seq-2…5, по умолчанию из макета: 0,265 · 0,35 · 0,45 · 0,755.' },
+      ],
+    },
+    {
+      name: 'sankeyLayout',
+      description: 'Раскладка санкея без отрисовки: слои, высоты, порядок с меньшим числом пересечений, пути лент.',
+      props: [{ name: 'options', type: 'object', required: true, signature: '{ x0: number; x1: number; height: number; nodeWidth?: number; padding?: number }', description: 'Края слоёв, высота, ширина узла 12 и зазор 16.' }],
+    },
+    {
+      name: 'chordLayout',
+      description: 'Углы групп и концов лент; 0 рад — 12 часов.',
+      props: [{ name: 'padAngle', type: 'number', description: 'Зазор между группами, рад; по умолчанию 4°.' }],
+    },
+    {
+      name: 'networkLayout',
+      description: 'Силовая раскладка в единичном квадрате: фиксированное зерно и число итераций, без анимации.',
+      props: [{ name: 'options', type: 'object', signature: '{ seed?: number; iterations?: number }', description: 'Зерно 1 и 300 итераций по умолчанию.' }],
+    },
+    {
+      name: 'waterfallLayout',
+      description: 'Начало, конец и вид каждого столбца водопада.',
+      props: [{ name: 'steps', type: 'object', required: true, signature: 'readonly WaterfallStep[]', description: 'Те же шаги, что у WaterfallChart.' }],
+    },
+  ],
+  slots: [
+    { name: 'funnel-chart', description: 'Воронка.' },
+    { name: 'funnel-bar', description: 'Полоса шага; data-width — длина.' },
+    { name: 'funnel-step', description: 'Плашка конверсии перехода fill-2.' },
+    { name: 'funnel-row', description: 'Зона наведения шага.' },
+    { name: 'waterfall-chart', description: 'Водопад.' },
+    { name: 'waterfall-bar', description: 'Столбец; data-kind total, up или down.' },
+    { name: 'waterfall-connector', description: 'Соединитель штрихом на уровне итога.' },
+    { name: 'sankey-chart', description: 'Санкей.' },
+    { name: 'sankey-node', description: 'Узел 12.' },
+    { name: 'sankey-link', description: 'Лента; data-highlight у смыслового потока.' },
+    { name: 'chord-chart', description: 'Хорды.' },
+    { name: 'chord-group', description: 'Дуга группы.' },
+    { name: 'chord-ribbon', description: 'Лента; data-highlight у потоков группы в фокусе.' },
+    { name: 'network-chart', description: 'Граф связей.' },
+    { name: 'network-node', description: 'Узел; data-id.' },
+    { name: 'network-link', description: 'Ребро; data-active у рёбер выбранного узла.' },
+    { name: 'arc-diagram-chart', description: 'Дуговая диаграмма.' },
+    { name: 'arc-node', description: 'Узел на оси.' },
+    { name: 'arc-link', description: 'Дуга; data-direction forward или back.' },
+    { name: 'arc-axis', description: 'Ось separator.' },
+    { name: 'cohort-chart', description: 'Когортная таблица.' },
+    { name: 'cohort-cell', description: 'Клетка; data-level 1…5 и data-share.' },
+    { name: 'cohort-value', description: 'Доля в клетке.' },
+  ],
+  states: [
+    { id: 'rest', label: 'покой', description: 'Без подсказки; смысловой поток уже выделен.' },
+    { id: 'highlighted', label: 'фокус', description: 'Наведение или ← →: подсказка, несвязанные ленты, рёбра и дуги приглушаются, в когортах — рамка fg-1 2.' },
+    { id: 'unchecked', label: 'группа скрыта', description: 'Граф и дуги: легенда-кнопка с контуром fg-4 и зачёркиванием.' },
+    { id: 'empty', label: 'пусто', description: 'Нет данных — EmptyState в карточке графика.' },
+  ],
+  keyboard: [
+    { keys: ['Tab'], action: 'Легенда-кнопки, затем область графика' },
+    { keys: ['←', '→'], action: 'Соседний шаг, столбец, узел или группа: подсказка и объявление' },
+    { keys: ['↑', '↓'], action: 'Воронка — соседний шаг; когорты — соседняя строка' },
+    { keys: ['Home', 'End'], action: 'Первый или последний элемент (в когортах — строки)' },
+    { keys: ['Enter', 'Space'], action: 'В легенде: скрыть или показать группу' },
+  ],
+  a11y: [
+    'Область графика — group с aria-label и ролью «график»; рядом скрытая таблица со всеми значениями.',
+    'Выбранное клавишами объявляется через aria-live: значение, конверсия, связи.',
+    'Направление и знак не только цветом: «+0,9» и «−0,7», дуги назад — снизу и с подписью «назад».',
+    'Текст в клетках когорт контрастен: на тёмных клетках — цвет поверхности, в тёмной теме шкала переворачивается вместе с ним.',
+  ],
+  motion: [
+    { label: 'Воронка и водопад', value: 'полосы растут от нуля 300 мс ease-standard, шаг 35 мс; соединители проявляются после', tokens: ['duration-slow'] },
+    { label: 'Санкей и дуги', value: 'clip-path слева направо 700 мс ease-out один раз, узлы — opacity 300 мс', tokens: ['duration-deliberate', 'duration-slow'] },
+    { label: 'Хорды и граф', value: 'ленты и рёбра проявляются 700 мс, узлы графа вырастают из точки 300 мс с шагом 20 мс', tokens: ['duration-deliberate', 'duration-slow'] },
+    { label: 'Когорты', value: 'клетки проявляются 300 мс по диагонали, шаг 30 мс', tokens: ['duration-slow'] },
+    { label: 'Фокус', value: 'приглушение до 25–35 % за 150 мс', tokens: ['duration-quick'], reduced: 'длительности сокращаются до 150 мс токенами' },
+  ],
+  examples: [
+    { id: 'funnel', title: 'Воронка заказа', description: 'Пять шагов от общего нуля, конверсия перехода и итог.' },
+    { id: 'waterfall', title: 'От плана к факту', description: 'Мост выручки в млн ₽: что добавило и что съело.' },
+    { id: 'sankey', title: 'Путь клиента', description: 'Источники → площадки → покупка или уход; поток к покупке выделен.' },
+    { id: 'chord', title: 'Переходы между тарифами', description: 'Потоки из «Бизнеса» её цветом поверх.' },
+    { id: 'network', title: 'Интеграции вместе', description: 'Шестнадцать сервисов в трёх группах; легенда скрывает группу.' },
+    { id: 'arc-diagram', title: 'Пути по разделам', description: 'Шаги вперёд сверху, возвраты снизу.' },
+    { id: 'cohort', title: 'Удержание по когортам', description: 'Треугольник шести месяцев на seq-шкале.' },
+  ],
+};
+
+export default meta;

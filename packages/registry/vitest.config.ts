@@ -18,6 +18,8 @@ export default defineConfig({
     // the module cache keeps old import.meta.glob results, so new examples stay invisible to meta tests
     fsModuleCache: false,
     setupFiles: ['./test/setup.ts'],
+    // user-event keyboard walks take 1–2 s alone and pass 5 s when the whole suite shares the CPU
+    testTimeout: 15_000,
     css: false,
   },
 });

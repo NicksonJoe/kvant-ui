@@ -1,5 +1,6 @@
 // Kvant registry metadata: one typed meta per component. Docs, the playground and the future composer read only this.
 import actions from './actions';
+import charts from './charts';
 import chatAi from './chat-ai';
 import content from './content';
 import dataDisplay from './data-display';
@@ -25,6 +26,7 @@ export const categories: readonly CategoryMeta[] = [
   overlays,
   feedback,
   dataDisplay,
+  charts,
   content,
   chatAi,
   utilities,

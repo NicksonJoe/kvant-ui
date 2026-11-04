@@ -13,7 +13,7 @@ interface Deal {
 }
 
 const rub = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
-const sum = (deals: readonly Deal[]) => `${(deals.reduce((total, deal) => total + deal.amount, 0) / 1e6).toLocaleString('ru-RU', { maximumFractionDigits: 1 })} млн ₽`;
+const sum = (deals: readonly Deal[]) => `${(deals.reduce((total, deal) => total + deal.amount, 0) / 1e6).toLocaleString('ru-RU', { maximumFractionDigits: 1 })} млн ₽`;
 
 const initial: KanbanItems<Deal> = {
   qualification: [
@@ -29,6 +29,11 @@ const initial: KanbanItems<Deal> = {
     { id: 'podcast', title: 'Обложки для подкаста', client: '«Тихий эфир»', amount: 168000, due: '19 ноя', owner: 'Пётр Ильин' },
   ],
   invoice: [],
+  paid: [
+    { id: 'menu', title: 'Меню и навигация для ресторана', client: '«Брусника»', amount: 1840000, due: '3 окт', owner: 'Анна Северова' },
+    { id: 'pack', title: 'Упаковка для сыроварни', client: '«Сыр да мёд»', amount: 1460000, due: '21 сен', owner: 'Илья Громов' },
+    { id: 'site', title: 'Сайт для автосервиса', client: '«Гараж 24»', amount: 1500000, due: '9 сен', owner: 'Пётр Ильин' },
+  ],
 };
 
 const stages = [
@@ -36,6 +41,7 @@ const stages = [
   { id: 'negotiation', title: 'Переговоры', color: 'var(--color-chart-1)' },
   { id: 'contract', title: 'Договор', color: 'var(--color-chart-3)', limit: 1 },
   { id: 'invoice', title: 'Счёт выставлен', color: 'var(--color-chart-4)' },
+  { id: 'paid', title: 'Оплачено', color: 'var(--color-chart-6)' },
 ];
 
 export default function KanbanDeals() {
@@ -48,6 +54,8 @@ export default function KanbanDeals() {
       columns={columns}
       items={items}
       onItemsChange={setItems}
+      collapsible
+      defaultCollapsed={['paid']}
       getLabel={(deal) => `${deal.title}, ${deal.client}, ${rub.format(deal.amount)}`}
       renderCard={(deal) => (
         <KanbanCard>

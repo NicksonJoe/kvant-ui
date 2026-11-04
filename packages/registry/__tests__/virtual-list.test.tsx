@@ -273,4 +273,22 @@ describe('VirtualList', () => {
     expect(indicator().textContent).toMatch(/К\s*412–419\sиз\s1\s284/);
     await waitFor(() => expect(indicator().hasAttribute('data-visible')).toBe(false), { timeout: 1500 });
   });
+
+  it('shows the position while the scrollbar thumb is held, however slowly it moves', async () => {
+    render(<VirtualList aria-label="Клиенты" count={1284} renderRow={row} />);
+    const indicator = () => document.querySelector('[data-slot=virtual-list-position]') as Element;
+    // jsdom never measures the viewport as scrollable, so Base UI draws no bar: stand one in with the same slot
+    const scrollbar = document.createElement('div');
+    scrollbar.dataset.slot = 'scroll-area-scrollbar';
+    document.querySelector('[data-slot=scroll-area]')?.append(scrollbar);
+
+    fireEvent.pointerDown(scrollbar);
+    await waitFor(() => expect(indicator().hasAttribute('data-visible')).toBe(true));
+    scrollViewport(112);
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    expect(indicator().hasAttribute('data-visible')).toBe(true);
+
+    fireEvent.pointerUp(window);
+    await waitFor(() => expect(indicator().hasAttribute('data-visible')).toBe(false), { timeout: 1500 });
+  });
 });

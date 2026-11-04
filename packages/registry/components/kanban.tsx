@@ -1,6 +1,7 @@
-import { Plus } from 'lucide-react';
+import { FoldHorizontal, Plus } from 'lucide-react';
 import { useEffect, useRef, useState, type ComponentProps, type DragEvent, type ReactNode } from 'react';
 import { cn } from '../lib/cn';
+import { useControllable } from '../lib/use-controllable';
 
 export interface KanbanColumn {
   id: string;
@@ -20,6 +21,11 @@ interface Target {
   column: string;
   index: number;
 }
+
+const NONE: readonly string[] = [];
+
+const cardSelector = (id: string) => `[data-kanban-id="${CSS.escape(id)}"]`;
+const toggleSelector = (column: string) => `[data-kanban-toggle="${CSS.escape(column)}"]`;
 
 /** Moves one card; `index` counts positions in the target column before the move. */
 export function moveKanbanItem<T extends { id: string }>(items: KanbanItems<T>, id: string, to: Target): KanbanItems<T> {
@@ -47,11 +53,18 @@ export interface KanbanProps<T extends { id: string }> extends Omit<ComponentPro
   onCardClick?: (item: T) => void;
   /** Shows «Добавить» at the bottom of every column. */
   onAdd?: (columnId: string) => void;
+  /** Puts a fold button into every column header. A folded column always opens back, even without it. */
+  collapsible?: boolean;
+  /** Ids of folded columns (controlled). */
+  collapsed?: readonly string[];
+  defaultCollapsed?: readonly string[];
+  onCollapsedChange?: (collapsed: readonly string[]) => void;
 }
 
 /**
  * Stages left to right with cards. Cards move by drag and drop or from the keyboard:
  * Alt+← → to the neighbouring column, Alt+↑ ↓ within one. Every move is announced.
+ * A column folds into a 48 strip with its title written vertically; cards still drop onto it.
  */
 export function Kanban<T extends { id: string }>({
   columns,
@@ -61,14 +74,20 @@ export function Kanban<T extends { id: string }>({
   getLabel,
   onCardClick,
   onAdd,
+  collapsible = false,
+  collapsed: collapsedProp,
+  defaultCollapsed = NONE,
+  onCollapsedChange,
   className,
   ...props
 }: KanbanProps<T>) {
+  const [collapsed, setCollapsed] = useControllable(collapsedProp, defaultCollapsed, onCollapsedChange);
   const [dragged, setDragged] = useState<string | null>(null);
   const [target, setTarget] = useState<Target | null>(null);
   const [announcement, setAnnouncement] = useState('');
   const board = useRef<HTMLDivElement>(null);
-  const refocus = useRef<string | null>(null);
+  // `folded` waits for the fold state to match: a controlled board may ignore the toggle
+  const refocus = useRef<{ selector: string; folded?: { column: string; value: boolean } } | null>(null);
   // touch drag: a long press arms it, so a quick swipe still scrolls the board
   const touch = useRef<{ id: string; x: number; y: number; timer: number; active: boolean } | null>(null);
 
@@ -84,10 +103,19 @@ export function Kanban<T extends { id: string }>({
   }, []);
 
   useEffect(() => {
-    if (refocus.current === null) return;
-    board.current?.querySelector<HTMLElement>(`[data-kanban-id="${CSS.escape(refocus.current)}"]`)?.focus();
+    const next = refocus.current;
+    if (next === null) return;
     refocus.current = null;
+    if (next.folded && collapsed.includes(next.folded.column) !== next.folded.value) return;
+    board.current?.querySelector<HTMLElement>(next.selector)?.focus();
   });
+
+  const toggle = (column: string) => {
+    const folding = !collapsed.includes(column);
+    // the pressed button unmounts, so focus moves to its twin: the strip or the header button
+    refocus.current = { selector: toggleSelector(column), folded: { column, value: folding } };
+    setCollapsed(folding ? [...collapsed, column] : collapsed.filter((id) => id !== column));
+  };
 
   const move = (item: T, to: Target) => {
     const next = moveKanbanItem(items, item.id, to);
@@ -95,7 +123,8 @@ export function Kanban<T extends { id: string }>({
     const list = next[to.column] ?? [];
     const position = list.findIndex((entry) => entry.id === item.id) + 1;
     setAnnouncement(`«${getLabel(item)}» — в «${column?.title ?? to.column}», позиция ${position} из ${list.length}`);
-    refocus.current = item.id;
+    // a folded column has no cards to focus, so focus stays on its strip
+    refocus.current = { selector: collapsed.includes(to.column) ? toggleSelector(to.column) : cardSelector(item.id) };
     onItemsChange(next);
   };
 
@@ -139,6 +168,47 @@ export function Kanban<T extends { id: string }>({
         const over = column.limit !== undefined && cards.length > column.limit;
         const slotAt = dragged !== null && target?.column === column.id ? target.index : null;
         const slot = <div aria-hidden className="h-14 shrink-0 rounded-md border-2 border-dashed border-accent bg-accent-soft" />;
+        const counter = column.limit !== undefined ? `${cards.length} / ${column.limit}` : cards.length;
+        const dot = column.color ? <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: column.color }} /> : null;
+        if (collapsed.includes(column.id)) {
+          return (
+            <section
+              key={column.id}
+              role="group"
+              aria-label={`${column.title}, ${cards.length}`}
+              data-slot="kanban-column"
+              data-kanban-column={column.id}
+              data-collapsed=""
+              data-drop-target={slotAt !== null ? '' : undefined}
+              onDragOver={(event) => {
+                if (dragged === null) return;
+                event.preventDefault();
+                setTarget({ column: column.id, index: cards.length });
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                drop(column.id);
+              }}
+              className="flex w-12 shrink-0 self-stretch rounded-lg bg-fill-1 transition-colors duration-(--duration-quick) not-data-drop-target:hover:bg-fill-2 data-drop-target:bg-[color-mix(in_oklab,var(--color-accent)_6%,transparent)] data-drop-target:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-accent)_35%,transparent)]"
+            >
+              <button
+                type="button"
+                data-kanban-toggle={column.id}
+                aria-expanded={false}
+                aria-label={`Развернуть колонку «${column.title}»`}
+                onClick={() => toggle(column.id)}
+                className="flex flex-1 flex-col items-center gap-3 rounded-lg py-3.5 outline-offset-2"
+              >
+                {dot}
+                <span className={cn('text-label-sm font-medium tabular-nums', over ? 'font-semibold text-warning-soft-fg' : 'text-fg-3')}>{counter}</span>
+                <span className="text-label-md font-semibold whitespace-nowrap text-fg-1 [writing-mode:vertical-rl]">
+                  {column.title}
+                  {column.summary ? <> · {column.summary}</> : null}
+                </span>
+              </button>
+            </section>
+          );
+        }
         return (
           <section
             key={column.id}
@@ -159,8 +229,8 @@ export function Kanban<T extends { id: string }>({
             }}
             className="flex w-[298px] min-w-[264px] shrink-0 flex-col gap-2"
           >
-            <header className="flex h-9 items-center gap-2 px-1">
-              {column.color ? <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: column.color }} /> : null}
+            <header className="group/header flex h-10 items-center gap-2 px-2">
+              {dot}
               <h3 className="truncate text-label-md font-semibold text-fg-1">{column.title}</h3>
               <span
                 className={cn(
@@ -168,9 +238,22 @@ export function Kanban<T extends { id: string }>({
                   over ? 'bg-warning-soft font-semibold text-warning-soft-fg' : 'bg-fill-2 text-fg-2',
                 )}
               >
-                {column.limit !== undefined ? `${cards.length} / ${column.limit}` : cards.length}
+                {counter}
               </span>
-              {column.summary ? <span className="ml-auto text-body-xs text-fg-2 tabular-nums">{column.summary}</span> : null}
+              <span className="ml-auto text-body-xs whitespace-nowrap text-fg-2 tabular-nums">{column.summary}</span>
+              {collapsible ? (
+                // zero-wide until the header is hovered or the button focused, so the sum keeps its place at rest
+                <button
+                  type="button"
+                  data-kanban-toggle={column.id}
+                  aria-expanded
+                  aria-label={`Свернуть колонку «${column.title}»`}
+                  onClick={() => toggle(column.id)}
+                  className="-ml-2 grid h-6 w-0 shrink-0 place-items-center overflow-hidden rounded-full text-fg-3 opacity-0 transition-opacity duration-(--duration-quick) group-hover/header:ml-0 group-hover/header:w-6 group-hover/header:opacity-100 hover:bg-fill-1 hover:text-fg-1 focus-visible:ml-0 focus-visible:w-6 focus-visible:opacity-100 pointer-coarse:ml-0 pointer-coarse:w-6 pointer-coarse:opacity-100"
+                >
+                  <FoldHorizontal aria-hidden className="size-4 stroke-[1.75]" />
+                </button>
+              ) : null}
             </header>
             {cards.length === 0 && slotAt === null ? (
               <div className="flex flex-col items-center gap-1 rounded-md border border-dashed border-border px-4 py-6 text-center">

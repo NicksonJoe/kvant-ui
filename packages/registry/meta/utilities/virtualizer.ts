@@ -66,13 +66,13 @@ const meta: ReadyComponentMeta = {
     { name: 'virtual-list-group', description: 'Заголовок группы в списке: 32, surface-2.' },
     { name: 'virtual-list-row', description: 'Строка listitem: aria-posinset, aria-setsize, aria-busy без данных; data-index — место в раскладке с заголовками.' },
     { name: 'virtual-list-placeholder', description: 'Плейсхолдер строки без данных; data-delayed — в покое ждёт 100 мс, строки, въехавшие при прокрутке, показывают его сразу.' },
-    { name: 'virtual-list-position', description: 'Капсула позиции «К 412–419 из 1 284»; data-visible при быстром броске.' },
+    { name: 'virtual-list-position', description: 'Капсула позиции «К 412–419 из 1 284»; data-visible при быстром броске и пока зажат ползунок.' },
   ],
   states: [
     { id: 'rest', label: 'покой', description: 'Окно строк, заголовок текущей группы прилип сверху.' },
     { id: 'loading', label: 'первая загрузка', description: 'Скелет на высоту окна, aria-busy.', props: { loading: true } },
     { id: 'empty', label: 'пусто', description: 'Вместо списка — empty: фильтр ничего не нашёл.', props: { count: 0 } },
-    { id: 'highlighted', label: 'быстрый бросок', description: 'Строки без данных — плейсхолдеры, справа капсула позиции; гаснет через 800 мс после остановки.', selector: 'data-visible' },
+    { id: 'highlighted', label: 'быстрый бросок', description: 'Строки без данных — плейсхолдеры, справа капсула позиции; гаснет через 800 мс после остановки. Пока ползунок зажат, капсула видна при любой скорости.', selector: 'data-visible' },
     {
       id: 'invalid',
       label: 'ошибка страницы',
@@ -99,7 +99,7 @@ const meta: ReadyComponentMeta = {
     {
       label: 'Позиция',
       value: 'opacity · 150 мс · ease-out',
-      detail: 'показ от 3 экранов в секунду, скрытие через 800 мс',
+      detail: 'показ от 3 экранов в секунду или пока зажат ползунок, скрытие через 800 мс после остановки или отпускания',
       easing: 'ease-out',
       reduced: 'так же: это смена прозрачности, не движение',
       tokens: ['duration-quick'],

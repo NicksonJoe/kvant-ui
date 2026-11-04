@@ -19,16 +19,29 @@ const fields: FilterField[] = [
       { value: 'oleg', label: 'Олег' },
     ],
   },
+  {
+    id: 'source',
+    label: 'Источник',
+    options: [
+      { value: 'site', label: 'Сайт' },
+      { value: 'telegram', label: 'Telegram' },
+    ],
+  },
 ];
 
-function Demo({ count }: { count: string }) {
-  const [value, setValue] = useState<FilterValue>({ stage: ['negotiation'] });
-  return <FilterBar className="w-full" fields={fields} value={value} onValueChange={setValue} count={count || undefined} />;
+function Demo({ count, width }: { count: string; width: number }) {
+  const [value, setValue] = useState<FilterValue>({ stage: ['negotiation'], owner: ['anna', 'oleg'], source: ['telegram'] });
+  return (
+    <div className="max-w-full" style={{ width }}>
+      <FilterBar fields={fields} value={value} onValueChange={setValue} count={count || undefined} />
+    </div>
+  );
 }
 
 const playground: Playground = {
   initial: { count: '48 из 312' },
-  render: (p) => <Demo count={p.text('count')} />,
+  controls: [{ name: 'width', type: 'number', options: [720, 900, 1200], default: 720, description: 'Ширина строки: в узкой лишние чипы уходят в «Ещё N».' }],
+  render: (p) => <Demo count={p.text('count')} width={p.num('width')} />,
   code: (p) => `<FilterBar fields={fields} value={value} onValueChange={setValue}${p.attrs(['count'])} />`,
 };
 

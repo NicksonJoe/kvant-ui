@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FilterBar, type FilterField } from '..';
 
 const fields: FilterField[] = [
@@ -88,5 +88,140 @@ describe('FilterBar', () => {
 
     await user.click(screen.getByRole('button', { name: 'Показать 48 сделок' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  });
+
+  describe('folding chips that do not fit into «Ещё»', () => {
+    const wide: FilterField[] = [
+      ...fields,
+      {
+        id: 'source',
+        label: 'Источник',
+        options: [
+          { value: 'site', label: 'Сайт' },
+          { value: 'telegram', label: 'Telegram' },
+        ],
+      },
+    ];
+    const all = { stage: ['negotiation'], owner: ['anna'], source: ['site'] };
+
+    // jsdom has no layout: the row width is set by the test, the hidden measuring row reports fixed widths
+    let rowWidth = 0;
+    let rowFor: (() => number) | null = null;
+    const observers = new Set<() => void>();
+    const widthOf = (element: HTMLElement): number => {
+      if (element.dataset.slot === 'filter-bar-row') return rowFor ? rowFor() : rowWidth;
+      if (element.dataset.slot === 'filter-bar-search') return element.childElementCount > 0 ? 240 : 0;
+      if (element.dataset.slot === 'filter-bar-tail') return element.childElementCount > 0 ? 100 : 0;
+      return { chip: 150, more: 80, add: 90 }[element.dataset.measure ?? ''] ?? 0;
+    };
+    const resize = () => act(() => observers.forEach((notify) => notify()));
+
+    beforeEach(() => {
+      rowWidth = 0;
+      rowFor = null;
+      vi.stubGlobal(
+        'ResizeObserver',
+        class implements ResizeObserver {
+          private readonly notify: () => void;
+          constructor(callback: ResizeObserverCallback) {
+            this.notify = () => callback([], this);
+          }
+          observe(): void {
+            observers.add(this.notify);
+          }
+          unobserve(): void {}
+          disconnect(): void {
+            observers.delete(this.notify);
+          }
+        },
+      );
+      vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+        const width = widthOf(this);
+        return { x: 0, y: 0, top: 0, left: 0, right: width, bottom: 32, width, height: 32, toJSON: () => ({}) };
+      });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      vi.restoreAllMocks();
+      observers.clear();
+    });
+
+    const chips = () => screen.queryAllByRole('button', { name: /^Фильтр .+, изменить$/ }).map((chip) => chip.getAttribute('aria-label'));
+
+    it('shows every chip while they fit and no «Ещё»', () => {
+      render(<FilterBar fields={wide} value={all} onValueChange={() => {}} search={<input aria-label="Поиск" />} count="48 из 312" />);
+      rowWidth = 1000;
+      resize();
+      expect(chips()).toHaveLength(3);
+      expect(screen.queryByRole('button', { name: /^Ещё фильтры/ })).toBeNull();
+    });
+
+    it('moves the tail chips into «Ещё N» and brings them back when the row widens', () => {
+      render(<FilterBar fields={wide} value={all} onValueChange={() => {}} search={<input aria-label="Поиск" />} count="48 из 312" />);
+      // 240 search + 150 chip + 80 «Ещё» + 100 count and reset = 570
+      rowWidth = 600;
+      resize();
+      expect(chips()).toEqual(['Фильтр Этап: Переговоры, изменить']);
+      const more = screen.getByRole('button', { name: 'Ещё фильтры, применено: 2' });
+      expect(more.textContent).toBe('Ещё2');
+
+      rowWidth = 1000;
+      resize();
+      expect(chips()).toHaveLength(3);
+      expect(screen.queryByRole('button', { name: /^Ещё фильтры/ })).toBeNull();
+    });
+
+    it('leaves room for «+ Фильтр» while some fields are still free', () => {
+      render(<FilterBar fields={wide} value={{ stage: ['negotiation'], owner: ['anna'] }} onValueChange={() => {}} />);
+      // 90 «+ Фильтр» + 150 chip + 80 «Ещё» + 100 reset = 420 fits, both chips with «+ Фильтр» and reset = 490 do not
+      rowWidth = 450;
+      resize();
+      expect(chips()).toHaveLength(1);
+      expect(screen.getByRole('button', { name: 'Ещё фильтры, применено: 1' })).toBeDefined();
+      expect(screen.getByRole('button', { name: 'Фильтр' })).toBeDefined();
+    });
+
+    it('folds every chip when even one does not fit', () => {
+      render(<FilterBar fields={wide} value={all} onValueChange={() => {}} search={<input aria-label="Поиск" />} />);
+      rowWidth = 400;
+      resize();
+      expect(chips()).toHaveLength(0);
+      expect(screen.getByRole('button', { name: 'Ещё фильтры, применено: 3' })).toBeDefined();
+    });
+
+    it('edits and removes a folded filter from the «Ещё» menu', async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+      render(<FilterBar fields={wide} value={all} onValueChange={onValueChange} search={<input aria-label="Поиск" />} count="48 из 312" />);
+      rowWidth = 600;
+      resize();
+
+      await user.click(screen.getByRole('button', { name: 'Ещё фильтры, применено: 2' }));
+      expect(await screen.findByRole('menuitem', { name: 'Ответственный: Анна' })).toBeDefined();
+      const source = screen.getByRole('menuitem', { name: 'Источник: Сайт' });
+      source.focus();
+      await user.keyboard('{ArrowRight}');
+      fireEvent.click(await screen.findByRole('menuitemcheckbox', { name: 'Telegram' }));
+      expect(onValueChange).toHaveBeenLastCalledWith({ stage: ['negotiation'], owner: ['anna'], source: ['site', 'telegram'] });
+
+      fireEvent.click(screen.getByRole('menuitem', { name: 'Снять фильтр Источник' }));
+      expect(onValueChange).toHaveBeenLastCalledWith({ stage: ['negotiation'], owner: ['anna'] });
+    });
+
+    it('measures a hidden copy, so a row that hugs its chips does not grow itself', () => {
+      render(<FilterBar fields={wide} value={all} onValueChange={() => {}} />);
+      // the row is as wide as what it shows: hiding a chip would shrink it, showing one would widen it
+      rowFor = () => chips().length * 150 + (screen.queryByRole('button', { name: /^Ещё фильтры/ }) ? 80 : 0) + 100;
+      resize();
+      resize();
+      resize();
+      expect(chips()).toHaveLength(3);
+
+      const copy = document.querySelector<HTMLElement>('[data-slot="filter-bar-measure"]');
+      expect(copy?.getAttribute('aria-hidden')).toBe('true');
+      expect(copy?.hasAttribute('inert')).toBe(true);
+      expect(copy?.querySelectorAll('button')).toHaveLength(0);
+    });
   });
 });
