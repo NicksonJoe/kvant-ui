@@ -70,6 +70,11 @@
   --color-chart-6: var(--color-chart-6);
   --color-chart-7: var(--color-chart-7);
   --color-chart-8: var(--color-chart-8);
+  --color-presence-1: var(--color-presence-1);
+  --color-presence-2: var(--color-presence-2);
+  --color-presence-3: var(--color-presence-3);
+  --color-presence-fg: var(--color-presence-fg);
+  --color-brand-telegram: var(--color-brand-telegram);
   --color-seq-1: var(--color-seq-1);
   --color-seq-2: var(--color-seq-2);
   --color-seq-3: var(--color-seq-3);

@@ -138,6 +138,11 @@
       "chart-6": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 140] } },
       "chart-7": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 295] } },
       "chart-8": { "$value": { "colorSpace": "oklch", "components": [0.62, 0.16, 25] } },
+      "presence-1": { "$description": "collaborator colours: cursors, foreign selection, presence avatars", "$value": { "colorSpace": "oklch", "components": [0.56, 0.2, 320] } },
+      "presence-2": { "$value": { "colorSpace": "oklch", "components": [0.55, 0.12, 215] } },
+      "presence-3": { "$value": { "colorSpace": "oklch", "components": [0.55, 0.14, 135] } },
+      "presence-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
+      "brand-telegram": { "$description": "service logo plate in step palette and nodes", "$value": { "colorSpace": "oklch", "components": [0.685, 0.135, 232] } },
       "seq-1": {
         "$description": "sequential magnitude scale, one chart-1 hue light to dark; seq-1 also fills forecast bands",
         "$value": { "colorSpace": "oklch", "components": [0.94, 0.03, 255] }

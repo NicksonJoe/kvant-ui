@@ -1,0 +1,121 @@
+import type { ReadyComponentMeta } from '../types';
+
+const meta: ReadyComponentMeta = {
+  id: 'canvas-editor',
+  status: 'beta',
+  title: 'Редактор графа',
+  description:
+    'Оболочка редактора автоматизаций: шапка с путём, версией, состоянием сохранения, людьми и действиями «История», «Проверить», «Запустить», «Опубликовать» — и три зоны слотами: палитра шагов, канвас, инспектор выделенного. Шапка подстраивается под ширину самого редактора, а не окна; на узком редакторе зоны открываются поверх канваса. Ошибки закрывают публикацию, сбой сохранения и нет сети — запуск и публикацию. Состояния самого канваса — CanvasState (пусто, загрузка, не открылся) и плашка CanvasReadonlyBar.',
+  category: 'canvas',
+  paperBoard: '1KOM-0',
+  anatomy: [
+    'Шапка h56: крошки 14/20, название 600 (не уже 120, «…» и полное имя в подсказке), чип версии h22 fill-2, «сохранено только что» 12 fg-3',
+    'Нет сети — чип h24 warning-soft «Нет сети · правки ждут»; сбой — чип danger-soft «Не сохранено» и «Повторить» fill-2',
+    'Справа: аватары 28 (до трёх и «+N»), переключатели зон, История и Проверить (ghost), Запустить (secondary), Опубликовать (primary) с числом ошибок, все h32',
+    'Сужение по ширине редактора: < 1280 без версии, < 1080 без «сохранено», < 1000 «История» иконкой, < 900 без аватаров, < 830 «Проверить» и «Запустить» иконками, < 640 от пути — стрелка назад; не влезло — действия переносятся второй строкой',
+    'Палитра 224 с разделителем справа; уже 900 — поверх канваса с тенью',
+    'Канвас — всё, что осталось',
+    'Инспектор 288 с разделителем слева; уже 900 — поверх канваса с тенью',
+    'CanvasState: плитка 44 r12, заголовок 16/24 600, текст 13/18 fg-2, кнопки h32 · загрузка — три узла-скелетона 128×48 со связями · ошибка на surface-2 с плиткой danger-soft',
+    'CanvasReadonlyBar h44 r12: глаз и «Только просмотр», «Попросить доступ» fill-2',
+  ],
+  related: ['step-palette', 'canvas-node', 'canvas-insert-menu', 'breadcrumb', 'avatar', 'sidebar'],
+  source: { file: 'components/canvas-editor.tsx', exports: ['CanvasEditor', 'CanvasState', 'CanvasReadonlyBar'] },
+  dependencies: { npm: ['lucide-react', '@base-ui/react'], registry: ['breadcrumb', 'button', 'avatar', 'tooltip', 'badge', 'skeleton'] },
+  props: [
+    { name: 'breadcrumbs', type: 'object', signature: 'readonly BreadcrumbItem[]', required: true, control: false, description: 'Путь до графа без него самого: [{ label: «Автоматизации», href }].' },
+    { name: 'title', type: 'string', required: true, description: 'Название графа — последняя крошка и имя области редактора.' },
+    { name: 'version', type: 'string', description: 'Чип версии: «Черновик · опубликована v7».' },
+    { name: 'saved', type: 'string', description: 'Текст сохранённого состояния, role="status": «сохранено только что».' },
+    {
+      name: 'saveState',
+      type: 'enum',
+      options: ['saved', 'saving', 'offline', 'failed'],
+      default: 'saved',
+      description: 'saving — «сохраняем…»; offline — «Нет сети · правки ждут»; failed — «Не сохранено». При offline и failed «Запустить» и «Опубликовать» выключены с подсказкой почему.',
+    },
+    { name: 'onRetrySave', type: 'function', signature: '() => void', description: '«Повторить» рядом с «Не сохранено».' },
+    { name: 'errors', type: 'number', default: 0, description: 'Ошибки, которые мешают публиковать: число на «Опубликовать», клик открывает проблемы (onValidate), а не публикует.' },
+    { name: 'people', type: 'object', signature: 'readonly { name: string; color: string }[]', control: false, description: 'Кто открыл граф: аватары 28 цветом присутствия 22 %.' },
+    { name: 'onHistory', type: 'function', signature: '() => void', description: 'Кнопка «История»; без обработчика кнопки нет. Так же для остальных действий.' },
+    { name: 'onValidate', type: 'function', signature: '() => void', description: '«Проверить»: найти ненастроенные шаги.' },
+    { name: 'onRun', type: 'function', signature: '() => void', description: '«Запустить»: тестовый прогон.' },
+    { name: 'onPublish', type: 'function', signature: '() => void', description: '«Опубликовать»; не вызывается, пока errors > 0.' },
+    { name: 'actions', type: 'node', control: false, description: 'Свои кнопки шапки перед «Историей».' },
+    { name: 'palette', type: 'node', control: false, description: 'Левая зона 224, обычно StepPalette; уже 900 — поверх канваса.' },
+    { name: 'inspector', type: 'node', control: false, description: 'Правая зона 288 — инспектор выделенного; уже 900 — поверх канваса.' },
+    {
+      name: 'paletteOpen',
+      type: 'boolean',
+      description: 'Палитра видна (управляемо), onPaletteOpenChange. Без defaultPaletteOpen палитра открыта на широком редакторе и свёрнута на узком.',
+    },
+    { name: 'inspectorOpen', type: 'boolean', description: 'Инспектор виден (управляемо); defaultInspectorOpen — true, onInspectorOpenChange.' },
+    { name: 'children', type: 'node', required: true, control: false, description: 'Канвас.' },
+  ],
+  parts: [
+    {
+      name: 'CanvasState',
+      description: 'Что показывает канвас без графа. Своей позиции нет: заполняет и центрирует то, что его держит, — пустой слот движка или слой поверх канваса.',
+      props: [
+        { name: 'kind', type: 'enum', options: ['empty', 'loading', 'error'], required: true, description: 'empty — первый шаг; loading — скелетон по форме графа, без спиннера; error — «Граф не открылся».' },
+        { name: 'title', type: 'string', description: 'Вместо «Начните с триггера» / «Загружаем граф…» / «Граф не открылся».' },
+        { name: 'description', type: 'string', description: 'Строка под заголовком.' },
+        { name: 'onAddStep', type: 'function', signature: '() => void', description: 'Пусто: «Добавить шаг» (то же, что Enter на канвасе).' },
+        { name: 'onBuildWithNorda', type: 'function', signature: '() => void', description: 'Пусто: «Собрать с Нордой».' },
+        { name: 'onRetry', type: 'function', signature: '() => void', description: 'Ошибка: «Повторить».' },
+        { name: 'version', type: 'string', description: 'Ошибка: к какой версии вернуться — «v7» → «Открыть версию v7».' },
+        { name: 'onOpenVersion', type: 'function', signature: '() => void', description: 'Ошибка: открыть опубликованную версию.' },
+      ],
+    },
+    {
+      name: 'CanvasReadonlyBar',
+      description: 'Плашка сверху канваса только для просмотра: порты, палитра и тулбары скрыты, вид, поиск и комментарии остаются.',
+      props: [
+        { name: 'onRequestAccess', type: 'function', signature: '() => void', description: '«Попросить доступ»; без обработчика кнопки нет.' },
+        { name: 'children', type: 'node', default: 'Только просмотр', description: 'Текст плашки.' },
+      ],
+    },
+  ],
+  slots: [
+    { name: 'canvas-editor', description: 'Корень section с именем графа; зоны — aside «Палитра шагов», region «Канвас», aside «Инспектор»; зона поверх канваса — data-overlay.' },
+    { name: 'canvas-state', description: 'Состояние канваса, data-kind="empty | loading | error".' },
+    { name: 'canvas-readonly-bar', description: 'Плашка «Только просмотр».' },
+  ],
+  states: [
+    { id: 'rest', label: 'три зоны', description: 'Палитра | канвас | инспектор.' },
+    { id: 'collapsed', label: 'только канвас', description: 'Палитра и инспектор скрыты, канвас на всю ширину.', props: { paletteOpen: false, inspectorOpen: false } },
+    { id: 'loading', label: 'сохраняем', description: '«сохраняем…» в статусе.', props: { saveState: 'saving' } },
+    { id: 'disabled', label: 'нет сети', description: 'Чип «Нет сети · правки ждут», «Запустить» и «Опубликовать» выключены.', props: { saveState: 'offline' } },
+    { id: 'invalid', label: 'ошибки', description: 'На «Опубликовать» число ошибок, клик открывает проблемы.', props: { errors: 3 } },
+  ],
+  keyboard: [
+    { keys: ['Tab'], action: 'Крошки → переключатели зон → действия шапки → палитра → канвас → инспектор; выключенные «Запустить» и «Опубликовать» остаются в порядке Tab' },
+    { keys: ['Esc'], action: 'Закрыть палитру или инспектор, открытые поверх канваса; фокус возвращается на переключатель' },
+    { keys: ['/'], action: 'Поиск палитры (из StepPalette)' },
+  ],
+  a11y: [
+    'Редактор — section с названием графа; зоны — ориентиры: aside «Палитра шагов», region «Канвас», aside «Инспектор».',
+    'Переключатели зон — кнопки с aria-pressed и подсказкой «Скрыть: …».',
+    '«Сохранено только что», «Нет сети», «Не сохранено» — role="status": диктор слышит смену без переноса фокуса.',
+    'Выключенные «Запустить» и «Опубликовать» — aria-disabled с описанием причины (aria-describedby) и подсказкой при наведении; при ошибках «Опубликовать» описывает, сколько ошибок мешают и что откроется.',
+    'Шапка сужается по ширине редактора (container queries): спрятанные подписи остаются именами кнопок; от пути на узком — «Назад: …».',
+    'Зона поверх канваса забирает фокус при открытии с переключателя, Esc закрывает её и возвращает фокус.',
+    'CanvasState: загрузка — role="status" aria-busy «Загружаем граф…», ошибка — role="alert".',
+  ],
+  motion: [
+    { label: 'Зоны', value: 'появляются и исчезают без анимации', note: 'Канвас сразу занимает освободившееся место.' },
+    { label: 'Скелетон загрузки', value: 'волна kv-shimmer 2000 мс, первые 300 мс скрыт', reduced: 'без волны', tokens: ['duration-shimmer'] },
+  ],
+  examples: [
+    {
+      id: 'full',
+      title: 'Редактор целиком',
+      description: 'NodeCanvas с карточками CanvasNodeCard, перетаскивание из палитры, инспектор выделенного шага и «Проверить» через checkGraph.',
+    },
+    { id: 'workflow', title: 'Воркфлоу «Заявка из Telegram → сделка»', description: 'Шапка с действиями, палитра, граф и инспектор.' },
+    { id: 'zones', title: 'Скрыть зоны', description: 'Управляемые paletteOpen и inspectorOpen; на узком редакторе зоны поверх канваса.' },
+    { id: 'states', title: 'Состояния канваса', description: 'Пусто, загрузка, «Граф не открылся», только просмотр, нет сети и сбой сохранения.' },
+  ],
+};
+
+export default meta;
