@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Sheet, SheetBody, SheetContent, SheetHeader, sheetReleaseTarget, sheetReleaseVelocity } from '..';
 
@@ -102,6 +103,22 @@ describe('Bottom sheet', () => {
     // 100 px past the large detent (92 % = 706.56 px) moves the sheet by 30 px only.
     drag(sheet, [-(706.56 + 100 - 384)]);
     expect(parseFloat(sheet.style.getPropertyValue('--kv-sheet-drag-height'))).toBeCloseTo(736.56);
+  });
+
+  it('keeps the gesture when the caller passes its own ref', async () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <Sheet defaultOpen>
+        <SheetContent side="bottom" ref={ref} initialFocus={ref}>
+          <SheetHeader title="Фильтры" />
+          <SheetBody>Этап и сумма</SheetBody>
+        </SheetContent>
+      </Sheet>,
+    );
+    const sheet = await screen.findByRole('dialog', { name: 'Фильтры' });
+    expect(ref.current).toBe(sheet);
+    drag(sheet, [60, 160]).release();
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
 
   it('closes when dragged down past 30 % of the detent', async () => {

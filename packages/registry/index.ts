@@ -83,6 +83,7 @@ export * from './components/tab-bar';
 export * from './components/table';
 export * from './components/tabs';
 export * from './components/tags-input';
+export * from './components/time-field';
 export * from './components/time-picker';
 export * from './components/timeline';
 export * from './components/toast';
