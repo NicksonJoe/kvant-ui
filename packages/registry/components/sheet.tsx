@@ -159,7 +159,7 @@ interface BottomSheetProps extends Omit<BaseDialog.Popup.Props, 'className'> {
  * Top r36, grabber 36×5. Drags 1:1 from the grabber and the header, from the body only when its list is
  * scrolled to the top. Rests at a detent on spring-gentle; leaves in 250ms ease-fluid from where it was let go.
  */
-function BottomSheet({ detents, defaultDetent, className, children, ...props }: BottomSheetProps) {
+function BottomSheet({ detents, defaultDetent, className, children, ref, ...props }: BottomSheetProps) {
   const ordered = SHEET_DETENTS.filter((detent) => detents.includes(detent));
   const [detent, setDetent] = useState<SheetDetent>(
     defaultDetent && ordered.includes(defaultDetent) ? defaultDetent : (ordered[0] ?? 'medium'),
@@ -309,7 +309,12 @@ function BottomSheet({ detents, defaultDetent, className, children, ...props }: 
     <>
       <BaseDialog.Backdrop ref={backdropRef} className={cn(backdrop, 'kv-sheet-backdrop')} />
       <BaseDialog.Popup
-        ref={popupRef}
+        ref={(node: HTMLDivElement | null) => {
+          // The caller's ref (initial focus, measuring) and the gesture's own both get the popup.
+          popupRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref) ref.current = node;
+        }}
         data-slot="sheet"
         data-side="bottom"
         data-detent={detent}
@@ -374,7 +379,7 @@ export function SheetHeader({ title, description, leading, className, ...props }
   return (
     <div
       data-slot="sheet-header"
-      className={cn('flex shrink-0 touch-none gap-3 pr-4', centred ? 'h-13 items-center pl-4' : 'items-start pt-2 pl-5', className)}
+      className={cn('flex shrink-0 touch-none gap-3 pr-4', centred ? 'h-13 items-center pl-4' : 'items-start pt-2 pl-4', className)}
       {...props}
     >
       {centred ? <div className="flex w-21 shrink-0">{leading}</div> : null}

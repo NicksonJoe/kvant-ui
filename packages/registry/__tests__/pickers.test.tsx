@@ -12,10 +12,12 @@ import {
   Listbox,
   NativeSelect,
   RangeCalendar,
+  TimeField,
   TimePicker,
   TimeSlots,
   UploadItem,
   formatFileSize,
+  parseTime,
   type CascaderOption,
 } from '..';
 
@@ -210,6 +212,60 @@ describe('TimePicker', () => {
     await user.click(within(screen.getByRole('listbox', { name: 'Минуты' })).getByRole('option', { name: '45' }));
     expect(onValueChange).toHaveBeenLastCalledWith('11:45');
     await waitFor(() => expect(screen.queryByRole('listbox')).toBeNull());
+  });
+});
+
+describe('TimeField', () => {
+  it.each([
+    ['', ''],
+    ['9', '09:00'],
+    ['930', '09:30'],
+    ['0930', '09:30'],
+    ['9:5', '09:05'],
+    ['17:45', '17:45'],
+    ['23:59', '23:59'],
+    ['24:00', null],
+    ['12:60', null],
+    ['12345', null],
+  ])('reads «%s» as %s', (text, time) => {
+    expect(parseTime(text)).toBe(time);
+  });
+
+  it('takes typed digits in 24 hours, whatever the browser locale, and puts back a bad value', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<TimeField aria-label="Время" defaultValue="10:00" onValueChange={onValueChange} />);
+    const input = screen.getByRole('textbox', { name: 'Время' }) as HTMLInputElement;
+    expect(input.getAttribute('inputmode')).toBe('numeric');
+    expect(input.value).toBe('10:00');
+
+    await user.clear(input);
+    await user.type(input, '1745');
+    expect(input.value).toBe('17:45');
+    expect(onValueChange).toHaveBeenLastCalledWith('17:45');
+
+    await user.clear(input);
+    await user.type(input, '2599');
+    await user.tab();
+    expect(input.value).toBe('17:45');
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+
+    input.focus();
+    await user.keyboard('{ArrowUp}');
+    expect(onValueChange).toHaveBeenLastCalledWith('18:00');
+  });
+
+  it('picks hours and minutes from the columns', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<TimeField aria-label="Время" onValueChange={onValueChange} />);
+
+    await user.click(screen.getByRole('button', { name: 'Выбрать время' }));
+    await user.click(await screen.findByRole('button', { name: '14 ч' }));
+    expect(onValueChange).toHaveBeenLastCalledWith('14:00');
+    await user.click(screen.getByRole('button', { name: '35 мин' }));
+    expect(onValueChange).toHaveBeenLastCalledWith('14:35');
+    expect((screen.getByRole('textbox', { name: 'Время' }) as HTMLInputElement).value).toBe('14:35');
   });
 });
 

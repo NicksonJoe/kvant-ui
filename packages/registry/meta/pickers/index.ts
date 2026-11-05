@@ -7,6 +7,7 @@ import cascader from './cascader';
 import calendar from './calendar';
 import datePicker from './date-picker';
 import dateField from './date-field';
+import timeField from './time-field';
 import timePicker from './time-picker';
 import colorPicker from './color-picker';
 import fileUpload from './file-upload';
@@ -20,7 +21,7 @@ const category: CategoryMeta = {
   id: 'pickers',
   title: 'Списки и пикеры',
   description: 'Выбор из списков, дат, времени, цвета и файлов.',
-  components: [select, nativeSelect, combobox, listbox, cascader, calendar, datePicker, dateField, timePicker, colorPicker, fileUpload, signaturePad, imageCropper, treeSelect, transferList, monthPicker],
+  components: [select, nativeSelect, combobox, listbox, cascader, calendar, datePicker, dateField, timeField, timePicker, colorPicker, fileUpload, signaturePad, imageCropper, treeSelect, transferList, monthPicker],
 };
 
 export default category;

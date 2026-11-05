@@ -875,6 +875,24 @@
       ]
     },
     {
+      "name": "time-field",
+      "type": "component",
+      "title": "Поле времени",
+      "description": "Время быстрее набрать, чем выбрать: «930» станет 09:30, двоеточие ставится само, 24 часа при любом языке браузера. Колонки часов и минут открываются кнопкой справа.",
+      "dependencies": [
+        "lucide-react@^1.63.0"
+      ],
+      "registryDependencies": [
+        "cn",
+        "input",
+        "popover"
+      ],
+      "css": [],
+      "files": [
+        "components/time-field.tsx"
+      ]
+    },
+    {
       "name": "time-picker",
       "type": "component",
       "title": "Выбор времени",
