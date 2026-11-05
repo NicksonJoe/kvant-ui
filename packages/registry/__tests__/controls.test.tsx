@@ -7,6 +7,7 @@ import {
   Field,
   Input,
   SegmentedControl,
+  Tag,
   Tabs,
   TabsList,
   TabsPanel,
@@ -44,6 +45,21 @@ describe('SegmentedControl', () => {
     await user.keyboard('{ArrowLeft}{ArrowLeft}');
     expect(onValueChange).toHaveBeenLastCalledWith('day');
     expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'День' }));
+  });
+});
+
+describe('Tag', () => {
+  it('reads the count with the label of a filter chip', async () => {
+    const user = userEvent.setup();
+    const onSelectedChange = vi.fn();
+    render(
+      <Tag size="lg" count={2} countTone="danger" onSelectedChange={onSelectedChange}>
+        Просроченные
+      </Tag>,
+    );
+    const chip = screen.getByRole('button', { name: 'Просроченные, 2' });
+    await user.click(chip);
+    expect(onSelectedChange.mock.lastCall?.[0]).toBe(true);
   });
 });
 

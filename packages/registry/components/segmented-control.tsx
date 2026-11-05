@@ -14,8 +14,8 @@ export interface SegmentedControlProps<V extends string> {
   value?: V;
   defaultValue?: V;
   onValueChange?: (value: V) => void;
-  /** sm: 32 track (pointer), md: 36. */
-  size?: 'sm' | 'md';
+  /** sm: 32 track (pointer), md: 36, lg: 44 capsule for the phone, 15 text and 18 icons. */
+  size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   'aria-label'?: string;
   'aria-labelledby'?: string;
@@ -79,7 +79,7 @@ export function SegmentedControl<V extends string>({
       disabled={disabled}
       className={cn(
         'relative inline-flex shrink-0 items-stretch bg-surface-2 p-0.5 data-disabled:opacity-50',
-        size === 'sm' ? 'h-control-sm rounded-control-sm' : 'h-control-md rounded-control-md',
+        size === 'lg' ? 'h-control-lg rounded-full' : size === 'sm' ? 'h-control-sm rounded-control-sm' : 'h-control-md rounded-control-md',
         className,
       )}
       {...aria}
@@ -87,7 +87,10 @@ export function SegmentedControl<V extends string>({
       <span
         ref={thumbRef}
         aria-hidden
-        className="pointer-events-none absolute inset-y-0.5 left-0 w-(--kv-w) translate-x-(--kv-x) kv-slide rounded-control-inner bg-thumb shadow-segment"
+        className={cn(
+          'pointer-events-none absolute inset-y-0.5 left-0 w-(--kv-w) translate-x-(--kv-x) kv-slide bg-thumb shadow-segment',
+          size === 'lg' ? 'rounded-full' : 'rounded-control-inner',
+        )}
       />
       {options.map((option) => (
         <Radio.Root
@@ -96,9 +99,11 @@ export function SegmentedControl<V extends string>({
           disabled={option.disabled}
           data-slot="segment"
           className={cn(
-            'relative z-1 inline-flex select-none items-center justify-center gap-1.5 rounded-control-inner px-3 font-medium text-fg-2 transition-colors duration-(--duration-micro) ease-hover',
+            'relative z-1 inline-flex select-none items-center justify-center gap-1.5 px-3 font-medium text-fg-2 transition-colors duration-(--duration-micro) ease-hover',
             'hover:not-data-checked:not-data-disabled:text-fg-1 data-checked:text-fg-1 data-disabled:opacity-50 focus-visible:-outline-offset-2',
-            size === 'sm' ? 'text-label-sm' : 'text-label-md',
+            size === 'lg'
+              ? 'flex-1 rounded-full px-4 text-[15px]/5 tracking-body [&_svg]:size-4.5 [&_svg]:stroke-[1.75]'
+              : cn('rounded-control-inner', size === 'sm' ? 'text-label-sm' : 'text-label-md'),
           )}
         >
           {option.label}

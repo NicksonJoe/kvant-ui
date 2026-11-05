@@ -109,7 +109,12 @@ export interface TagProps {
   onRemove?: () => void;
   /** Accessible name for the remove button; defaults to «Удалить …» with the tag text. */
   removeLabel?: string;
-  size?: 'sm' | 'md';
+  /** sm 28 · md 32 · lg 36: phone filter chip, 15 text, selection shown by fill and ring without the check. */
+  size?: 'sm' | 'md' | 'lg';
+  /** Number after the text: «Все 6», «Просроченные 2». */
+  count?: number;
+  /** danger: the count is a warning, e.g. overdue items. */
+  countTone?: 'danger';
   disabled?: boolean;
   className?: string;
 }
@@ -122,22 +127,31 @@ export function Tag({
   onRemove,
   removeLabel,
   size = 'sm',
+  count,
+  countTone,
   disabled,
   className,
 }: TagProps) {
+  const large = size === 'lg';
   const look = cn(
     tagShell,
-    size === 'md' ? 'h-8' : 'h-7',
+    large ? 'h-9 px-3.5 text-[15px]/5 tracking-body' : size === 'md' ? 'h-8' : 'h-7',
     selected
-      ? 'bg-accent-soft text-accent-soft-fg'
+      ? cn('bg-accent-soft text-accent-soft-fg', large && 'shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-accent)_35%,transparent)]')
       : 'bg-control text-fg-1 shadow-control hover:not-data-disabled:bg-control-hover',
     disabled && 'opacity-50',
     className,
   );
   const label = (
     <>
-      {selected ? <Check aria-hidden /> : null}
+      {selected && !large ? <Check aria-hidden /> : null}
       {children}
+      {count !== undefined ? (
+        <>
+          <span className="sr-only">,</span>{' '}
+          <span className={cn('tabular-nums', countTone === 'danger' ? 'text-danger-soft-fg' : 'opacity-60')}>{count}</span>
+        </>
+      ) : null}
     </>
   );
   const remove = onRemove ? (

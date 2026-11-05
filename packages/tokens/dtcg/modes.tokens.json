@@ -143,6 +143,8 @@
       "presence-3": { "$value": { "colorSpace": "oklch", "components": [0.55, 0.14, 135] } },
       "presence-fg": { "$value": { "colorSpace": "oklch", "components": [0.995, 0, 0] } },
       "brand-telegram": { "$description": "service logo plate in step palette and nodes", "$value": { "colorSpace": "oklch", "components": [0.685, 0.135, 232] } },
+      "brand-1c": { "$description": "1C logo plate: yellow ground", "$value": { "colorSpace": "oklch", "components": [0.88, 0.18, 95] } },
+      "brand-1c-fg": { "$description": "1C logo mark on the brand-1c plate", "$value": { "colorSpace": "oklch", "components": [0.52, 0.21, 28] } },
       "seq-1": {
         "$description": "sequential magnitude scale, one chart-1 hue light to dark; seq-1 also fills forecast bands",
         "$value": { "colorSpace": "oklch", "components": [0.94, 0.03, 255] }

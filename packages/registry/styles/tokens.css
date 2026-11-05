@@ -249,6 +249,10 @@
   --color-presence-fg: oklch(0.995 0 0);
   /* service logo plate in step palette and nodes */
   --color-brand-telegram: oklch(0.685 0.135 232);
+  /* 1C logo plate: yellow ground */
+  --color-brand-1c: oklch(0.88 0.18 95);
+  /* 1C logo mark on the brand-1c plate */
+  --color-brand-1c-fg: oklch(0.52 0.21 28);
   /* sequential magnitude scale, one chart-1 hue light to dark; seq-1 also fills forecast bands */
   --color-seq-1: oklch(0.94 0.03 255);
   --color-seq-2: oklch(0.86 0.07 255);

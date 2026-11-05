@@ -7,14 +7,16 @@ const meta: ReadyComponentMeta = {
   description: 'Нажимаемая метка: фильтр с галочкой, выбор или удаляемое значение с крестиком.',
   category: 'data-display',
   paperBoard: '9O3-0',
-  anatomy: ['Капсула 28 px', 'Галочка при выборе', 'Текст', 'Крестик удаления'],
+  anatomy: ['Капсула 28, 32 или 36 px', 'Галочка при выборе', 'Текст', 'Счётчик', 'Крестик удаления'],
   related: ['badge', 'tags-input', 'toggle-group', 'segmented-control'],
   source: { file: 'components/badge.tsx', exports: ['Tag'] },
   dependencies: { npm: ['@base-ui/react', 'lucide-react'], registry: [] },
   props: [
     { name: 'children', type: 'string', signature: 'ReactNode', required: true, description: 'Текст тега.' },
     { name: 'selected', type: 'boolean', default: false, description: 'Выбран: accent-soft и галочка.' },
-    { name: 'size', type: 'enum', options: ['sm', 'md'], default: 'sm', description: 'Высота 28 или 32 px.' },
+    { name: 'size', type: 'enum', options: ['sm', 'md', 'lg'], default: 'sm', description: 'Высота 28, 32 или 36 px; lg — чип-фильтр телефона: текст 15, выбор заливкой и кольцом без галочки.' },
+    { name: 'count', type: 'number', description: 'Число после текста: «Все 6»; диктор читает «Все, 6».' },
+    { name: 'countTone', type: 'enum', options: ['danger'], description: 'Счётчик-предупреждение красным: «Просроченные 2».' },
     { name: 'disabled', type: 'boolean', default: false, description: 'Недоступен.' },
     { name: 'onSelectedChange', type: 'function', signature: '(selected: boolean) => void', description: 'Делает тег переключателем-фильтром.', control: false },
     { name: 'onRemove', type: 'function', signature: '() => void', description: 'Добавляет крестик «Удалить «…»».', control: false },
@@ -49,6 +51,7 @@ const meta: ReadyComponentMeta = {
   examples: [
     { id: 'filters', title: 'Фильтры', description: 'Теги-переключатели над списком.' },
     { id: 'removable', title: 'Удаляемые', description: 'Выбранные значения с крестиком.' },
+    { id: 'phone', title: 'Фильтры на телефоне', description: 'Чипы 36 со счётчиками; ряд прокручивается вбок.' },
   ],
 };
 

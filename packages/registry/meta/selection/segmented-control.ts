@@ -12,7 +12,7 @@ const meta: ReadyComponentMeta = {
   source: { file: 'components/segmented-control.tsx', exports: ['SegmentedControl'] },
   dependencies: { npm: ['@base-ui/react'], registry: [] },
   props: [
-    { name: 'size', type: 'enum', options: ['sm', 'md'], default: 'sm', description: 'Дорожка 32 px для указателя или 36 px.' },
+    { name: 'size', type: 'enum', options: ['sm', 'md', 'lg'], default: 'sm', description: 'Дорожка 32 px для указателя, 36 px или 44 px — капсула телефона во всю ширину, текст 15 и иконки 18.' },
     { name: 'disabled', type: 'boolean', default: false, description: 'Отключает все сегменты.' },
     { name: 'options', type: 'object', required: true, signature: 'readonly { value: V; label: ReactNode; disabled?: boolean }[]', description: 'Варианты.', control: false },
     { name: 'value', type: 'string', signature: 'V', description: 'Управляемый выбор.', control: false },
@@ -47,6 +47,7 @@ const meta: ReadyComponentMeta = {
   examples: [
     { id: 'period', title: 'Период отчёта', description: 'Короткие подписи одной длины.' },
     { id: 'view', title: 'Вид списка', description: 'Иконки с подписями; размер md.' },
+    { id: 'phone', title: 'На телефоне', description: 'Капсула 44 во всю ширину для вида и 36 для периода.' },
   ],
 };
 
