@@ -14,7 +14,7 @@ const meta: ReadyComponentMeta = {
   props: [
     { name: 'children', type: 'string', signature: 'ReactNode', required: true, description: 'Текст тега.' },
     { name: 'selected', type: 'boolean', default: false, description: 'Выбран: accent-soft и галочка.' },
-    { name: 'size', type: 'enum', options: ['sm', 'md', 'lg'], default: 'sm', description: 'Высота 28, 32 или 36 px; lg — чип-фильтр телефона: текст 15, выбор заливкой и кольцом без галочки.' },
+    { name: 'size', type: 'enum', options: ['sm', 'md', 'lg'], default: 'sm', description: 'Высота 28, 32 или 36 px; lg — чип-фильтр телефона: текст 15, выбор заливкой и кольцом accent без галочки.' },
     { name: 'count', type: 'number', description: 'Число после текста: «Все 6»; диктор читает «Все, 6».' },
     { name: 'countTone', type: 'enum', options: ['danger'], description: 'Счётчик-предупреждение красным: «Просроченные 2».' },
     { name: 'disabled', type: 'boolean', default: false, description: 'Недоступен.' },

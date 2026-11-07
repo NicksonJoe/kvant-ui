@@ -99,11 +99,11 @@ export function SegmentedControl<V extends string>({
           disabled={option.disabled}
           data-slot="segment"
           className={cn(
-            'relative z-1 inline-flex select-none items-center justify-center gap-1.5 px-3 font-medium text-fg-2 transition-colors duration-(--duration-micro) ease-hover',
+            'relative z-1 inline-flex select-none items-center justify-center gap-1.5 font-medium text-fg-2 transition-colors duration-(--duration-micro) ease-hover',
             'hover:not-data-checked:not-data-disabled:text-fg-1 data-checked:text-fg-1 data-disabled:opacity-50 focus-visible:-outline-offset-2',
             size === 'lg'
               ? 'flex-1 rounded-full px-4 text-[15px]/5 tracking-body [&_svg]:size-4.5 [&_svg]:stroke-[1.75]'
-              : cn('rounded-control-inner', size === 'sm' ? 'text-label-sm' : 'text-label-md'),
+              : cn('rounded-control-inner px-3', size === 'sm' ? 'text-label-sm' : 'text-label-md'),
           )}
         >
           {option.label}

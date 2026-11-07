@@ -10,7 +10,7 @@ import {
 } from '@/kvant';
 
 const telegram: CanvasServiceLogo = { name: 'Telegram', background: '#2AABEE', color: '#FFFFFF', content: <Send /> };
-const oneC: CanvasServiceLogo = { name: '1С', background: '#FFD400', color: '#C8102E', content: '1С' };
+const oneC: CanvasServiceLogo = { name: '1С', background: 'var(--color-brand-1c)', color: 'var(--color-brand-1c-fg)', content: '1С' };
 
 export default function CanvasNodeBeyondCard() {
   return (

@@ -48,6 +48,37 @@ export function List({ variant = 'plain', header, footer, className, children, .
   );
 }
 
+export interface ListSectionHeaderProps extends Omit<ComponentProps<'div'>, 'title'> {
+  title: ReactNode;
+  /** Counter after the title, read with it: «Просроченные шаги, 2». */
+  count?: number;
+  /** The counter counts problems: danger instead of fg-4. */
+  urgent?: boolean;
+  /** Link on the right, usually «Все»; name it when several sections share the word. */
+  action?: ReactNode;
+}
+
+/** Phone section title 44 high over a list: 20/28 title, counter and «Все». */
+export function ListSectionHeader({ title, count, urgent = false, action, className, ...props }: ListSectionHeaderProps) {
+  return (
+    <div data-slot="list-section-header" className={cn('flex h-11 items-center gap-2 pr-2 pl-4', className)} {...props}>
+      <h3 className="flex min-w-0 items-baseline gap-2 text-heading-md font-semibold text-fg-1">
+        <span className="truncate">{title}</span>
+        {count !== undefined ? (
+          <>
+            <span className="sr-only">,</span>{' '}
+            <span className={cn('font-medium tabular-nums', urgent ? 'text-danger-soft-fg' : 'text-fg-4')}>{count}</span>
+          </>
+        ) : null}
+      </h3>
+      {action ? (
+        // the link itself fills the 44 zone, not just its text
+        <span className="ml-auto flex h-11 shrink-0 text-[15px]/5 font-medium tracking-body text-accent-soft-fg *:flex *:items-center *:px-2">{action}</span>
+      ) : null}
+    </div>
+  );
+}
+
 export interface ListItemProps extends Omit<useRender.ComponentProps<'div'>, 'title' | 'children'> {
   title: ReactNode;
   subtitle?: ReactNode;
@@ -103,8 +134,8 @@ export function ListItem({
     props: mergeProps<'div'>(
       {
         className: cn(
-          'relative flex w-full select-none items-center gap-3 px-4 py-2 text-left focus-visible:-outline-offset-2',
-          variant === 'inset' ? 'min-h-13' : 'min-h-11 pointer-coarse:min-h-13',
+          'relative flex w-full select-none items-center gap-3 px-4 text-left focus-visible:-outline-offset-2',
+          variant === 'inset' ? 'min-h-13 py-3' : 'min-h-11 py-2 pointer-coarse:min-h-13',
           interactive && 'cursor-pointer transition-colors duration-(--duration-micro) ease-hover hover:bg-fill-1 active:bg-fill-2',
           disabled && 'pointer-events-none opacity-50',
           destructive ? 'text-danger-soft-fg' : 'text-fg-1',
@@ -124,7 +155,7 @@ export function ListItem({
             ) : null}
             <span className="flex min-w-0 flex-1 flex-col">
               <span className={cn('truncate font-medium', variant === 'inset' ? 'text-label-lg' : 'text-label-md')}>{title}</span>
-              {subtitle ? <span className="truncate text-caption text-fg-3">{subtitle}</span> : null}
+              {subtitle ? <span className={cn('truncate text-fg-3', variant === 'inset' ? 'text-body-sm' : 'text-caption')}>{subtitle}</span> : null}
             </span>
             {value !== undefined ? (
               <span className={cn('shrink-0 text-fg-3 tabular-nums', variant === 'inset' ? 'text-body-md' : 'text-body-sm')}>{value}</span>

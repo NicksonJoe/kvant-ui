@@ -12,6 +12,7 @@ import {
   Pagination,
   Steps,
   TabBar,
+  TabBarCenter,
   TabBarItem,
   Toolbar,
   ToolbarButton,
@@ -115,6 +116,24 @@ describe('TabBar', () => {
     expect(screen.getByRole('navigation', { name: 'Разделы' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Входящие, 4 новых' }).getAttribute('aria-current')).toBe('page');
     expect(screen.getByRole('link', { name: 'Сводка' }).hasAttribute('aria-current')).toBe(false);
+  });
+
+  it('keeps a named button in the middle between the tabs', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <TabBar aria-label="Разделы">
+        <TabBarItem href="#home" icon={<House />} label="Сводка" />
+        <TabBarCenter aria-label="Агент Норды" onClick={onClick}>
+          <span />
+        </TabBarCenter>
+        <TabBarItem href="#inbox" icon={<Mail />} label="Входящие" />
+      </TabBar>,
+    );
+    const center = within(screen.getByRole('navigation', { name: 'Разделы' })).getByRole('button', { name: 'Агент Норды' });
+    expect(center.getAttribute('data-slot')).toBe('tab-bar-center');
+    await user.click(center);
+    expect(onClick).toHaveBeenCalledOnce();
   });
 });
 

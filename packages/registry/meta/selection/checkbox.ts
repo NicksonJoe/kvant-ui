@@ -16,6 +16,7 @@ const meta: ReadyComponentMeta = {
     { name: 'defaultChecked', type: 'boolean', default: false, description: 'Начальное состояние неуправляемого флажка.' },
     { name: 'indeterminate', type: 'boolean', default: false, description: 'Частичный выбор: минус вместо галочки.' },
     { name: 'size', type: 'enum', options: ['md', 'lg'], default: 'md', description: '18 px для указателя, 22 px для касания.' },
+    { name: 'shape', type: 'enum', options: ['square', 'circle'], default: 'square', description: 'circle — отметка задачи: круг 24 в зоне касания 44, size не действует.' },
     { name: 'invalid', type: 'boolean', default: false, description: 'Рамка danger, пока флажок не отмечен.' },
     { name: 'disabled', type: 'boolean', default: false, description: 'Недоступен.' },
     { name: 'checked', type: 'boolean', description: 'Управляемое состояние.', control: false },

@@ -17,6 +17,7 @@ import {
   LineChart,
   List,
   ListItem,
+  ListSectionHeader,
   Switch,
   Timeline,
   TimelineDay,
@@ -46,6 +47,14 @@ describe('List', () => {
     await user.click(screen.getByRole('button', { name: /Валюта отчётов/ }));
     expect(onOpen).toHaveBeenCalledOnce();
     expect(screen.getByRole('button', { name: /Еженедельная сводка/ }).getAttribute('aria-pressed')).toBe('true');
+  });
+});
+
+describe('ListSectionHeader', () => {
+  it('reads the counter with the title and keeps the action beside it', () => {
+    render(<ListSectionHeader title="Просроченные шаги" count={2} urgent action={<a href="#steps">Все</a>} />);
+    expect(screen.getByRole('heading', { name: 'Просроченные шаги, 2' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Все' })).toBeTruthy();
   });
 });
 

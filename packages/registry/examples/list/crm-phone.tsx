@@ -1,6 +1,6 @@
 import { Clock, LayoutGrid, Phone } from 'lucide-react';
-import { useState } from 'react';
-import { Avatar, Checkbox, IconButton, List, ListItem, cn } from '@/kvant';
+import { useId, useState } from 'react';
+import { Avatar, Checkbox, IconButton, List, ListItem, ListSectionHeader, cn } from '@/kvant';
 
 const deals = [
   { id: 'bakery', title: 'Айдентика для пекарни', amount: '1 284 900 ₽', step: 'Подготовить презентацию концепций', due: 'Завтра, 10:00' },
@@ -12,42 +12,32 @@ const initialTasks = [
   { id: 'deck-v1', title: 'Подготовить презентацию концепций', deal: 'Айдентика для пекарни', due: 'Выполнена', done: true },
 ];
 
-/** Section title 44 high: a counter, red when it counts problems, and «Все» on the right. */
-function SectionHeader({ title, count, urgent = false }: { title: string; count: number; urgent?: boolean }) {
-  return (
-    <div className="flex h-11 items-center gap-1.5 px-4">
-      <h3 className="text-heading-xs font-semibold text-fg-1">{title}</h3>
-      <span className={cn('text-body-md tabular-nums', urgent ? 'text-danger-soft-fg' : 'text-fg-3')}>{count}</span>
-      <a href="#all" className="ml-auto text-label-md font-medium text-accent">
-        Все
-      </a>
-    </div>
-  );
-}
-
 /** Rows of the phone CRM built from List: a deal with the next step, a task with its deal, a contact with a call. */
 export default function ListCrmPhone() {
+  const id = useId();
   const [tasks, setTasks] = useState(initialTasks);
   return (
     <div className="flex w-full max-w-[402px] flex-col gap-2 rounded-xl bg-background py-4 shadow-[inset_0_0_0_1px_var(--color-hairline)]">
-      <SectionHeader title="Сделки" count={deals.length} />
+      <ListSectionHeader title="Сделки" count={deals.length} action={<a href="#all" aria-label="Все: сделки">Все</a>} />
       <div className="px-4">
         <List variant="inset" aria-label="Сделки">
           {deals.map((deal) => (
             <ListItem
               key={deal.id}
               href={`#${deal.id}`}
+              // phone rows of the CRM board: 13/18 subtitle 2 below the title, rows 67
+              className="pt-[13px] pb-3.5"
               title={deal.title}
               subtitle={
-                <span className="flex items-center gap-1.5">
-                  <Clock aria-hidden className={cn('size-3.5 shrink-0 stroke-2', deal.overdue ? 'text-danger' : 'text-fg-4')} />
+                <span className="mt-0.5 flex items-center gap-1.5 text-body-xs text-fg-2">
+                  <Clock aria-hidden className={cn('size-[13px] shrink-0 stroke-2', deal.overdue ? 'text-danger' : 'text-fg-4')} />
                   <span className="truncate">{deal.step}</span>
                 </span>
               }
               value={
-                <span className="flex flex-col items-end">
+                <span className="flex flex-col items-end gap-0.5">
                   <span className="text-label-lg font-semibold text-fg-1">{deal.amount}</span>
-                  <span className={cn('text-caption', deal.overdue && 'font-medium text-danger-soft-fg')}>{deal.due}</span>
+                  <span className={cn('text-body-xs', deal.overdue && 'font-medium text-danger-soft-fg')}>{deal.due}</span>
                 </span>
               }
             />
@@ -55,29 +45,32 @@ export default function ListCrmPhone() {
         </List>
       </div>
 
-      <SectionHeader title="Просроченные шаги" count={2} urgent />
+      <ListSectionHeader title="Просроченные шаги" count={2} urgent action={<a href="#all" aria-label="Все: просроченные шаги">Все</a>} />
       <div className="px-4">
         <List variant="inset" aria-label="Задачи">
           {tasks.map((task) => (
             <ListItem
               key={task.id}
+              // rows 71; the circle sits on the title line, not in the middle of the row
+              className="pt-3 pb-[11px] *:first:-mt-0.5 *:first:self-start"
               leading={
                 <Checkbox
-                  size="lg"
+                  shape="circle"
                   aria-label={task.title}
+                  aria-describedby={`${id}-${task.id}`}
                   checked={task.done}
                   onCheckedChange={(done) => setTasks((list) => list.map((item) => (item.id === task.id ? { ...item, done } : item)))}
-                  className="size-6 rounded-full"
                 />
               }
               title={<span className={cn(task.done && 'text-fg-3 line-through')}>{task.title}</span>}
               subtitle={
-                <span className="flex items-center gap-2">
-                  <span className="inline-flex h-5 min-w-0 items-center gap-1 rounded-full bg-fill-1 px-2 text-fg-2">
-                    <LayoutGrid aria-hidden className="size-3 shrink-0" />
+                // the deal and the date tell apart tasks with the same title
+                <span id={`${id}-${task.id}`} className="mt-1.5 flex items-center gap-2 text-body-xs">
+                  <span className="inline-flex h-5.5 min-w-0 items-center gap-[5px] rounded-full bg-fill-2 pr-2 pl-[7px] font-medium text-fg-2">
+                    <LayoutGrid aria-hidden className="size-3 shrink-0 stroke-[2.25] text-fg-3" />
                     <span className="truncate">{task.deal}</span>
                   </span>
-                  <span className={cn('shrink-0', task.done && 'text-success-soft-fg')}>{task.done ? 'Выполнена' : task.due}</span>
+                  <span className={cn('shrink-0 tabular-nums', task.done ? 'font-medium text-success-soft-fg' : 'text-fg-3')}>{task.done ? 'Выполнена' : task.due}</span>
                 </span>
               }
             />
@@ -85,13 +78,14 @@ export default function ListCrmPhone() {
         </List>
       </div>
 
-      <SectionHeader title="Контакты" count={1} />
+      <ListSectionHeader title="Контакты" count={1} action={<a href="#all" aria-label="Все: контакты">Все</a>} />
       <div className="px-4">
         <List variant="inset" aria-label="Контакты">
           <ListItem
             leading={<Avatar name="Пётр Савин" size={40} />}
+            className="pt-3 pb-[11px]"
             title="Пётр Савин"
-            subtitle="«Город» · Навигация для ТЦ"
+            subtitle={<span className="mt-0.5 block truncate text-body-xs">«Город» · Навигация для ТЦ</span>}
             value={
               <IconButton variant="soft" size="lg" icon={<Phone />} aria-label="Позвонить: Пётр Савин" className="rounded-full" />
             }

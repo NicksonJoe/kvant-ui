@@ -80,6 +80,7 @@ export * from './components/spinner';
 export * from './components/steps';
 export * from './components/swipe-actions';
 export * from './components/tab-bar';
+export * from './components/phone-chrome';
 export * from './components/table';
 export * from './components/tabs';
 export * from './components/tags-input';

@@ -10,7 +10,7 @@ const meta: ReadyComponentMeta = {
   paperBoard: '1M9-0',
   anatomy: ['Стеклянная капсула h62, padding 4', 'Вкладка 54, r full', 'Иконка 24 и подпись 10/12 500', 'Подложка выбранной fill-2', 'Счётчик 18 danger', 'Круг действия 62'],
   related: ['sidebar', 'tabs', 'indicator', 'topbar'],
-  source: { file: 'components/tab-bar.tsx', exports: ['TabBar', 'TabBarItem', 'TabBarAction'] },
+  source: { file: 'components/tab-bar.tsx', exports: ['TabBar', 'TabBarItem', 'TabBarCenter', 'TabBarAction'] },
   dependencies: { npm: ['@base-ui/react'], registry: ['indicator'] },
   props: [
     { name: 'aria-label', type: 'string', required: true, description: 'Название навигации: «Разделы приложения».', control: false },
@@ -28,10 +28,16 @@ const meta: ReadyComponentMeta = {
         { name: 'active', type: 'boolean', description: 'Текущий раздел: accent и aria-current="page".' },
       ],
     },
+    {
+      name: 'TabBarCenter',
+      description: 'Слот 64 между вкладками для лица агента: AgentAvatar 56. В свёрнутом баре скрыт.',
+      props: [{ name: 'aria-label', type: 'string', required: true, description: 'Название кнопки: «Агент Норды».' }],
+    },
     { name: 'TabBarAction', description: 'Стеклянный круг 62 рядом с баром.', props: [{ name: 'icon', type: 'node', required: true, description: 'Иконка 24.' }, { name: 'aria-label', type: 'string', required: true, description: 'Название действия.' }] },
   ],
   slots: [
     { name: 'tab-bar', description: 'Навигация; data-minimized в свёрнутом виде.' },
+    { name: 'tab-bar-center', description: 'Слот по центру.' },
     { name: 'tab-bar-action', description: 'Круг действия.' },
   ],
   states: [

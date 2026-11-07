@@ -1,6 +1,7 @@
 import type { CategoryMeta } from '../types';
 import topbar from './topbar';
 import tabBar from './tab-bar';
+import phoneChrome from './phone-chrome';
 import sidebar from './sidebar';
 import tabs from './tabs';
 import breadcrumb from './breadcrumb';
@@ -19,7 +20,7 @@ const category: CategoryMeta = {
   id: 'navigation',
   title: 'Навигация',
   description: 'Панели, вкладки, крошки, шаги и командная палитра.',
-  components: [topbar, tabBar, sidebar, tabs, breadcrumb, pagination, navigationMenu, menubar, steps, toolbar, commandPalette, treeView, tableOfContents, filterBar, siteFooter],
+  components: [topbar, tabBar, phoneChrome, sidebar, tabs, breadcrumb, pagination, navigationMenu, menubar, steps, toolbar, commandPalette, treeView, tableOfContents, filterBar, siteFooter],
 };
 
 export default category;

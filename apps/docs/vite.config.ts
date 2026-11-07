@@ -7,7 +7,12 @@ const registry = fileURLToPath(new URL('../../packages/registry/', import.meta.u
 const src = fileURLToPath(new URL('./src/', import.meta.url));
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    // examples live outside the root: without a watched folder import.meta.glob misses a new file until restart
+    { name: 'kvant-watch-examples', configureServer: (server) => void server.watcher.add(`${registry}examples`) },
+  ],
   resolve: {
     // Docs import the library the way an app does: `@/kvant` (examples are shown to users verbatim).
     alias: [

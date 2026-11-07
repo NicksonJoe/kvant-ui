@@ -14,11 +14,14 @@ export interface CheckboxProps extends Omit<BaseCheckbox.Root.Props, 'className'
   children?: ReactNode;
   /** 22px box for touch layouts. */
   size?: 'md' | 'lg';
+  /** circle: the task mark, 24 with a 44 touch zone; ignores `size`. */
+  shape?: 'square' | 'circle';
   invalid?: boolean;
   className?: string;
 }
 
-export function Checkbox({ children, size = 'md', invalid, className, ...props }: CheckboxProps) {
+export function Checkbox({ children, size = 'md', shape = 'square', invalid, className, ...props }: CheckboxProps) {
+  const circle = shape === 'circle';
   const box = (
     <BaseCheckbox.Root
       data-slot="checkbox"
@@ -28,7 +31,11 @@ export function Checkbox({ children, size = 'md', invalid, className, ...props }
         'hover:not-data-disabled:not-data-checked:not-data-indeterminate:shadow-[inset_0_0_0_1.5px_var(--color-fg-3)]',
         'data-checked:bg-accent data-checked:shadow-none data-indeterminate:bg-accent data-indeterminate:shadow-none',
         'aria-invalid:not-data-checked:shadow-[inset_0_0_0_1.5px_var(--color-danger)]',
-        size === 'md' ? 'size-[18px] rounded-xs' : 'size-[22px] rounded-[7px]',
+        circle
+          ? "size-6 rounded-full after:absolute after:-inset-2.5 after:content-['']"
+          : size === 'md'
+            ? 'size-[18px] rounded-xs'
+            : 'size-[22px] rounded-[7px]',
         !children && className,
       )}
       {...props}
@@ -39,7 +46,7 @@ export function Checkbox({ children, size = 'md', invalid, className, ...props }
             <path d="M2.5 6h7" pathLength={1} />
           </svg>
         ) : (
-          <svg viewBox="0 0 12 12" className="size-3" fill="none" stroke="currentColor" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <svg viewBox="0 0 12 12" className={circle ? 'size-3.5' : 'size-3'} fill="none" stroke="currentColor" strokeWidth={circle ? 2.5 : 2.25} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M2.25 6.25 4.75 8.75 9.75 3.5" pathLength={1} />
           </svg>
         )}

@@ -9,7 +9,7 @@ const meta: ReadyComponentMeta = {
   paperBoard: '1GX-0',
   anatomy: ['Группа с подписью и примечанием', 'Контейнер r20 (inset — r24)', 'Строка', 'Ведущий слот 32', 'Заголовок и подзаголовок', 'Значение', 'Шеврон или галочка', 'Разделитель от текста'],
   related: ['data-list', 'card', 'switch', 'separator'],
-  source: { file: 'components/list.tsx', exports: ['List', 'ListItem'] },
+  source: { file: 'components/list.tsx', exports: ['List', 'ListItem', 'ListSectionHeader'] },
   dependencies: { npm: ['@base-ui/react', 'lucide-react'], registry: [] },
   propsOf: 'ListItem',
   props: [
@@ -30,9 +30,19 @@ const meta: ReadyComponentMeta = {
       name: 'List',
       description: 'Контейнер строк на surface-1 с микротенью; заголовок группы называет список.',
       props: [
-        { name: 'variant', type: 'enum', options: ['plain', 'inset'], default: 'plain', description: 'plain — r20, строки 44; inset — iOS inset-grouped, r24, строки 52, текст 16.' },
+        { name: 'variant', type: 'enum', options: ['plain', 'inset'], default: 'plain', description: 'plain — r20, строки 44; inset — iOS inset-grouped, r24, строки 52, с подзаголовком или аватаром 40 — 64, текст 16, подзаголовок 14/20 fg-3.' },
         { name: 'header', type: 'node', description: 'Подпись группы 13/16 500 fg-3 над строками.' },
         { name: 'footer', type: 'node', description: 'Примечание 13/18 fg-3 под строками.' },
+      ],
+    },
+    {
+      name: 'ListSectionHeader',
+      description: 'Заголовок раздела телефона 44 над списком: название 20/28 600, счётчик и «Все».',
+      props: [
+        { name: 'title', type: 'node', required: true, description: 'Название раздела.' },
+        { name: 'count', type: 'number', description: 'Счётчик fg-4 после названия; диктор читает «Просроченные шаги, 2».' },
+        { name: 'urgent', type: 'boolean', description: 'Счётчик считает проблемы: danger вместо fg-4.' },
+        { name: 'action', type: 'node', description: 'Ссылка справа 15/20 accent, обычно «Все»; при нескольких разделах — с aria-label «Все: сделки».' },
       ],
     },
   ],

@@ -1,6 +1,6 @@
 import { CircleCheck, House, LayoutGrid, Users } from 'lucide-react';
 import { useState, type MouseEvent } from 'react';
-import { AgentAvatar, TabBar, TabBarItem } from '@/kvant';
+import { AgentAvatar, TabBar, TabBarCenter, TabBarItem } from '@/kvant';
 
 const left = [
   { id: 'home', label: 'Сводка', icon: <House /> },
@@ -24,9 +24,9 @@ export default function TabBarAgent() {
     <div className="relative h-[200px] w-full max-w-[402px] overflow-hidden rounded-[36px] bg-background shadow-raised">
       <TabBar aria-label="Разделы приложения" className="absolute inset-x-4 bottom-5">
         {left.map(item)}
-        <button type="button" aria-label="Агент Норды" className="kv-pressable relative z-1 grid h-13.5 flex-1 place-items-center rounded-full">
-          <AgentAvatar size={32} />
-        </button>
+        <TabBarCenter aria-label="Агент Норды">
+          <AgentAvatar size={56} />
+        </TabBarCenter>
         {right.map(item)}
       </TabBar>
     </div>

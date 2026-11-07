@@ -110,6 +110,22 @@ export function TabBarItem({ icon, label, count, active, render, className, ...p
   });
 }
 
+export interface TabBarCenterProps extends ComponentProps<'button'> {
+  'aria-label': string;
+}
+
+/** Middle slot 64 between the tabs for a face, usually <AgentAvatar size={56} />; hidden while minimized. */
+export function TabBarCenter({ className, ...props }: TabBarCenterProps) {
+  return (
+    <button
+      type="button"
+      data-slot="tab-bar-center"
+      className={cn('kv-pressable relative z-1 grid h-13.5 w-16 shrink-0 place-items-center rounded-full in-data-minimized:hidden', className)}
+      {...props}
+    />
+  );
+}
+
 export interface TabBarActionProps extends Omit<ComponentProps<'button'>, 'children'> {
   icon: ReactNode;
   'aria-label': string;

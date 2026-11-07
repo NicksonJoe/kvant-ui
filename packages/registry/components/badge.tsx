@@ -98,7 +98,7 @@ export function Kbd({ className, ...props }: ComponentProps<'kbd'>) {
 }
 
 const tagShell =
-  'kv-pressable inline-flex shrink-0 select-none items-center gap-1.5 rounded-full px-3 text-label-sm font-medium whitespace-nowrap [&_svg]:size-3.5 [&_svg]:stroke-[1.75]';
+  'kv-pressable inline-flex shrink-0 select-none items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&_svg]:size-3.5 [&_svg]:stroke-[1.75]';
 
 export interface TagProps {
   children: ReactNode;
@@ -109,7 +109,7 @@ export interface TagProps {
   onRemove?: () => void;
   /** Accessible name for the remove button; defaults to «Удалить …» with the tag text. */
   removeLabel?: string;
-  /** sm 28 · md 32 · lg 36: phone filter chip, 15 text, selection shown by fill and ring without the check. */
+  /** sm 28 · md 32 · lg 36: phone filter chip, 15 text, selection shown by fill and accent ring without the check. */
   size?: 'sm' | 'md' | 'lg';
   /** Number after the text: «Все 6», «Просроченные 2». */
   count?: number;
@@ -135,9 +135,10 @@ export function Tag({
   const large = size === 'lg';
   const look = cn(
     tagShell,
-    large ? 'h-9 px-3.5 text-[15px]/5 tracking-body' : size === 'md' ? 'h-8' : 'h-7',
+    large ? 'h-9 px-3.5 text-[15px]/5 tracking-body' : cn('px-3 text-label-sm', size === 'md' ? 'h-8' : 'h-7'),
     selected
-      ? cn('bg-accent-soft text-accent-soft-fg', large && 'shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-accent)_35%,transparent)]')
+      ? // the ring is full accent: at 35 % (Paper) it reads 1.6:1 on the page and the state rests on the fill alone
+        cn('bg-accent-soft text-accent-soft-fg', large && 'shadow-[0_0_0_1px_var(--color-accent)]')
       : 'bg-control text-fg-1 shadow-control hover:not-data-disabled:bg-control-hover',
     disabled && 'opacity-50',
     className,
@@ -149,7 +150,7 @@ export function Tag({
       {count !== undefined ? (
         <>
           <span className="sr-only">,</span>{' '}
-          <span className={cn('tabular-nums', countTone === 'danger' ? 'text-danger-soft-fg' : 'opacity-60')}>{count}</span>
+          <span className={cn('tabular-nums', countTone === 'danger' ? 'text-danger-soft-fg' : !selected && 'text-fg-3')}>{count}</span>
         </>
       ) : null}
     </>

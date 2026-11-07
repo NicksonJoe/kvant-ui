@@ -111,6 +111,19 @@ describe('Checkbox', () => {
     await user.keyboard(' ');
     expect(box.getAttribute('aria-checked')).toBe('true');
   });
+
+  it('draws the task circle 24 with a 44 touch zone instead of the square', async () => {
+    const user = userEvent.setup();
+    render(<Checkbox shape="circle" aria-label="Перезвонить по смете" />);
+    const box = screen.getByRole('checkbox', { name: 'Перезвонить по смете' });
+    expect(box.className).toContain('size-6 rounded-full');
+    expect(box.className).not.toContain('size-[18px]');
+    // jsdom has no layout: the zone is the ::after 10 past each side, anchored to the box itself
+    expect(box.className).toMatch(/(^| )relative( |$)/);
+    expect(box.className).toContain('after:-inset-2.5');
+    await user.click(box);
+    expect(box.getAttribute('aria-checked')).toBe('true');
+  });
 });
 
 describe('Field', () => {

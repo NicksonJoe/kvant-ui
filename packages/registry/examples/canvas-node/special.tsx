@@ -29,7 +29,7 @@ export default function CanvasNodeSpecial() {
             { name: 'amount', type: '₽' },
           ]}
         />
-        <CanvasNodeCard kind="action" title="Отправить в 1С" size="collapsed" logo={{ name: '1С', background: '#FFD400', color: '#C8102E', content: '1С' }} />
+        <CanvasNodeCard kind="action" title="Отправить в 1С" size="collapsed" logo={{ name: '1С', background: 'var(--color-brand-1c)', color: 'var(--color-brand-1c-fg)', content: '1С' }} />
         <CanvasAddStep />
         <CanvasNote author={{ name: 'Анна', color: 'var(--color-chart-2)' }} time="2 мин назад">
           Порог бюджета согласовать с Игорем — может, 30 000 ₽ для повторных клиентов?
