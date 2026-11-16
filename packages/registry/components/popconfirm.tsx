@@ -127,7 +127,7 @@ export function Popconfirm({
     <Button
       ref={confirmRef}
       size={size === 'sm' ? 'xs' : 'sm'}
-      variant={danger ? 'danger' : 'primary'}
+      variant={danger ? 'danger-soft' : 'primary'}
       loading={busy}
       leadingIcon={busy ? <Spinner inherit /> : undefined}
       onClick={confirm}

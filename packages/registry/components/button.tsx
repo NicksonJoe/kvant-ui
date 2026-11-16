@@ -7,7 +7,7 @@ import { cloneElement, createContext, isValidElement, use, type ComponentProps, 
 import { cn } from '../lib/cn';
 import { Spinner } from './spinner';
 
-export const BUTTON_VARIANTS = ['primary', 'secondary', 'soft', 'outline', 'ghost', 'danger', 'danger-soft', 'link'] as const;
+export const BUTTON_VARIANTS = ['primary', 'secondary', 'soft', 'outline', 'ghost', 'danger-soft', 'link'] as const;
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export const BUTTON_SIZES = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
 export type ButtonSize = (typeof BUTTON_SIZES)[number];
@@ -55,8 +55,6 @@ const variants: Record<ButtonVariant, string> = {
   soft: 'bg-accent-soft text-accent-soft-fg hover:bg-accent-soft-hover active:bg-accent-soft-hover aria-expanded:bg-accent-soft-hover',
   outline: cn('text-fg-1 shadow-[inset_0_0_0_1px_var(--color-border)] hover:bg-fill-1 active:bg-fill-2 aria-expanded:bg-fill-2', quietIcons),
   ghost: cn('text-fg-1 hover:bg-fill-1 active:bg-fill-2 aria-expanded:bg-fill-2', quietIcons),
-  danger:
-    'bg-danger text-danger-fg shadow-accent-control hover:bg-danger-hover active:bg-danger-hover active:shadow-pressed-accent',
   'danger-soft':
     'bg-danger-soft text-danger-soft-fg hover:bg-[image:linear-gradient(var(--color-fill-1),var(--color-fill-1))] active:bg-[image:linear-gradient(var(--color-fill-2),var(--color-fill-2))]',
   link: 'rounded-full text-accent-soft-fg underline-offset-3 decoration-1 hover:underline active:text-accent-pressed active:underline [--kv-press-scale:1]',

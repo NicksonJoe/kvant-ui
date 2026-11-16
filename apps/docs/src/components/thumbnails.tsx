@@ -49,7 +49,7 @@ export const THUMBNAILS: Record<string, ReactNode> = {
       <span className="text-body-sm text-fg-2">Это нельзя отменить.</span>
       <div className="flex justify-end gap-2">
         <Button variant="secondary">Отмена</Button>
-        <Button variant="danger">Удалить</Button>
+        <Button variant="danger-soft">Удалить сделку</Button>
       </div>
     </div>
   ),

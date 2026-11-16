@@ -1,13 +1,13 @@
 import type { ReadyComponentMeta } from '../types';
 
-const variants = ['primary', 'secondary', 'soft', 'outline', 'ghost', 'danger', 'danger-soft', 'link'] as const;
+const variants = ['primary', 'secondary', 'soft', 'outline', 'ghost', 'danger-soft', 'link'] as const;
 const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
 
 const meta: ReadyComponentMeta = {
   id: 'button',
   status: 'stable',
   title: 'Кнопка',
-  description: 'Запускает действие. Капсула пяти высот и восьми вариантов; одна основная кнопка на экран.',
+  description: 'Запускает действие. Капсула пяти высот и семи вариантов; одна основная кнопка на экран.',
   category: 'actions',
   paperBoard: '1WB-0',
   anatomy: ['Корень — button', 'Ведущая иконка или спиннер', 'Подпись', 'Замыкающая иконка'],
@@ -23,7 +23,7 @@ const meta: ReadyComponentMeta = {
       type: 'enum',
       options: variants,
       default: 'primary',
-      description: 'Вид. primary — главное действие экрана, danger — необратимое, link — переход.',
+      description: 'Вид. primary — главное действие экрана, danger-soft — необратимое, подпись называет, что удаляется, link — переход.',
     },
     {
       name: 'size',
@@ -105,12 +105,7 @@ const meta: ReadyComponentMeta = {
       },
       {
         label: 'Опасная',
-        props: { variant: 'danger', children: 'Удалить', icon: 'trash' },
-        tokens: ['bg danger → danger-hover', 'тень accent-control → pressed-accent'],
-      },
-      {
-        label: 'Опасная мягкая',
-        props: { variant: 'danger-soft', children: 'Удалить', icon: 'trash' },
+        props: { variant: 'danger-soft', children: 'Удалить сделку', icon: 'trash' },
         tokens: ['bg danger-soft + fill-1 → 2', 'текст danger-soft-fg · без тени'],
       },
       {

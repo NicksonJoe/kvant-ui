@@ -8,8 +8,7 @@ export default function ButtonVariants() {
       <Button variant="soft">Пригласить</Button>
       <Button variant="outline">Фильтры</Button>
       <Button variant="ghost">Отмена</Button>
-      <Button variant="danger">Удалить</Button>
-      <Button variant="danger-soft">Архивировать</Button>
+      <Button variant="danger-soft">Удалить сделку</Button>
       <Button variant="link">Подробнее</Button>
     </div>
   );
