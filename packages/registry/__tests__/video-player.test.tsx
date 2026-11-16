@@ -269,6 +269,19 @@ describe('VideoPlayer progress', () => {
     expect(media.el.currentTime).toBe(500);
     fireEvent.pointerUp(slider, { clientX: 500, pointerId: 1, pointerType: 'touch' });
   });
+
+  it('stops the download of the hidden preview decoder when the pointer leaves the bar', () => {
+    const load = vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => {});
+    playing();
+    const slider = screen.getByRole('slider', { name: 'Позиция' });
+    slider.getBoundingClientRect = () => rect(768);
+    fireEvent.pointerMove(slider, { clientX: 353, pointerId: 1 });
+    load.mockClear();
+    fireEvent.pointerLeave(slider);
+    // removing src alone keeps the request and the decoder alive; load() with no src drops them
+    expect(load.mock.contexts.some((probe) => probe instanceof HTMLVideoElement && !probe.hasAttribute('src') && !probe.isConnected)).toBe(true);
+    load.mockRestore();
+  });
 });
 
 describe('VideoPlayer chrome', () => {

@@ -74,8 +74,12 @@ const isOff = ({ min, max, isDateDisabled }: DayLimits, d: Date) =>
 
 /** Roving focus over the visible months: arrows ±day/week, Home/End, PageUp/PageDown (Shift: year). */
 function useCursor(initialFocus: Date, initialFirst: Date, count: number) {
-  const [focused, setFocused] = useState(() => day(initialFocus));
   const [first, setFirst] = useState(() => startOfMonth(initialFirst));
+  // The tabbable day must be on screen: months opened away from the focus day start from their first day.
+  const [focused, setFocused] = useState(() => {
+    const offset = monthsBetween(startOfMonth(initialFirst), initialFocus);
+    return offset < 0 || offset >= count ? startOfMonth(initialFirst) : day(initialFocus);
+  });
   const [direction, setDirection] = useState<'next' | 'prev' | undefined>(undefined);
   const wrapRef = useRef<HTMLDivElement>(null);
   const moveFocusRef = useRef(false);
@@ -279,6 +283,8 @@ export interface RangeCalendarProps extends DayLimits {
   defaultValue?: DateRange | null;
   /** Fires when the second end is picked. */
   onValueChange?: (range: DateRange) => void;
+  /** The first end is picked and the range is open (`true`), or it is closed again (`false`). */
+  onPendingChange?: (pending: boolean) => void;
   /** First month shown; defaults to the month before the range end (or today). */
   defaultMonth?: Date;
   /** Months side by side. */
@@ -292,6 +298,7 @@ export function RangeCalendar({
   value,
   defaultValue = null,
   onValueChange,
+  onPendingChange,
   defaultMonth,
   months: count = 2,
   min,
@@ -312,10 +319,12 @@ export function RangeCalendar({
     go(d, false);
     if (!anchor) {
       setAnchor(d);
+      onPendingChange?.(true);
       return;
     }
     const next = d < anchor ? { start: d, end: anchor } : { start: anchor, end: d };
     setAnchor(null);
+    onPendingChange?.(false);
     setOwn(next);
     onValueChange?.(next);
   };
@@ -469,11 +478,14 @@ export function DateRangePicker({
   const [draft, setDraft] = useState<DateRange | null>(committed);
   // A preset remounts the months so they scroll to its range.
   const [view, setView] = useState(0);
+  // Only the start of a new range is picked: the draft is still the old range and must not be applied.
+  const [pending, setPending] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
-  const active = draft ? presets.find((preset) => sameRange(preset.range(today), draft)) : undefined;
+  const active = draft && !pending ? presets.find((preset) => sameRange(preset.range(today), draft)) : undefined;
 
   const onOpenChange = (next: boolean) => {
     if (next) setDraft(committed);
+    setPending(false);
     setOpen(next);
   };
 
@@ -514,6 +526,7 @@ export function DateRangePicker({
                         aria-pressed={pressed}
                         onClick={() => {
                           setDraft(preset.range(today));
+                          setPending(false);
                           setView((n) => n + 1);
                         }}
                         className={cn(
@@ -534,13 +547,16 @@ export function DateRangePicker({
                 today={today}
                 value={draft}
                 onValueChange={setDraft}
+                onPendingChange={setPending}
                 defaultMonth={view > 0 && draft ? addMonths(draft.end, -1) : defaultMonth}
                 className="p-4"
               />
             </div>
             <div className="flex items-center gap-2 border-t border-separator px-4 py-3">
               <p className="flex min-w-0 flex-1 items-baseline gap-2 text-label-sm tabular-nums">
-                {draft ? (
+                {pending ? (
+                  <span className="text-fg-3">Выберите конец периода</span>
+                ) : draft ? (
                   <>
                     <span className="font-medium text-fg-1">{formatRangeLong(draft)}</span>
                     <span className="text-fg-3">{daysLabel(rangeDays(draft))}</span>
@@ -552,7 +568,7 @@ export function DateRangePicker({
               <Button size="sm" variant="secondary" onClick={() => setOpen(false)}>
                 Отмена
               </Button>
-              <Button size="sm" disabled={!draft} onClick={apply}>
+              <Button size="sm" disabled={!draft || pending} onClick={apply}>
                 Применить
               </Button>
             </div>

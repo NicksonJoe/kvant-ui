@@ -77,6 +77,51 @@ describe('Kanban', () => {
     expect(within(column('Квалификация')).queryByText('Иконки')).toBeNull();
   });
 
+  it('leaves Enter and Space to a control inside the card', async () => {
+    const user = userEvent.setup();
+    const onCardClick = vi.fn();
+    const onMore = vi.fn();
+    render(
+      <Kanban
+        aria-label="Воронка сделок"
+        columns={columns}
+        items={initial}
+        onItemsChange={() => {}}
+        onCardClick={onCardClick}
+        getLabel={(deal) => deal.title}
+        renderCard={(deal) => (
+          <KanbanCard>
+            {deal.title}
+            <button type="button" onClick={onMore}>{`Ещё: ${deal.title}`}</button>
+            <input aria-label={`Заметка: ${deal.title}`} />
+          </KanbanCard>
+        )}
+      />,
+    );
+    screen.getByRole('button', { name: 'Ещё: Иконки' }).focus();
+    await user.keyboard('{Enter}');
+    expect(onMore).toHaveBeenCalledTimes(1);
+    await user.type(screen.getByRole('textbox', { name: 'Заметка: Иконки' }), 'a b');
+    expect(screen.getByRole<HTMLInputElement>('textbox', { name: 'Заметка: Иконки' }).value).toBe('a b');
+    expect(onCardClick).not.toHaveBeenCalled();
+  });
+
+  it('does not redraw the board while a dragged card hovers the same place', () => {
+    const renderCard = vi.fn((deal: Deal) => <KanbanCard>{deal.title}</KanbanCard>);
+    render(<Kanban aria-label="Воронка сделок" columns={columns} items={initial} onItemsChange={() => {}} getLabel={(deal) => deal.title} renderCard={renderCard} />);
+    fireEvent.dragStart(screen.getByRole('button', { name: /Иконки/ }));
+    fireEvent.dragOver(screen.getByRole('button', { name: /Айдентика/ }));
+    fireEvent.dragOver(column('Счёт выставлен'));
+    const drawn = renderCard.mock.calls.length;
+    fireEvent.dragOver(column('Счёт выставлен'));
+    fireEvent.dragOver(column('Счёт выставлен'));
+    expect(renderCard.mock.calls.length).toBe(drawn);
+    fireEvent.dragOver(screen.getByRole('button', { name: /Айдентика/ }));
+    const again = renderCard.mock.calls.length;
+    fireEvent.dragOver(screen.getByRole('button', { name: /Айдентика/ }));
+    expect(renderCard.mock.calls.length).toBe(again);
+  });
+
   describe('on a touch screen', () => {
     afterEach(() => {
       vi.useRealTimers();

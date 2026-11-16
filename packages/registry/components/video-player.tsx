@@ -227,6 +227,8 @@ function Frame({ src, time, crossOrigin }: { src: string; time: number; crossOri
     return () => {
       probe.removeEventListener('seeked', paint);
       probe.removeAttribute('src');
+      // without load() the request and the decoder of this hidden video live on after every hover
+      probe.load();
       probeRef.current = null;
     };
   }, [src, crossOrigin]);

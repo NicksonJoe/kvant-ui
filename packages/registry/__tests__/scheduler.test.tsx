@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { Scheduler, type SchedulerCategory, type SchedulerEvent } from '..';
@@ -73,11 +73,12 @@ describe('Scheduler', () => {
     const dialog = screen.getByRole('dialog', { name: 'Пн, 2 ноября' });
     // all-day first, with its whole range
     const first = within(dialog).getByRole('button', { name: '1–2 ноября, Командировка' });
-    expect(document.activeElement).toBe(first);
+    // the popover moves the focus a frame after it opens
+    await waitFor(() => expect(document.activeElement).toBe(first));
     expect(within(dialog).getAllByRole('button')).toHaveLength(5);
     await user.keyboard('{Escape}');
-    expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(more);
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(more));
   });
 
   it('draws a multi-day event as one bar across the week, announced once', () => {
@@ -292,5 +293,15 @@ describe('Scheduler', () => {
     expect(Number.parseFloat(long.style.top) + Number.parseFloat(long.style.height)).toBeLessThanOrEqual(576);
     expect(early.dataset.clipped).toBe('start');
     expect(late.dataset.clipped).toBe('end');
+  });
+
+  it('moves the «сейчас» line with the clock while the calendar stays open', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 10, 3, 10, 0));
+    render(<Scheduler aria-label="Календарь" events={events} categories={categories} defaultDate="2026-11-03" defaultView="week" />);
+    expect(screen.getByText('10:00', { selector: '[aria-hidden]' })).toBeDefined();
+    act(() => void vi.advanceTimersByTime(61 * 60_000));
+    expect(screen.getByText('11:01', { selector: '[aria-hidden]' })).toBeDefined();
+    vi.useRealTimers();
   });
 });

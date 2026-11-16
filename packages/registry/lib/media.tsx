@@ -299,17 +299,21 @@ export function useMedia(ref: RefObject<HTMLMediaElement | null>, { chain, onEnd
         const code = element.error?.code;
         const url = element.currentSrc;
         if ((code !== 2 && code !== 4) || !/^https?:/.test(url)) return;
-        // HEAD tells a missing file and a closed one from a real format or network problem
-        void fetch(url, { method: 'HEAD' })
+        // The answer tells a missing file and a closed one from a real format or network problem.
+        // One byte by GET, not HEAD: a signed link is signed for GET only. The body is dropped once the headers are in.
+        const controller = new AbortController();
+        void fetch(url, { headers: { Range: 'bytes=0-0' }, signal: controller.signal })
           // a dev server or a CDN answers a missing file with its HTML page
-          .then((response) =>
-            response.status === 404 || response.status === 410 || (response.ok && response.headers.get('content-type')?.startsWith('text/html'))
+          .then((response): MediaErrorReason | null => {
+            controller.abort();
+            return response.status === 404 || response.status === 410 || (response.ok && response.headers.get('content-type')?.startsWith('text/html'))
               ? 'missing'
               : response.status === 401 || response.status === 403
                 ? 'forbidden'
-                : null,
-          )
-          .catch((): MediaErrorReason => 'network')
+                : null;
+          })
+          // the server cannot be asked: offline is the network; otherwise (CORS) the code of the player itself stands
+          .catch((): MediaErrorReason | null => (navigator.onLine === false ? 'network' : null))
           .then((reason) => {
             probed = reason;
             sync();
@@ -474,6 +478,7 @@ export function useScrub({ duration, disabled = false, onSeek }: { duration: num
 
 const PEAKS = 256;
 const decoded = new Map<string, Promise<number[] | null>>();
+const DECODED_LIMIT = 200;
 
 const canDecode = () => typeof OfflineAudioContext !== 'undefined';
 
@@ -492,7 +497,13 @@ export function useWaveform(src: string, given?: readonly number[]): readonly nu
         .then((response) => (response.ok ? response.arrayBuffer() : Promise.reject(new Error(String(response.status)))))
         .then((buffer) => new OfflineAudioContext(1, 1, 22050).decodeAudioData(buffer))
         .then((audio) => waveformPeaks(audio.getChannelData(0), PEAKS))
-        .catch(() => null);
+        .catch(() => {
+          // a network blip is not remembered: the next mount asks again
+          decoded.delete(src);
+          return null;
+        });
+      // signed URLs change, so the cache would grow all session: the oldest entry goes first
+      if (decoded.size >= DECODED_LIMIT) decoded.delete(decoded.keys().next().value ?? src);
       decoded.set(src, job);
     }
     void job.then((value) => {

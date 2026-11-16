@@ -84,6 +84,10 @@ export function Kanban<T extends { id: string }>({
   const [collapsed, setCollapsed] = useControllable(collapsedProp, defaultCollapsed, onCollapsedChange);
   const [dragged, setDragged] = useState<string | null>(null);
   const [target, setTarget] = useState<Target | null>(null);
+  // dragover fires many times a second over the same place: an equal target keeps the state, so the board is not redrawn
+  const aim = (next: Target | null) => {
+    if (target?.column !== next?.column || target?.index !== next?.index) setTarget(next);
+  };
   const [announcement, setAnnouncement] = useState('');
   const board = useRef<HTMLDivElement>(null);
   // `folded` waits for the fold state to match: a controlled board may ignore the toggle
@@ -183,7 +187,7 @@ export function Kanban<T extends { id: string }>({
               onDragOver={(event) => {
                 if (dragged === null) return;
                 event.preventDefault();
-                setTarget({ column: column.id, index: cards.length });
+                aim({ column: column.id, index: cards.length });
               }}
               onDrop={(event) => {
                 event.preventDefault();
@@ -220,7 +224,7 @@ export function Kanban<T extends { id: string }>({
               if (dragged === null) return;
               event.preventDefault();
               if (event.target === event.currentTarget || !(event.target instanceof Element) || !event.target.closest('[data-kanban-id]')) {
-                setTarget({ column: column.id, index: cards.length });
+                aim({ column: column.id, index: cards.length });
               }
             }}
             onDrop={(event) => {
@@ -272,7 +276,11 @@ export function Kanban<T extends { id: string }>({
                   aria-roledescription="карточка"
                   aria-label={getLabel(item)}
                   data-dragging={dragged === item.id || undefined}
-                  onClick={() => onCardClick?.(item)}
+                  onClick={(event) => {
+                    // a click on a button, link or field inside the card is theirs
+                    const inner = event.target instanceof Element ? event.target.closest('button, a, input, select, textarea, [role=button]') : null;
+                    if (inner === null || inner === event.currentTarget) onCardClick?.(item);
+                  }}
                   onDragStart={(event: DragEvent<HTMLDivElement>) => {
                     event.dataTransfer?.setData('text/plain', item.id);
                     setDragged(item.id);
@@ -284,7 +292,7 @@ export function Kanban<T extends { id: string }>({
                   onDragOver={(event) => {
                     if (dragged === null) return;
                     const rect = event.currentTarget.getBoundingClientRect();
-                    setTarget({ column: column.id, index: event.clientY > rect.top + rect.height / 2 ? index + 1 : index });
+                    aim({ column: column.id, index: event.clientY > rect.top + rect.height / 2 ? index + 1 : index });
                   }}
                   onTouchStart={(event) => {
                     const point = event.touches[0];
@@ -301,7 +309,7 @@ export function Kanban<T extends { id: string }>({
                     const point = event.touches[0];
                     const current = touch.current;
                     if (!point || !current) return;
-                    if (current.active) setTarget(targetAt(point.clientX, point.clientY));
+                    if (current.active) aim(targetAt(point.clientX, point.clientY));
                     else if (Math.hypot(point.clientX - current.x, point.clientY - current.y) > 8) endTouch();
                   }}
                   onTouchEnd={(event) => {
@@ -316,6 +324,8 @@ export function Kanban<T extends { id: string }>({
                   }}
                   onTouchCancel={endTouch}
                   onKeyDown={(event) => {
+                    // keys of a button or a field inside the card are theirs
+                    if (event.target !== event.currentTarget) return;
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
                       onCardClick?.(item);
