@@ -1,5 +1,5 @@
-/** «Kvant — дизайн-система» in Paper: the source of every value in this registry. */
-export const PAPER_FILE_URL = 'https://app.paper.design/file/01M600AT8D8Q47F7BGAQYS7J3A';
+/** «Kvant — библиотека» in Paper: the source of every value in this registry. */
+export const PAPER_FILE_URL = 'https://app.paper.design/file/01M7HHWM2RS5B94E91BZF6ZM5R';
 
 export const PAPER_BOARDS = {
   // foundations
