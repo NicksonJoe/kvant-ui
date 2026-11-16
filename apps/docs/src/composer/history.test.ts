@@ -6,6 +6,13 @@ const text = (id: string): ComposerNode => ({ id, type: 'text', props: { text: i
 const add = (root: ComposerNode, id: string) => insertNode(root, { parentId: ROOT_ID, slot: CHILDREN, index: 99 }, text(id));
 
 describe('composerReducer', () => {
+  it('keeps the draft a link replaced one undo away', () => {
+    const draft = add(emptyRoot(), 'draft');
+    const opened = initialState(add(emptyRoot(), 'shared'), draft);
+    expect(composerReducer(opened, { type: 'undo' }).root).toBe(draft);
+    expect(initialState(emptyRoot()).past).toEqual([]);
+  });
+
   it('undoes and redoes changes, keeping the selection when the node still exists', () => {
     const start = initialState(emptyRoot());
     const one = composerReducer(start, { type: 'change', root: add(start.root, 'a'), select: 'a' });

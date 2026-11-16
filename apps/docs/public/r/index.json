@@ -2696,7 +2696,8 @@
         "components/node-canvas.tsx",
         "components/canvas-types.ts",
         "components/node-canvas-geometry.ts",
-        "components/node-canvas-layout.ts"
+        "components/node-canvas-layout.ts",
+        "components/node-canvas-history.ts"
       ]
     },
     {

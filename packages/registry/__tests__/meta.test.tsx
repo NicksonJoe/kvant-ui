@@ -19,6 +19,7 @@ const examples = import.meta.glob<{ default: ComponentType }>(['../examples/*/*.
 });
 const playgrounds = import.meta.glob<{ default: Playground }>('../examples/*/playground.tsx', { eager: true });
 const ready = components.filter(isReady);
+const sources = import.meta.glob<Record<string, unknown>>('../components/*.{ts,tsx}', { eager: true });
 
 const enumProps = (meta: ReadyComponentMeta) =>
   new Map(meta.props.filter((prop) => prop.options !== undefined).map((prop) => [prop.name, prop.options ?? []]));
@@ -31,6 +32,14 @@ describe('registry meta', () => {
     for (const category of categories) {
       for (const meta of category.components) expect(meta.category, meta.id).toBe(category.id);
     }
+  });
+
+  // The registry builder ships the files `source.file` imports, so an export living elsewhere never reaches `kvant-ui add`.
+  it('exports every name of `source.exports` from `source.file` itself', () => {
+    const missing = ready.flatMap((meta) =>
+      meta.source.exports.filter((name) => !(name in (sources[`../${meta.source.file}`] ?? {}))).map((name) => `${meta.id}: ${name}`),
+    );
+    expect(missing).toEqual([]);
   });
 
   it('only links related components that exist', () => {

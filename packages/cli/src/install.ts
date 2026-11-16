@@ -49,7 +49,8 @@ export function packageInstaller(cwd: string, manager: PackageManager): Installe
   return (packages, { dev }) =>
     new Promise((resolve, reject) => {
       const args = [manager === 'npm' ? 'install' : 'add', ...(dev ? ['-D'] : []), ...packages];
-      // Windows needs a shell for pnpm.cmd / npm.cmd; specs are validated by the registry schema, so nothing to inject.
+      // Windows needs a shell for pnpm.cmd / npm.cmd; the registry schema lets a spec carry no space, pipe or redirect.
+      // shortcut: cmd still eats `^`, so a caret range installs as the exact version there; quote the specs if that matters.
       const child = spawn(manager, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' });
       child.on('error', (error) => reject(new Error(`Не удалось запустить ${manager}: ${error.message}`)));
       child.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`${manager} ${args.join(' ')} завершился с кодом ${code ?? '?'}`))));

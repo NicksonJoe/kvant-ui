@@ -46,7 +46,7 @@ export interface RegistryIndex {
 }
 
 export const ITEM_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const PACKAGE_SPEC = /^(?:@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*(?:@[\w.^~<>=*|+ -]+)?$/i;
+const PACKAGE_SPEC = /^(?:@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*(?:@[\^~]?[\w.+-]+)?$/i;
 const CSS_IMPORT = /^(?:\.\/)?[\w@][\w@./-]*$/;
 
 /** Relative, forward slashes, no `.` or `..` segments: a target can never leave the Kvant folder. */

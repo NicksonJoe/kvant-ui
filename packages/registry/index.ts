@@ -127,8 +127,6 @@ export * from './components/questionnaire';
 export * from './components/rich-text-editor';
 export type * from './components/canvas-types';
 export * from './components/node-canvas';
-export * from './components/node-canvas-history';
-export * from './components/node-canvas-layout';
 export * from './components/canvas-node';
 export * from './components/canvas-editor';
 export * from './components/step-palette';

@@ -40,6 +40,7 @@
       "accent-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.008, 286] } },
       "accent-soft-hover": { "$value": { "colorSpace": "oklch", "components": [0.3, 0.008, 286] } },
       "accent-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.012, 286] } },
+      "ring": { "$value": "{color.accent}" },
       "info": { "$value": { "colorSpace": "oklch", "components": [0.524, 0.137, 250] } },
       "info-soft": { "$value": { "colorSpace": "oklch", "components": [0.27, 0.05, 250] } },
       "info-soft-fg": { "$value": { "colorSpace": "oklch", "components": [0.8, 0.097, 250] } },

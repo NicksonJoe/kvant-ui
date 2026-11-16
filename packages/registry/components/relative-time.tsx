@@ -43,6 +43,15 @@ export function RelativeTime({ date, now, className, ...props }: RelativeTimePro
     return () => window.clearInterval(timer);
   }, [now]);
 
+  // A date the API sent broken or empty is a dash, not a crash: toISOString throws on an invalid Date.
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
+    return (
+      <time data-slot="relative-time" className={className} {...props}>
+        —
+      </time>
+    );
+  }
+
   return (
     <time data-slot="relative-time" dateTime={value.toISOString()} title={formatExactTime(value)} className={className} {...props}>
       {formatRelativeTime(value, now ?? tick)}
