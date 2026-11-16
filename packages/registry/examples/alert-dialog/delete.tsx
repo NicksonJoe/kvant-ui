@@ -21,8 +21,8 @@ export default function AlertDialogDelete() {
         </AlertDialogDescription>
         <div className="flex justify-end gap-2 pt-2">
           <AlertDialogClose render={<Button variant="secondary" />}>Отмена</AlertDialogClose>
-          <AlertDialogClose render={<Button variant="danger" />} onClick={() => toast.add({ title: 'Сделка удалена' })}>
-            Удалить
+          <AlertDialogClose render={<Button variant="danger-soft" />} onClick={() => toast.add({ title: 'Сделка удалена' })}>
+            Удалить сделку
           </AlertDialogClose>
         </div>
       </AlertDialogContent>

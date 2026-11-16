@@ -21,7 +21,7 @@ const playground: Playground = {
           <AlertDialogDescription>Сделка исчезнет вместе с задачами и файлами.</AlertDialogDescription>
           <div className="flex justify-end gap-2 pt-2">
             <AlertDialogClose render={<Button variant="secondary" />}>Отмена</AlertDialogClose>
-            <AlertDialogClose render={<Button variant={tone === 'danger' ? 'danger' : 'primary'} />}>Удалить</AlertDialogClose>
+            <AlertDialogClose render={<Button variant={tone === 'danger' ? 'danger-soft' : 'primary'} />}>Удалить сделку</AlertDialogClose>
           </div>
         </AlertDialogContent>
       </AlertDialog>
@@ -34,7 +34,7 @@ const playground: Playground = {
     <AlertDialogDescription>Сделка исчезнет вместе с задачами и файлами.</AlertDialogDescription>
     <div className="flex justify-end gap-2 pt-2">
       <AlertDialogClose render={<Button variant="secondary" />}>Отмена</AlertDialogClose>
-      <AlertDialogClose render={<Button variant="danger" />}>Удалить</AlertDialogClose>
+      <AlertDialogClose render={<Button variant="danger-soft" />}>Удалить сделку</AlertDialogClose>
     </div>
   </AlertDialogContent>
 </AlertDialog>`,

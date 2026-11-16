@@ -112,10 +112,10 @@ export default function SignaturePadDelivery() {
           <div className="flex justify-end gap-2 pt-2">
             <AlertDialogClose render={<Button variant="secondary" />}>Отмена</AlertDialogClose>
             <AlertDialogClose
-              render={<Button variant={confirm === 'delete' ? 'danger' : 'primary'} />}
+              render={<Button variant={confirm === 'delete' ? 'danger-soft' : 'primary'} />}
               onClick={() => (confirm === 'delete' ? drop('Подпись удалена') : drop('Подпись в архиве'))}
             >
-              {confirm === 'delete' ? 'Удалить' : 'В архив'}
+              {confirm === 'delete' ? 'Удалить подпись' : 'В архив'}
             </AlertDialogClose>
           </div>
         </AlertDialogContent>

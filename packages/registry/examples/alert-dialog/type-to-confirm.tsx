@@ -33,8 +33,8 @@ export default function AlertDialogTypeToConfirm() {
         </Field>
         <DialogFooter>
           <AlertDialogClose render={<Button variant="secondary" />}>Отмена</AlertDialogClose>
-          <AlertDialogClose render={<Button variant="danger" />} disabled={!confirmed}>
-            Удалить навсегда
+          <AlertDialogClose render={<Button variant="danger-soft" />} disabled={!confirmed}>
+            Удалить пространство
           </AlertDialogClose>
         </DialogFooter>
       </AlertDialogContent>

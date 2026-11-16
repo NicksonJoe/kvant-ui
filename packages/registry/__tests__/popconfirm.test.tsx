@@ -42,14 +42,14 @@ describe('Popconfirm', () => {
     await waitFor(() => expect(document.activeElement).toBe(confirm));
   });
 
-  it('danger: the confirm button is danger and the focus waits on «Отмена»', async () => {
+  it('danger: the confirm button is danger-soft and the focus waits on «Отмена»', async () => {
     render(
       <Popconfirm tone="danger" title="Удалить комментарий?" onConfirm={() => {}}>
         <Button variant="secondary">Удалить…</Button>
       </Popconfirm>,
     );
     open('Удалить…');
-    expect((await screen.findByRole('button', { name: 'Удалить' })).getAttribute('data-variant')).toBe('danger');
+    expect((await screen.findByRole('button', { name: 'Удалить' })).getAttribute('data-variant')).toBe('danger-soft');
     const cancel = screen.getByRole('button', { name: 'Отмена' });
     expect(cancel.getAttribute('data-variant')).toBe('secondary');
     await waitFor(() => expect(document.activeElement).toBe(cancel));
