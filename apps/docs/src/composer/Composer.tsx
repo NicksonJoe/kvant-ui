@@ -40,22 +40,24 @@ interface Start {
   root: ComposerNode;
   selected: string;
   notice: string | null;
+  /** The saved draft a link is about to replace. */
+  previous?: ComposerNode;
 }
 
-/** A share link (#doc=…) wins, then `?c=<component>` from a docs page, then the saved draft. */
+/** A share link (#doc=…) wins, then `?c=<component>` from a docs page, then the saved draft (kept one undo away under a link). */
 function openStart(componentId: string | null): Start {
   let notice: string | null = null;
   const shared = /^#doc=([\w-]+)$/.exec(window.location.hash)?.[1];
   if (shared) {
     try {
-      return { root: decodeShare(shared), selected: ROOT_ID, notice };
+      return { root: decodeShare(shared), selected: ROOT_ID, notice, previous: loadDraft() ?? undefined };
     } catch (error) {
       notice = error instanceof Error ? error.message : 'Ссылка повреждена';
     }
   }
   if (componentId && getSpec(componentId)) {
     const node = createNode(componentId);
-    return { root: { ...emptyRoot(), slots: { [CHILDREN]: [node] } }, selected: node.id, notice };
+    return { root: { ...emptyRoot(), slots: { [CHILDREN]: [node] } }, selected: node.id, notice, previous: loadDraft() ?? undefined };
   }
   return { root: loadDraft() ?? emptyRoot(), selected: ROOT_ID, notice };
 }
@@ -121,7 +123,7 @@ interface Drag {
 export function Composer() {
   const [search] = useSearchParams();
   const [start] = useState(() => openStart(search.get('c')));
-  const [state, dispatch] = useReducer(composerReducer, start, (value) => ({ ...initialState(value.root), selected: value.selected }));
+  const [state, dispatch] = useReducer(composerReducer, start, (value) => ({ ...initialState(value.root, value.previous), selected: value.selected }));
   const { root, selected, past, future } = state;
   const selectedNode = findNode(root, selected) ?? root;
 
@@ -151,6 +153,9 @@ export function Composer() {
     if (start.notice && !noticed.current) {
       noticed.current = true;
       toast.add({ type: 'danger', title: 'Ссылка не открылась', description: `${start.notice}. Открыт черновик.` });
+    } else if (start.previous && !noticed.current) {
+      noticed.current = true;
+      toast.add({ title: 'Черновик заменён', description: 'Ссылка открыла другой холст. «Отменить» вернёт черновик.' });
     }
   }, [start]);
 

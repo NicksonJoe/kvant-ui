@@ -415,6 +415,7 @@
   --color-accent-soft: oklch(0.27 0.008 286);
   --color-accent-soft-hover: oklch(0.3 0.008 286);
   --color-accent-soft-fg: oklch(0.8 0.012 286);
+  --color-ring: var(--color-accent);
   --color-info: oklch(0.524 0.137 250);
   --color-info-soft: oklch(0.27 0.05 250);
   --color-info-soft-fg: oklch(0.8 0.097 250);

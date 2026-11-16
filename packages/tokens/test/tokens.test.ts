@@ -50,6 +50,15 @@ describe('colours', () => {
     }
   });
 
+  // Dark defaults sit on :root[data-mode='dark'] and outrank a light [data-accent] rule: an accent must restate them.
+  it('restates in dark every colour the default accent sets in dark', () => {
+    const dark = (accent: Accent): string[] =>
+      Object.keys(JSON.parse(readFileSync(new URL(`../dtcg/accents/${accent}.tokens.json`, import.meta.url), 'utf8')).dark.color);
+    for (const accent of ACCENTS) {
+      expect(dark(DEFAULT_ACCENT).filter((name) => !dark(accent).includes(name)), accent).toEqual([]);
+    }
+  });
+
   it('resolves every colour of every accent in both modes', () => {
     const names = [...resolveColors(sets, DEFAULT_ACCENT, 'light').keys()];
     for (const accent of ACCENTS) for (const mode of MODES) expect([...resolveColors(sets, accent, mode).keys()], `${accent}/${mode}`).toEqual(names);

@@ -18,8 +18,9 @@ export type ComposerAction =
 
 const LIMIT = 100;
 
-export function initialState(root: ComposerNode): ComposerState {
-  return { root, past: [], future: [], selected: ROOT_ID, mergeKey: null };
+/** `previous` is the document `root` replaced on open (the draft under a shared link): undo brings it back. */
+export function initialState(root: ComposerNode, previous?: ComposerNode): ComposerState {
+  return { root, past: previous ? [previous] : [], future: [], selected: ROOT_ID, mergeKey: null };
 }
 
 function existing(root: ComposerNode, id: string): string {

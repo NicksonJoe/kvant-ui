@@ -258,10 +258,12 @@ function leaf(meta: ReadyComponentMeta, playground: Playground): LeafSpec {
 const composables = COMPOSABLE.map(composable);
 const composableIds = new Set(COMPOSABLE.map((entry) => entry.id));
 
-/** Components in library order; the card is the layout primitive, extra composable parts follow their component. */
+const primitiveTypes = new Set<string>(primitives.map((spec) => spec.type));
+
+/** Components in library order; a primitive keeps its name (card, icon), extra composable parts follow their component. */
 const components: NodeSpec[] = categories.flatMap((category) =>
   category.components.filter(isReady).flatMap((meta): NodeSpec[] => {
-    if (meta.id === 'card') return [];
+    if (primitiveTypes.has(meta.id)) return [];
     if (composableIds.has(meta.id)) return composables.filter((spec) => spec.meta.id === meta.id);
     const playground = getPlayground(meta.id);
     return playground ? [leaf(meta, playground)] : [];

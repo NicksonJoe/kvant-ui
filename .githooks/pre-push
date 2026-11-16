@@ -1,0 +1,4 @@
+#!/bin/sh
+# Nothing else runs the checks: without this a stale registry or a red test reaches main and every `kvant-ui add`.
+# shortcut: checks the working tree, not the pushed commits; fine while pushes go from a clean tree, else check a stash.
+exec pnpm run check

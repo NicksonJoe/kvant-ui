@@ -2429,3 +2429,7 @@ export function CanvasMiniMap({ cursors = [], collapsible = true, defaultCollaps
     </div>
   );
 }
+
+// Part of the same registry item: the builder ships only what this file imports.
+export * from './node-canvas-history';
+export * from './node-canvas-layout';

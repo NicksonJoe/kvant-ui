@@ -18,7 +18,7 @@ const meta: ReadyComponentMeta = {
   related: ['canvas-editor', 'canvas-node', 'canvas-inspector', 'canvas-run', 'json-viewer'],
   source: {
     file: 'components/canvas-review.tsx',
-    exports: ['CanvasProblems', 'CanvasVersionBar', 'CanvasVersionList', 'CanvasChangeNote', 'CANVAS_DIFF_CLASSES', 'checkGraph', 'diffGraphs', 'portTypeName', 'pluralRu'],
+    exports: ['CanvasProblems', 'CanvasVersionBar', 'CanvasVersionList', 'CanvasChangeNote', 'CANVAS_DIFF_CLASSES'],
   },
   dependencies: { npm: ['lucide-react'], registry: ['badge', 'button'] },
   props: [

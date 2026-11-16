@@ -35,6 +35,16 @@ describe('RelativeTime', () => {
     expect(time.tagName).toBe('TIME');
     expect(time.getAttribute('title')).toBe('3 ноября 2026, 14:55');
   });
+
+  it('shows a dash instead of crashing on a date it cannot read', () => {
+    // null reaches the component from untyped API data
+    for (const date of ['', 'не дата', new Date(Number.NaN), null as unknown as Date]) {
+      const { container, unmount } = render(<RelativeTime date={date} />);
+      expect(container.querySelector('time')?.textContent).toBe('—');
+      expect(container.querySelector('time')?.hasAttribute('datetime')).toBe(false);
+      unmount();
+    }
+  });
 });
 
 const people: MentionPerson[] = [
