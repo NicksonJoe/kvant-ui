@@ -153,6 +153,22 @@ export function MentionField({ people, placeholder, onValueChange, minRows = 3, 
         suppressContentEditableWarning
         data-placeholder={placeholder}
         onInput={update}
+        // Only text comes in: pasted markup would bring formatting, pictures and chips of people nobody picked.
+        // shortcut: text dragged in from a page still lands as markup; handle drop the same way if that shows up.
+        onPaste={(event) => {
+          event.preventDefault();
+          const pasted = event.clipboardData.getData('text/plain');
+          // insertText keeps the browser's undo and fires `input` itself; the manual path is for where it is missing
+          if (typeof document.execCommand === 'function' && document.execCommand('insertText', false, pasted)) return;
+          const selection = document.getSelection();
+          if (!selection || selection.rangeCount === 0) return;
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          const text = document.createTextNode(pasted);
+          range.insertNode(text);
+          selection.collapse(text, text.length);
+          update();
+        }}
         onKeyUp={(event) => {
           if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) update();
         }}
@@ -173,7 +189,7 @@ export function MentionField({ people, placeholder, onValueChange, minRows = 3, 
           }
         }}
         style={{ minHeight: `calc(${minRows} * var(--leading-body-sm) + 24px)` }}
-        className="w-full overflow-y-auto rounded-xl bg-field px-3.5 py-3 text-body-sm text-fg-1 shadow-[inset_0_0_0_1px_var(--color-input)] outline-none empty:before:text-fg-3 empty:before:content-[attr(data-placeholder)] focus:shadow-[inset_0_0_0_1px_var(--color-ring),0_0_0_1px_var(--color-ring)]"
+        className="w-full overflow-y-auto rounded-xl bg-field whitespace-pre-wrap px-3.5 py-3 text-body-sm text-fg-1 shadow-[inset_0_0_0_1px_var(--color-input)] outline-none empty:before:text-fg-3 empty:before:content-[attr(data-placeholder)] focus:shadow-[inset_0_0_0_1px_var(--color-ring),0_0_0_1px_var(--color-ring)]"
       />
       {open ? (
         <MentionSuggestions

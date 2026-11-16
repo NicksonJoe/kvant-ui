@@ -93,4 +93,18 @@ describe('MentionField', () => {
     fireEvent.input(box);
     expect(onValueChange).toHaveBeenLastCalledWith({ text: 'Первая строка\nВторая @Мария Ким\u00a0', mentions: ['maria'] });
   });
+
+  it('pastes as plain text: no formatting and no mention the person did not pick', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<MentionField aria-label="Комментарий" people={people} onValueChange={onValueChange} />);
+    const box = screen.getByRole('textbox', { name: 'Комментарий' });
+    await user.click(box);
+    await user.keyboard('Итог: ');
+    const html = '<b>счёт</b> <span data-mention-id="42">@Чужой</span><img src="x.png">';
+    const clipboardData = { getData: (type: string) => (type === 'text/plain' ? 'счёт @Чужой' : html) };
+    expect(fireEvent.paste(box, { clipboardData })).toBe(false);
+    expect(box.querySelector('b, img, [data-mention-id]')).toBeNull();
+    expect(onValueChange).toHaveBeenLastCalledWith({ text: 'Итог: счёт @Чужой', mentions: [] });
+  });
 });

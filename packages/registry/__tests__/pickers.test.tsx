@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import {
   Cascader,
+  Combobox,
   ColorPicker,
   DateField,
   DatePicker,
@@ -135,6 +136,11 @@ describe('RangeCalendar', () => {
     await user.click(screen.getByRole('button', { name: /, 2 октября 2026/ }));
     expect(onValueChange).toHaveBeenLastCalledWith({ start: new Date(2026, 9, 2), end: new Date(2026, 9, 5) });
   });
+
+  it('keeps a day reachable with Tab when the shown months are not the month of today', () => {
+    render(<RangeCalendar today={new Date(2026, 9, 29)} defaultMonth={new Date(2027, 0, 1)} />);
+    expect(document.querySelectorAll('[data-slot=range-calendar] button[tabindex="0"]')).toHaveLength(1);
+  });
 });
 
 describe('DatePicker', () => {
@@ -164,6 +170,28 @@ describe('DateRangePicker', () => {
     expect(onValueChange).toHaveBeenLastCalledWith({ start: new Date(2026, 9, 23), end: today });
     await waitFor(() => expect(trigger.textContent).toContain('23.10.2026\u00a0— 29.10.2026'));
   });
+
+  it('does not apply the old period while only the start of a new one is picked', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const today = new Date(2026, 9, 29);
+    render(
+      <DateRangePicker
+        aria-label="Период отчёта"
+        today={today}
+        defaultValue={{ start: new Date(2026, 9, 1), end: new Date(2026, 9, 10) }}
+        onValueChange={onValueChange}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Период отчёта' }));
+    await user.click(await screen.findByRole('button', { name: /, 20 октября 2026/ }));
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Применить' }).disabled).toBe(true);
+    expect(screen.getByText('Выберите конец периода')).toBeTruthy();
+
+    await user.click(screen.getByRole('button', { name: /, 22 октября 2026/ }));
+    await user.click(screen.getByRole('button', { name: 'Применить' }));
+    expect(onValueChange).toHaveBeenLastCalledWith({ start: new Date(2026, 9, 20), end: new Date(2026, 9, 22) });
+  });
 });
 
 describe('DateField', () => {
@@ -192,6 +220,27 @@ describe('DateField', () => {
     await user.tab();
     expect(screen.getByText('В феврале 2026 года 28 дней')).toBeTruthy();
     expect(screen.getByRole('spinbutton', { name: 'день' }).getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('keeps what is being typed when the parent re-renders with an equal date in a new object', async () => {
+    const user = userEvent.setup();
+    const iso = '2026-11-10T00:00:00';
+    const { rerender } = render(<DateField aria-label="Срок" value={new Date(iso)} />);
+    const day = screen.getByRole('spinbutton', { name: 'день' });
+    day.focus();
+    await user.keyboard('2');
+    expect(day.textContent).toBe('2');
+    rerender(<DateField aria-label="Срок" value={new Date(iso)} />);
+    expect(screen.getByRole('spinbutton', { name: 'день' }).textContent).toBe('2');
+    rerender(<DateField aria-label="Срок" value={new Date('2026-11-21T00:00:00')} />);
+    expect(screen.getByRole('spinbutton', { name: 'день' }).textContent).toBe('21');
+  });
+
+  it('survives a date it cannot read instead of re-rendering forever', () => {
+    const broken = new Date(Number.NaN);
+    const { rerender } = render(<DateField aria-label="Срок" value={broken} />);
+    rerender(<DateField aria-label="Срок" value={new Date(Number.NaN)} />);
+    expect(screen.getByRole('group', { name: 'Срок' })).toBeTruthy();
   });
 });
 
@@ -329,6 +378,14 @@ describe('Dropzone', () => {
     expect(screen.getByText('Этот файл не подойдёт')).toBeTruthy();
   });
 
+  it('names the kind a wildcard accepts: video and audio are not «изображения»', () => {
+    const { unmount } = render(<Dropzone accept="video/*" onFiles={() => {}} />);
+    expect(screen.getByText('видео')).toBeTruthy();
+    unmount();
+    render(<Dropzone accept="image/*,audio/*,.pdf" onFiles={() => {}} />);
+    expect(screen.getByText('изображения, аудио или PDF')).toBeTruthy();
+  });
+
   it('shows the drop target state while files are dragged over', () => {
     render(<Dropzone accept=".pdf" onFiles={() => {}} />);
     const zone = screen.getByRole('button');
@@ -362,5 +419,37 @@ describe('UploadItem', () => {
     expect(formatFileSize(512)).toBe('512 Б');
     expect(formatFileSize(1_258_291)).toBe('1,2 МБ');
     expect(formatFileSize(20 * 1024 * 1024)).toBe('20 МБ');
+  });
+});
+
+
+describe('Combobox', () => {
+  const cities = [
+    { value: 'msk', label: 'Москва' },
+    { value: 'spb', label: 'Санкт-Петербург' },
+    { value: 'kzn', label: 'Казань' },
+  ];
+
+  it('filters while typing and shows every option again once one is picked', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Combobox aria-label="Город" options={cities} onValueChange={onValueChange} />);
+    const input = screen.getByRole('combobox', { name: 'Город' });
+    await user.click(input);
+    await user.keyboard('мос');
+    expect((await screen.findAllByRole('option')).map((option) => option.textContent)).toEqual(['Москва']);
+    await user.click(screen.getByRole('option', { name: 'Москва' }));
+    expect(onValueChange).toHaveBeenLastCalledWith('msk');
+
+    await user.click(screen.getByRole('button', { name: 'Показать варианты' }));
+    expect((await screen.findAllByRole('option')).map((option) => option.textContent)).toEqual(['Москва', 'Санкт-Петербург', 'Казань']);
+  });
+
+  it('still filters when the whole name of an option is typed, not picked', async () => {
+    const user = userEvent.setup();
+    render(<Combobox aria-label="Город" options={[...cities, { value: 'msc', label: 'Москва-Сити' }]} />);
+    await user.click(screen.getByRole('combobox', { name: 'Город' }));
+    await user.keyboard('Москва');
+    expect((await screen.findAllByRole('option')).map((option) => option.textContent)).toEqual(['Москва', 'Москва-Сити']);
   });
 });

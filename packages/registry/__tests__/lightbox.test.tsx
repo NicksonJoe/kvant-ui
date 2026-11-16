@@ -147,6 +147,17 @@ describe('Lightbox · share', () => {
     expect(screen.queryByText('Ссылка скопирована')).toBeNull();
     expect(screen.queryByText('Не удалось поделиться')).toBeNull();
   });
+
+  it('does not download a whole video ahead of «Поделиться»: a video is shared as a link', async () => {
+    Object.defineProperty(navigator, 'share', { configurable: true, value: vi.fn(() => Promise.resolve()) });
+    Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+    const fetch = blobFetch();
+    vi.stubGlobal('fetch', fetch);
+    render(<Lightbox items={photos} defaultOpen defaultIndex={photos.findIndex((item) => item.video !== undefined)} />);
+    await screen.findByRole('dialog');
+    await act(async () => {});
+    expect(fetch).not.toHaveBeenCalled();
+  });
 });
 
 describe('Lightbox · chrome auto-hide', () => {

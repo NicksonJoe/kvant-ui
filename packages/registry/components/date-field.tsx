@@ -69,9 +69,9 @@ export interface DateFieldProps {
 export function DateField({ value, defaultValue = null, onValueChange, min, max, disabled = false, className, ...aria }: DateFieldProps) {
   const id = useId();
   const [segments, setSegments] = useState(() => toSegments(value ?? defaultValue));
-  // A new `value` from the parent replaces whatever is typed.
+  // A new `value` from the parent replaces whatever is typed; the same moment in a new Date object is not new.
   const [synced, setSynced] = useState(value);
-  if (value !== undefined && value !== synced) {
+  if (value !== undefined && !Object.is(value?.getTime(), synced?.getTime())) {
     setSynced(value);
     setSegments(toSegments(value));
   }

@@ -562,38 +562,25 @@ function Voice({
       {...rest}
     >
       <div className="flex items-center gap-2.5">
-        {decoded === undefined ? (
-          <>
-            <span className="flex size-control-md shrink-0 items-center justify-center rounded-full bg-fill-2 text-fg-2">
-              <RingSpinner size={20} />
+        {/* the <audio> streams by itself: playing does not wait for the whole file the waveform needs — bars stay flat until then */}
+        <MainButton state={state} media={media} size={36} icon={16} tone={outgoing ? 'inverse' : 'accent'} label="Слушать голосовое" />
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <Waveform
+            media={media}
+            duration={Number.isFinite(media.duration) ? media.duration : duration}
+            peaks={resamplePeaks(decoded ?? [], bars).map((peak) => (decoded ? peak : 0.35))}
+            side={side}
+            unplayed={fresh}
+            state={state}
+          />
+          <div className="flex items-center gap-1.5">
+            <span data-slot="audio-player-time" className={cn('text-caption font-medium tabular-nums', muted)}>
+              {state === 'error' ? 'Не удалось загрузить' : shown ? `${formatMediaTime(media.time)} / ${formatMediaTime(duration)}` : formatMediaTime(duration)}
             </span>
-            <span aria-hidden className="flex flex-col gap-1.5">
-              <span className="h-1 w-[178px] max-w-full rounded-full bg-fill-3" />
-              <span className="h-2 w-12 rounded-[4px] bg-fill-2" />
-            </span>
-          </>
-        ) : (
-          <>
-            <MainButton state={state} media={media} size={36} icon={16} tone={outgoing ? 'inverse' : 'accent'} label="Слушать голосовое" />
-            <div className="flex min-w-0 flex-col gap-0.5">
-              <Waveform
-                media={media}
-                duration={Number.isFinite(media.duration) ? media.duration : duration}
-                peaks={resamplePeaks(decoded ?? [], bars).map((peak) => (decoded ? peak : 0.35))}
-                side={side}
-                unplayed={fresh}
-                state={state}
-              />
-              <div className="flex items-center gap-1.5">
-                <span data-slot="audio-player-time" className={cn('text-caption font-medium tabular-nums', muted)}>
-                  {state === 'error' ? 'Не удалось загрузить' : shown ? `${formatMediaTime(media.time)} / ${formatMediaTime(duration)}` : formatMediaTime(duration)}
-                </span>
-                {fresh ? <span data-slot="audio-player-dot" className="size-1.5 shrink-0 rounded-full bg-accent" /> : null}
-                {timestamp ? <span className={cn('text-overline', muted)}>{timestamp}</span> : null}
-              </div>
-            </div>
-          </>
-        )}
+            {fresh ? <span data-slot="audio-player-dot" className="size-1.5 shrink-0 rounded-full bg-accent" /> : null}
+            {timestamp ? <span className={cn('text-overline', muted)}>{timestamp}</span> : null}
+          </div>
+        </div>
         {chip ? (
           <button
             type="button"

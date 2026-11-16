@@ -379,6 +379,32 @@ describe('AudioPlayer track', () => {
     vi.unstubAllGlobals();
   });
 
+  it('asks with a one-byte GET, which a signed link allows, and trusts the player when the server cannot be asked', async () => {
+    const fetchMock = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(() => Promise.reject(new TypeError('CORS')));
+    vi.stubGlobal('fetch', fetchMock);
+    track();
+    const audio = media();
+    Object.defineProperty(audio.el, 'currentSrc', { value: 'https://cdn.example/episode.ogg' });
+    audio.fail(4);
+    await act(async () => {});
+    expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({ headers: { Range: 'bytes=0-0' } });
+    expect(fetchMock.mock.calls[0]?.[1]?.method ?? 'GET').toBe('GET');
+    expect(screen.getByText('Не удалось загрузить · формат не поддерживается')).toBeDefined();
+    vi.unstubAllGlobals();
+  });
+
+  it('says there is no network when the server cannot be asked because the device is offline', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new TypeError('offline'))));
+    const onLine = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    track();
+    const audio = media();
+    Object.defineProperty(audio.el, 'currentSrc', { value: 'https://cdn.example/episode.mp3' });
+    audio.fail(4);
+    expect(await screen.findByText('Не удалось загрузить · нет сети')).toBeDefined();
+    onLine.mockRestore();
+    vi.unstubAllGlobals();
+  });
+
   it('says which format failed', () => {
     track();
     media().fail(4);
@@ -652,5 +678,43 @@ describe('AudioPlaylist', () => {
     fireEvent.click(row);
     fireEvent.click(row);
     expect(audio.pause).toHaveBeenCalledTimes(1);
+  });
+});
+
+/* ---------- voice without a given waveform: the file is decoded for its peaks ---------- */
+
+describe('AudioPlayer voice decoding its own waveform', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'OfflineAudioContext',
+      class {
+        decodeAudioData(): Promise<{ getChannelData(): Float32Array }> {
+          return Promise.resolve({ getChannelData: () => new Float32Array(1024).fill(0.5) });
+        }
+      },
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('can be played while the file is still downloading for the waveform', () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => {})));
+    render(<AudioPlayer variant="voice" src="/slow.mp3" duration={42} />);
+    expect(screen.getByRole('button', { name: 'Слушать голосовое' })).toBeTruthy();
+    // and sought: the bars are flat until the peaks arrive
+    expect(screen.getByRole('slider', { name: 'Позиция' })).toBeTruthy();
+  });
+
+  it('asks for the file again after a failed download, not never', async () => {
+    const fetchMock = vi.fn(() => Promise.reject(new Error('offline')));
+    vi.stubGlobal('fetch', fetchMock);
+    const first = render(<AudioPlayer variant="voice" src="/flaky.mp3" duration={42} />);
+    await act(async () => {});
+    first.unmount();
+    render(<AudioPlayer variant="voice" src="/flaky.mp3" duration={42} />);
+    await act(async () => {});
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

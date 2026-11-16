@@ -120,6 +120,19 @@ describe('DataTable', () => {
     expect(bodyRows()[1]?.textContent).toContain('Айдентика');
   });
 
+  it('does not sort again when only the focused row changes', async () => {
+    const user = userEvent.setup();
+    const sortValue = vi.fn((deal: Deal) => deal.amount);
+    const counted: readonly DataTableColumn<Deal>[] = [{ id: 'amount', header: 'Сумма', numeric: true, cell: (deal) => `${deal.amount} ₽`, sortValue }];
+    render(<DataTable aria-label="Сделки" rows={deals} columns={counted} getRowId={(deal) => deal.id} defaultSort={{ column: 'amount', direction: 'ascending' }} />);
+    const rows = bodyRows();
+    rows[0]?.focus();
+    const sortedOnce = sortValue.mock.calls.length;
+    await user.keyboard('{ArrowDown}');
+    rows[1]?.focus();
+    expect(sortValue.mock.calls.length).toBe(sortedOnce);
+  });
+
   it('selects the page, shows the bulk bar and clears it with Escape', async () => {
     const user = userEvent.setup();
     const onArchive = vi.fn();

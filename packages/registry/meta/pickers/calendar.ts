@@ -29,6 +29,7 @@ const meta: ReadyComponentMeta = {
       props: [
         { name: 'value', type: 'object', signature: '{ start: Date; end: Date } | null', description: 'Управляемый диапазон.' },
         { name: 'onValueChange', type: 'function', signature: '(range: DateRange) => void', description: 'Срабатывает после второго нажатия; края упорядочены.' },
+        { name: 'onPendingChange', type: 'function', signature: '(pending: boolean) => void', description: 'Выбрано только начало — true, диапазон закрыт — false: пока true, старый период применять нельзя.' },
         { name: 'months', type: 'enum', options: [1, 2], default: 2, description: 'Сколько месяцев рядом.' },
         { name: 'defaultMonth', type: 'object', signature: 'Date', description: 'Первый показанный месяц; по умолчанию — месяц перед концом диапазона.' },
         { name: 'min', type: 'object', signature: 'Date', description: 'Раньше нельзя.' },

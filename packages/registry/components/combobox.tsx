@@ -62,7 +62,10 @@ export function Combobox<V extends string>({
 }: ComboboxProps<V>) {
   const [query, setQuery] = useState('');
   const find = (v: V | null | undefined) => options.find((option) => option.value === v) ?? null;
-  const needle = query.trim().toLocaleLowerCase('ru');
+  // After a pick the field holds the label of that option: a choice, not a search, so the list is whole again.
+  const [picked, setPicked] = useState<string | null>(null);
+  const chosen = value === undefined ? picked : (find(value)?.label ?? null);
+  const needle = query === chosen ? '' : query.trim().toLocaleLowerCase('ru');
   const matches = options.filter((option) => option.label.toLocaleLowerCase('ru').includes(needle));
   const exact = matches.some((option) => option.label.toLocaleLowerCase('ru') === needle);
   const entries: ListEntry<V>[] = onCreate && needle && !exact ? [...matches, { create: query.trim() }] : matches;
@@ -78,6 +81,7 @@ export function Combobox<V extends string>({
           onCreate?.(next.create);
           return;
         }
+        setPicked(next?.label ?? null);
         onValueChange?.(next?.value ?? null);
       }}
       onInputValueChange={setQuery}

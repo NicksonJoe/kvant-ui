@@ -27,9 +27,13 @@ const filesWord = (n: number, genitive = false) => {
   return rule === 'one' ? 'файл' : rule === 'few' ? 'файла' : 'файлов';
 };
 
-/** «PDF, PNG или JPG» from `.pdf,.png,.jpg`; `image/*` reads as «изображения». */
+const KINDS: Record<string, string> = { image: 'изображения', video: 'видео', audio: 'аудио' };
+
+/** «PDF, PNG или JPG» from `.pdf,.png,.jpg`; `image/*` reads as «изображения», `video/*` as «видео». */
 function typesLabel(tokens: readonly string[]): string {
-  const names = tokens.map((token) => (token.endsWith('/*') ? 'изображения' : (token.split(/[./]/).at(-1) ?? token).toUpperCase()));
+  const names = tokens.map((token) =>
+    token.endsWith('/*') ? (KINDS[token.slice(0, -2)] ?? token) : (token.split(/[./]/).at(-1) ?? token).toUpperCase(),
+  );
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} или ${names.at(-1)}` : (names[0] ?? '');
 }
 

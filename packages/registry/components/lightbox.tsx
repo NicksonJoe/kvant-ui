@@ -144,7 +144,8 @@ export function Lightbox({
   const index = Math.min(Math.max(0, indexProp ?? indexState), Math.max(0, items.length - 1));
   const item = items[index];
   const zoomable = item !== undefined && item.video === undefined;
-  const shareSrc = open && item ? (item.video ?? item.src) : undefined;
+  // A video is shared as a link: reading it ahead would download the whole file next to the stream.
+  const shareSrc = open && item && !item.video ? item.src : undefined;
   const shareName = item ? (item.name ?? item.alt) : '';
   const kind = (at: number) => (items[at]?.video ? 'видео' : 'фото');
   const scale = zoomable ? (LIGHTBOX_ZOOM[zoom] ?? 1) : 1;

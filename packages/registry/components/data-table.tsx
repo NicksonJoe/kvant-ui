@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useMemo, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { cn } from '../lib/cn';
 import { useControllable } from '../lib/use-controllable';
 import { IconButton } from './button';
@@ -63,8 +63,10 @@ export interface DataTableProps<Row> {
   className?: string;
 }
 
+const collator = new Intl.Collator('ru');
+
 function compare(a: string | number, b: string | number): number {
-  return typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b), 'ru');
+  return typeof a === 'number' && typeof b === 'number' ? a - b : collator.compare(String(a), String(b));
 }
 
 const count = (value: number) => value.toLocaleString('ru-RU');
@@ -104,10 +106,12 @@ export function DataTable<Row>({
 
   const sortColumn = sort ? columns.find((column) => column.id === sort.column) : undefined;
   const getValue = sortColumn?.sortValue;
-  const sorted =
-    sort && getValue
-      ? [...rows].sort((a, b) => (sort.direction === 'ascending' ? 1 : -1) * compare(getValue(a), getValue(b)))
-      : rows;
+  // not on every render: moving the focus between rows re-renders the table
+  const direction = sort?.direction;
+  const sorted = useMemo(
+    () => (direction && getValue ? [...rows].sort((a, b) => (direction === 'ascending' ? 1 : -1) * compare(getValue(a), getValue(b))) : rows),
+    [rows, direction, getValue],
+  );
 
   const totalCount = total ?? rows.length;
   const pageCount = pageSize ? Math.max(1, Math.ceil(totalCount / pageSize)) : 1;
@@ -116,6 +120,7 @@ export function DataTable<Row>({
 
   const chosen = new Set(selected);
   const pageIds = visible.filter((row) => !isRowDisabled?.(row)).map(getRowId);
+  const onPage = new Set(pageIds);
   const pageChosen = pageIds.filter((id) => chosen.has(id)).length;
   const clear = () => setSelected([]);
   const toggle = (id: string) => setSelected(chosen.has(id) ? selected.filter((item) => item !== id) : [...selected, id]);
@@ -188,7 +193,7 @@ export function DataTable<Row>({
                       indeterminate={pageChosen > 0 && pageChosen < pageIds.length}
                       disabled={loading || pageIds.length === 0}
                       onCheckedChange={(on) =>
-                        setSelected(on ? [...selected, ...pageIds.filter((id) => !chosen.has(id))] : selected.filter((id) => !pageIds.includes(id)))
+                        setSelected(on ? [...selected, ...pageIds.filter((id) => !chosen.has(id))] : selected.filter((id) => !onPage.has(id)))
                       }
                     />
                   </TableHead>

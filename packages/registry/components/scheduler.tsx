@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useId, useState, type ComponentProps } from 'react';
+import { useEffect, useId, useState, type ComponentProps } from 'react';
 import { cn } from '../lib/cn';
 import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from './popover';
 
@@ -99,14 +99,24 @@ function eventsWord(count: number): string {
   return `${count} событий`;
 }
 
+// The month asks for every day twice on every render: the answer per list and day is kept while the list is the same array.
+const eventsByDay = new WeakMap<readonly SchedulerEvent[], Map<string, SchedulerEvent[]>>();
+
 /** Events of one day: all-day first, then by start time. */
 function eventsOn(events: readonly SchedulerEvent[], day: string): SchedulerEvent[] {
-  return events
-    .filter((event) => {
-      const [first, last] = dayRange(event);
-      return first <= day && day <= last;
-    })
-    .sort((a, b) => Number(b.allDay ?? false) - Number(a.allDay ?? false) || parse(a.start).getTime() - parse(b.start).getTime());
+  let days = eventsByDay.get(events);
+  if (!days) eventsByDay.set(events, (days = new Map()));
+  let list = days.get(day);
+  if (!list) {
+    list = events
+      .filter((event) => {
+        const [first, last] = dayRange(event);
+        return first <= day && day <= last;
+      })
+      .sort((a, b) => Number(b.allDay ?? false) - Number(a.allDay ?? false) || parse(a.start).getTime() - parse(b.start).getTime());
+    days.set(day, list);
+  }
+  return list;
 }
 
 interface Span {
@@ -201,6 +211,13 @@ export function Scheduler({
   ...props
 }: SchedulerProps) {
   const todayDay = today ?? isoDay(new Date());
+  // Without a fixed `now` the «сейчас» line follows the clock: a calendar left open must not show the hour it was opened.
+  const [clockNow, setClockNow] = useState(() => new Date());
+  useEffect(() => {
+    if (now) return;
+    const timer = window.setInterval(() => setClockNow(new Date()), 60_000);
+    return () => window.clearInterval(timer);
+  }, [now]);
   const [viewState, setViewState] = useState(defaultView);
   const [dateState, setDateState] = useState(defaultDate ?? todayDay);
   const view = viewProp ?? viewState;
@@ -304,7 +321,7 @@ export function Scheduler({
           days={view === 'week' ? Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)) : [current]}
           events={events}
           todayDay={todayDay}
-          now={now ? parse(now) : new Date()}
+          now={now ? parse(now) : clockNow}
           startHour={startHour}
           endHour={endHour}
           color={color}
